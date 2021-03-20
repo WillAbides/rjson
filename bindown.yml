@@ -2,6 +2,12 @@ systems:
 - darwin/amd64
 - linux/amd64
 dependencies:
+  go-fuzz-corpus:
+    url: https://github.com/dvyukov/go-fuzz-corpus/archive/{{.ref}}.tar.gz
+    vars:
+      ref: c42c1b2914c7503500996ee15927d3ab3d2ba968
+    required_vars:
+    - ref
   gobin:
     template: origin#gobin
     vars:
@@ -10,6 +16,14 @@ dependencies:
     template: origin#golangci-lint
     vars:
       version: 1.28.2
+  jq:
+    template: origin#jq
+    vars:
+      version: "1.6"
+  mockgen:
+    template: origin#mockgen
+    vars:
+      version: 1.5.0
   shellcheck:
     template: origin#shellcheck
     vars:
@@ -69,6 +83,63 @@ templates:
     - linux/mips64le
     - linux/s390x
     - linux/ppc64le
+  origin#jq:
+    url: https://github.com/stedolan/jq/releases/download/jq-{{.version}}/jq-{{.os}}{{.arch}}{{.extension}}
+    archive_path: jq-{{.os}}{{.arch}}{{.extension}}
+    bin: jq
+    vars:
+      extension: ""
+    required_vars:
+    - version
+    overrides:
+    - matcher:
+        os:
+        - darwin
+        arch:
+        - amd64
+      dependency:
+        url: https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64
+        archive_path: jq-osx-amd64
+    - matcher:
+        os:
+        - windows
+      dependency:
+        vars:
+          extension: .exe
+    substitutions:
+      arch:
+        "386": "32"
+        amd64: "64"
+      os:
+        windows: win
+    systems:
+    - linux/386
+    - linux/amd64
+    - darwin/amd64
+    - windows/386
+    - windows/amd64
+  origin#mockgen:
+    url: https://github.com/golang/mock/releases/download/v{{.version}}/mock_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+    archive_path: mock_{{.version}}_{{.os}}_{{.arch}}/mockgen{{.archivepathsuffix}}
+    bin: mockgen
+    vars:
+      archivepathsuffix: ""
+    required_vars:
+    - version
+    overrides:
+    - matcher:
+        os:
+        - windows
+      dependency:
+        vars:
+          archivepathsuffix: .exe
+    systems:
+    - darwin/386
+    - darwin/amd64
+    - linux/386
+    - linux/amd64
+    - windows/386
+    - windows/amd64
   origin#shellcheck:
     url: https://github.com/koalaman/shellcheck/releases/download/v{{.version}}/shellcheck-v{{.version}}.{{.os}}.{{.arch}}.tar.xz
     archive_path: shellcheck-v{{.version}}/shellcheck
@@ -92,9 +163,14 @@ templates:
 template_sources:
   origin: https://raw.githubusercontent.com/WillAbides/bindown-templates/master/bindown.yml
 url_checksums:
+  https://github.com/dvyukov/go-fuzz-corpus/archive/c42c1b2914c7503500996ee15927d3ab3d2ba968.tar.gz: ba5d183a75d04ff48699c2bd9c832ee8e278ed75a06e2026eddc906cc77b00f3
+  https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_darwin_amd64.tar.gz: d644549b478340f5346fd58c945ed74fb969d2ca1c85e28735f07aa8dbd5a572
+  https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_linux_amd64.tar.gz: 33980a05fc892b89b83c3c430bf7a98566bdb16304b20e7aba1ebf570296acb5
   https://github.com/golangci/golangci-lint/releases/download/v1.28.2/golangci-lint-1.28.2-darwin-amd64.tar.gz: 6e6952a4d72906f6265c379743f274b7609a289cc9cbb19bf6ff94e6f8f00daf
   https://github.com/golangci/golangci-lint/releases/download/v1.28.2/golangci-lint-1.28.2-linux-amd64.tar.gz: c893b07dd7d2c8e13b6380dd52781bb6732f7f541d90da2dc941be5f7e8be6fb
   https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.darwin.x86_64.tar.xz: b080c3b659f7286e27004aa33759664d91e15ef2498ac709a452445d47e3ac23
   https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz: 64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
   https://github.com/myitcv/gobin/releases/download/v0.0.14/darwin-amd64: 08db3d50eea308b475d591d43efc160c7c44f4666da4f2fd103864a9d038b230
   https://github.com/myitcv/gobin/releases/download/v0.0.14/linux-amd64: 5bc800e8be7eaefcb86780786c38b75243082685a17ceea3c2235e06b8259151
+  https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64: af986793a515d500ab2d35f8d2aecd656e764504b789b66d7e1a0b727a124c44
+  https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64: 5c0a0a3ea600f302ee458b30317425dd9632d1ad8882259fcaf4e9b868b2b1ef

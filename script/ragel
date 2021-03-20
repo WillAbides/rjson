@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
+
+# if ragel 6.10 is in PATH, use that.  It's much faster.
+command -v ragel >/dev/null && [[ "$(ragel -v)" == *"version 6.10"* ]] && exec ragel "$@"
+
+docker_image_name="rjson-ragel"
+
+if [ -z "$(docker images -q "$docker_image_name")" ]; then
+cat <<EOF | docker build -t "$docker_image_name" -
+  FROM debian:10.8-slim
+
+  RUN DEBIAN_FRONTEND="noninteractive" \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends ragel
+
+  WORKDIR /work
+EOF
+fi
+
+docker run --rm -v "$(pwd):/work" "$docker_image_name" ragel "$@"

@@ -4,4 +4,5 @@ set -e
 
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 
-go test -covermode=atomic ./...
+make -s bin/mockgen
+bin/mockgen "$@"

@@ -367,9 +367,11 @@ func readFloat64(data []byte) (float64, int, error) {
 	pe := len(data)
 	eof := len(data)
 	var start int
+	var hasDecimal bool
+	var hasExp bool
 
 	const readFloat64_start int = 1
-	const readFloat64_first_final int = 7
+	const readFloat64_first_final int = 6
 	const readFloat64_error int = 0
 
 	const readFloat64_en_main int = 1
@@ -389,48 +391,37 @@ func readFloat64(data []byte) (float64, int, error) {
 			goto st_case_0
 		case 2:
 			goto st_case_2
+		case 6:
+			goto st_case_6
 		case 3:
 			goto st_case_3
 		case 7:
 			goto st_case_7
-		case 4:
-			goto st_case_4
 		case 8:
 			goto st_case_8
-		case 9:
-			goto st_case_9
+		case 4:
+			goto st_case_4
 		case 5:
 			goto st_case_5
-		case 6:
-			goto st_case_6
+		case 9:
+			goto st_case_9
 		case 10:
 			goto st_case_10
 		case 11:
 			goto st_case_11
 		case 12:
 			goto st_case_12
-		case 13:
-			goto st_case_13
 		}
 		goto st_out
 	st_case_1:
 		switch data[p] {
-		case 13:
-			goto st2
-		case 32:
-			goto st2
 		case 45:
-			goto tr2
+			goto tr1
 		case 48:
-			goto tr3
+			goto tr2
 		}
-		switch {
-		case data[p] > 10:
-			if 49 <= data[p] && data[p] <= 57 {
-				goto tr4
-			}
-		case data[p] >= 9:
-			goto st2
+		if 49 <= data[p] && data[p] <= 57 {
+			goto tr3
 		}
 		goto tr0
 	tr0:
@@ -440,47 +431,49 @@ func readFloat64(data []byte) (float64, int, error) {
 	st0:
 		cs = 0
 		goto _out
+	tr1:
+		start = p
+		goto st2
 	st2:
 		if p++; p == pe {
 			goto _test_eof2
 		}
 	st_case_2:
-		switch data[p] {
-		case 13:
-			goto st2
-		case 32:
-			goto st2
-		case 45:
-			goto tr2
-		case 48:
-			goto tr3
+		if data[p] == 48 {
+			goto st6
 		}
-		switch {
-		case data[p] > 10:
-			if 49 <= data[p] && data[p] <= 57 {
-				goto tr4
-			}
-		case data[p] >= 9:
-			goto st2
+		if 49 <= data[p] && data[p] <= 57 {
+			goto st11
 		}
 		goto tr0
 	tr2:
 		start = p
-		goto st3
+		goto st6
+	st6:
+		if p++; p == pe {
+			goto _test_eof6
+		}
+	st_case_6:
+		switch data[p] {
+		case 46:
+			goto st3
+		case 69:
+			goto st4
+		case 101:
+			goto st4
+		}
+		goto st0
 	st3:
 		if p++; p == pe {
 			goto _test_eof3
 		}
 	st_case_3:
-		if data[p] == 48 {
-			goto st7
-		}
-		if 49 <= data[p] && data[p] <= 57 {
-			goto st12
+		if 48 <= data[p] && data[p] <= 57 {
+			goto tr6
 		}
 		goto tr0
-	tr3:
-		start = p
+	tr6:
+		hasDecimal = true
 		goto st7
 	st7:
 		if p++; p == pe {
@@ -488,23 +481,18 @@ func readFloat64(data []byte) (float64, int, error) {
 		}
 	st_case_7:
 		switch data[p] {
-		case 46:
-			goto st4
 		case 69:
-			goto st5
+			goto st4
 		case 101:
-			goto st5
+			goto st4
+		}
+		if 48 <= data[p] && data[p] <= 57 {
+			goto tr12
 		}
 		goto st0
-	st4:
-		if p++; p == pe {
-			goto _test_eof4
-		}
-	st_case_4:
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st8
-		}
-		goto tr0
+	tr12:
+		hasDecimal = true
+		goto st8
 	st8:
 		if p++; p == pe {
 			goto _test_eof8
@@ -512,74 +500,82 @@ func readFloat64(data []byte) (float64, int, error) {
 	st_case_8:
 		switch data[p] {
 		case 69:
-			goto st5
+			goto st4
 		case 101:
-			goto st5
+			goto st4
 		}
 		if 48 <= data[p] && data[p] <= 57 {
-			goto st9
+			goto tr12
 		}
 		goto st0
-	st9:
+	st4:
 		if p++; p == pe {
-			goto _test_eof9
+			goto _test_eof4
 		}
-	st_case_9:
+	st_case_4:
 		switch data[p] {
-		case 69:
+		case 43:
 			goto st5
-		case 101:
+		case 45:
 			goto st5
 		}
 		if 48 <= data[p] && data[p] <= 57 {
-			goto st9
+			goto tr8
 		}
-		goto st0
+		goto tr0
 	st5:
 		if p++; p == pe {
 			goto _test_eof5
 		}
 	st_case_5:
-		switch data[p] {
-		case 43:
-			goto st6
-		case 45:
-			goto st6
-		}
 		if 48 <= data[p] && data[p] <= 57 {
-			goto st10
+			goto tr8
 		}
 		goto tr0
-	st6:
+	tr8:
+		hasExp = true
+		goto st9
+	st9:
 		if p++; p == pe {
-			goto _test_eof6
+			goto _test_eof9
 		}
-	st_case_6:
+	st_case_9:
 		if 48 <= data[p] && data[p] <= 57 {
-			goto st10
+			goto tr13
 		}
-		goto tr0
+		goto st0
+	tr13:
+		hasExp = true
+		goto st10
 	st10:
 		if p++; p == pe {
 			goto _test_eof10
 		}
 	st_case_10:
 		if 48 <= data[p] && data[p] <= 57 {
-			goto st11
+			goto tr13
 		}
 		goto st0
+	tr3:
+		start = p
+		goto st11
 	st11:
 		if p++; p == pe {
 			goto _test_eof11
 		}
 	st_case_11:
+		switch data[p] {
+		case 46:
+			goto st3
+		case 69:
+			goto st4
+		case 101:
+			goto st4
+		}
 		if 48 <= data[p] && data[p] <= 57 {
-			goto st11
+			goto st12
 		}
 		goto st0
-	tr4:
-		start = p
-		goto st12
 	st12:
 		if p++; p == pe {
 			goto _test_eof12
@@ -587,36 +583,22 @@ func readFloat64(data []byte) (float64, int, error) {
 	st_case_12:
 		switch data[p] {
 		case 46:
-			goto st4
+			goto st3
 		case 69:
-			goto st5
+			goto st4
 		case 101:
-			goto st5
+			goto st4
 		}
 		if 48 <= data[p] && data[p] <= 57 {
-			goto st13
-		}
-		goto st0
-	st13:
-		if p++; p == pe {
-			goto _test_eof13
-		}
-	st_case_13:
-		switch data[p] {
-		case 46:
-			goto st4
-		case 69:
-			goto st5
-		case 101:
-			goto st5
-		}
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st13
+			goto st12
 		}
 		goto st0
 	st_out:
 	_test_eof2:
 		cs = 2
+		goto _test_eof
+	_test_eof6:
+		cs = 6
 		goto _test_eof
 	_test_eof3:
 		cs = 3
@@ -624,20 +606,17 @@ func readFloat64(data []byte) (float64, int, error) {
 	_test_eof7:
 		cs = 7
 		goto _test_eof
-	_test_eof4:
-		cs = 4
-		goto _test_eof
 	_test_eof8:
 		cs = 8
 		goto _test_eof
-	_test_eof9:
-		cs = 9
+	_test_eof4:
+		cs = 4
 		goto _test_eof
 	_test_eof5:
 		cs = 5
 		goto _test_eof
-	_test_eof6:
-		cs = 6
+	_test_eof9:
+		cs = 9
 		goto _test_eof
 	_test_eof10:
 		cs = 10
@@ -648,16 +627,13 @@ func readFloat64(data []byte) (float64, int, error) {
 	_test_eof12:
 		cs = 12
 		goto _test_eof
-	_test_eof13:
-		cs = 13
-		goto _test_eof
 
 	_test_eof:
 		{
 		}
 		if p == eof {
 			switch cs {
-			case 1, 2, 3, 4, 5, 6:
+			case 1, 2, 3, 4, 5:
 				return 0, p, errInvalidNumber
 			}
 		}
@@ -667,7 +643,7 @@ func readFloat64(data []byte) (float64, int, error) {
 		}
 	}
 
-	n, err := readFloat64Helper(data[start:p])
+	n, err := readFloat64Helper(hasDecimal, hasExp, data[start:p])
 	return n, p, err
 }
 
@@ -750,7 +726,12 @@ func readInt64(data []byte) (int64, int, error) {
 			goto _test_eof3
 		}
 	st_case_3:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -779,7 +760,12 @@ func readInt64(data []byte) (int64, int, error) {
 			goto _test_eof4
 		}
 	st_case_4:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -791,7 +777,12 @@ func readInt64(data []byte) (int64, int, error) {
 			goto _test_eof5
 		}
 	st_case_5:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -924,7 +915,12 @@ func readInt32(data []byte) (int32, int, error) {
 			goto _test_eof3
 		}
 	st_case_3:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -953,7 +949,12 @@ func readInt32(data []byte) (int32, int, error) {
 			goto _test_eof4
 		}
 	st_case_4:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -965,7 +966,12 @@ func readInt32(data []byte) (int32, int, error) {
 			goto _test_eof5
 		}
 	st_case_5:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -1077,7 +1083,12 @@ func readUint64(data []byte) (uint64, int, error) {
 			goto _test_eof2
 		}
 	st_case_2:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -1106,7 +1117,12 @@ func readUint64(data []byte) (uint64, int, error) {
 			goto _test_eof3
 		}
 	st_case_3:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -1118,7 +1134,12 @@ func readUint64(data []byte) (uint64, int, error) {
 			goto _test_eof4
 		}
 	st_case_4:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -1227,7 +1248,12 @@ func readUint32(data []byte) (uint32, int, error) {
 			goto _test_eof2
 		}
 	st_case_2:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -1256,7 +1282,12 @@ func readUint32(data []byte) (uint32, int, error) {
 			goto _test_eof3
 		}
 	st_case_3:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {
@@ -1268,7 +1299,12 @@ func readUint32(data []byte) (uint32, int, error) {
 			goto _test_eof4
 		}
 	st_case_4:
-		if data[p] == 46 {
+		switch data[p] {
+		case 46:
+			goto tr0
+		case 69:
+			goto tr0
+		case 101:
 			goto tr0
 		}
 		if 48 <= data[p] && data[p] <= 57 {

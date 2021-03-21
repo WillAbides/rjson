@@ -1,5 +1,3 @@
-// +build gofuzz
-
 package rjson
 
 import (
@@ -7,35 +5,276 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
 func Fuzz(data []byte) int {
-	var jsonVal interface{}
+	score := 0
 
-	err := json.NewDecoder(bytes.NewReader(data)).Decode(&jsonVal)
-	jsonUnmarshalFailed := err != nil
+	for _, fd := range []struct {
+		name   string
+		fuzzer fuzzer
+	}{
+		{name: "fuzzIfaceUnmarshaller", fuzzer: fuzzIfaceUnmarshaller},
+		{name: "fuzzSkip", fuzzer: fuzzSkip},
+		{name: "fuzzNextToken", fuzzer: fuzzNextToken},
+		{name: "fuzzReadUint64", fuzzer: fuzzReadUint64},
+		{name: "fuzzReadInt64", fuzzer: fuzzReadInt64},
+		{name: "fuzzReadUint32", fuzzer: fuzzReadUint32},
+		{name: "fuzzReadInt32", fuzzer: fuzzReadInt32},
+		{name: "fuzzReadInt", fuzzer: fuzzReadInt},
+		{name: "fuzzReadUint", fuzzer: fuzzReadUint},
+		{name: "fuzzReadFloat64", fuzzer: fuzzReadFloat64},
+	} {
+		d := make([]byte, len(data))
+		copy(d, data)
+		s, err := fd.fuzzer(d)
+		if err != nil {
+			panic(fmt.Sprintf("%s\n%v", fd.name, err))
+		}
+		switch s {
+		case -1:
+			return -1
+		case 1:
+			score = 1
+		}
+	}
+	return score
+}
+
+type fuzzer func([]byte) (int, error)
+
+func fuzzIfaceUnmarshaller(data []byte) (int, error) {
+	var jsonVal interface{}
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&jsonVal)
 
 	handler := &ifaceUnmarshaller{}
-
-	_, err = handler.HandleAnyValue(data)
-
+	_, gotErr := handler.HandleAnyValue(data)
+	err := checkFuzzErrors(wantErr, gotErr)
 	if err != nil {
-		if jsonUnmarshalFailed {
-			return 0
-		}
-		panic("we errored when json.Unmarshal didn't")
+		return 0, err
 	}
-
-	if jsonUnmarshalFailed {
-		panic("json.Unmarshal errored and we didn't")
+	if wantErr != nil {
+		return 0, nil
 	}
 	gotVal, wantVal := removeJSONRuneError(handler.val, jsonVal)
 	err = ifaceCompare(wantVal, gotVal, []string{"ROOT"})
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
-	return 1
+	return 1, nil
+}
+
+func fuzzSkip(data []byte) (int, error) {
+	skippedBytes, err := SkipValue(data)
+	gotValid := err == nil
+	skippedData := data
+	if skippedBytes < len(skippedData) {
+		skippedData = skippedData[:skippedBytes]
+	}
+	wantValid := json.Valid(skippedData)
+	if wantValid && !gotValid {
+		return 0, fmt.Errorf("failed to skip valid json. error: %v", err)
+	}
+	if !wantValid && gotValid {
+		return 0, fmt.Errorf("failed to detect invalid json")
+	}
+	return 0, nil
+}
+
+var (
+	startsWithNull = regexp.MustCompile(`^[\t\r\n ]*null`)
+	startsWith00   = regexp.MustCompile(`^[\t\r\n ]*-?0[0-9eE]`)
+)
+
+func checkValidNumberFuzzers(data []byte) bool {
+	if startsWithNull.Match(data) {
+		return false
+	}
+	if startsWith00.Match(data) {
+		return false
+	}
+	return true
+}
+
+func fuzzPrepReadData(data []byte) []byte {
+	if len(data) == 0 {
+		return data
+	}
+	return data[countWhitespace(data):]
+}
+
+func fuzzReadUint64(data []byte) (int, error) {
+	data = fuzzPrepReadData(data)
+	if !checkValidNumberFuzzers(data) {
+		return 0, nil
+	}
+	var want uint64
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
+	got, _, gotErr := ReadUint64(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil || wantErr != nil {
+		return 0, err
+	}
+	if got != want {
+		return 0, fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return 0, nil
+}
+
+func fuzzReadInt64(data []byte) (int, error) {
+	data = fuzzPrepReadData(data)
+	if !checkValidNumberFuzzers(data) {
+		return 0, nil
+	}
+	var want int64
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
+	got, _, gotErr := ReadInt64(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil || wantErr != nil {
+		return 0, err
+	}
+	if got != want {
+		return 0, fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return 0, nil
+}
+
+func fuzzReadUint32(data []byte) (int, error) {
+	data = fuzzPrepReadData(data)
+	if !checkValidNumberFuzzers(data) {
+		return 0, nil
+	}
+	var want uint32
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
+	got, _, gotErr := ReadUint32(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil || wantErr != nil {
+		return 0, err
+	}
+	if got != want {
+		return 0, fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return 0, nil
+}
+
+func fuzzReadInt32(data []byte) (int, error) {
+	data = fuzzPrepReadData(data)
+	if !checkValidNumberFuzzers(data) {
+		return 0, nil
+	}
+	var want int32
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
+	got, _, gotErr := ReadInt32(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil || wantErr != nil {
+		return 0, err
+	}
+	if got != want {
+		return 0, fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return 0, nil
+}
+
+func fuzzReadFloat64(data []byte) (int, error) {
+	data = fuzzPrepReadData(data)
+	if !checkValidNumberFuzzers(data) {
+		return 0, nil
+	}
+	var want float64
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
+	got, _, gotErr := ReadFloat64(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil || wantErr != nil {
+		return 0, err
+	}
+	if got != want {
+		return 0, fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return 0, nil
+}
+
+func fuzzReadUint(data []byte) (int, error) {
+	data = fuzzPrepReadData(data)
+	if !checkValidNumberFuzzers(data) {
+		return 0, nil
+	}
+	var want uint
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
+	got, _, gotErr := ReadUint(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil || wantErr != nil {
+		return 0, err
+	}
+	if got != want {
+		return 0, fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return 0, nil
+}
+
+func fuzzReadInt(data []byte) (int, error) {
+	data = fuzzPrepReadData(data)
+	if !checkValidNumberFuzzers(data) {
+		return 0, nil
+	}
+	var want int
+	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
+	got, _, gotErr := ReadInt(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil || wantErr != nil {
+		return 0, err
+	}
+	if got != want {
+		return 0, fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return 0, nil
+}
+
+func checkFuzzErrors(wantErr, gotErr error) error {
+	if wantErr != nil {
+		if gotErr == nil {
+			return fmt.Errorf("we got no error but json got: %v", wantErr)
+		}
+		return nil
+	}
+	if gotErr != nil {
+		return fmt.Errorf("json got no error but we did: %v", gotErr)
+	}
+	return nil
+}
+
+func fuzzNextToken(data []byte) (int, error) {
+	got, _, gotErr := NextToken(data)
+
+	want, wantErr := json.NewDecoder(bytes.NewReader(data)).Token()
+	if wantErr != nil {
+		return 0, nil
+	}
+	if gotErr != nil {
+		return 0, fmt.Errorf("json got no error but we did: %v", gotErr)
+	}
+	var wantType TokenType
+	switch w := want.(type) {
+	case json.Delim:
+		wantType = tokenTypes[w]
+	case bool:
+		wantType = TrueType
+		if !w {
+			wantType = FalseType
+		}
+	case float64:
+		wantType = NumberType
+	case string:
+		wantType = StringType
+	case nil:
+		wantType = NullType
+	}
+	gotType := tokenTypes[got]
+	if wantType != gotType {
+		return 0, fmt.Errorf("got wrong token type. wanted %s but got %s", wantType, gotType)
+	}
+	return 0, nil
 }
 
 type multiPathErr []*pathErr

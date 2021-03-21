@@ -49,18 +49,24 @@ func readFloat64(data []byte) (float64, int, error) {
     	pe := len(data)
     	eof := len(data)
     	var start int
+    	var hasDecimal bool
+    	var hasExp bool
 
 %%{
 
 machine readFloat64;
 include common "common.rl";
 
-main := (json_space* json_number >{start = p}) @err{return 0, p, errInvalidNumber};
+main := (
+  json_int >{start = p}
+  ('.'[0-9]+)? @{hasDecimal = true}
+  ([eE][+\-]?[0-9]+)? @{hasExp = true}
+  ) @err{return 0, p, errInvalidNumber};
 
 write data; write init; write exec;
 }%%
 
-  n, err := readFloat64Helper(data[start:p])
+  n, err := readFloat64Helper(hasDecimal, hasExp, data[start:p])
   return n, p, err
 }
 
@@ -68,9 +74,22 @@ write data; write init; write exec;
 machine intReader;
 include common "common.rl";
 
+read_int = (
+ ('-' @{neg = true})?
+ json_uint >{start = p}
+ [^.0-9eE]  @{fhold; fbreak;}
+ ) @eof{
+     if p == 0 {
+       return 0, p, errInvalidInt
+     }
+     fhold; fbreak;
+   }
+   @err{return 0, p, errInvalidInt}
+;
+
 read_uint = (
  json_uint >{start = p}
- [^.0-9]  @{fhold; fbreak;}
+ [^.0-9eE]  @{fhold; fbreak;}
  ) @eof{
      if p == 0 {
        return 0, p, errInvalidUInt
@@ -80,18 +99,6 @@ read_uint = (
    @err{return 0, p, errInvalidUInt}
 ;
 
-read_int = (
- ('-' @{neg = true})?
- json_uint >{start = p}
- [^.0-9]  @{fhold; fbreak;}
- ) @eof{
-     if p == 0 {
-       return 0, p, errInvalidInt
-     }
-     fhold; fbreak;
-   }
-   @err{return 0, p, errInvalidInt}
-;
 
 }%%
 

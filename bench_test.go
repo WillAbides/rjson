@@ -10,7 +10,7 @@ var benchInt int
 
 func BenchmarkSkip(b *testing.B) {
 	var err error
-	for _, file := range []string{"citm_catalog.json"} {
+	for _, file := range jsonTestFiles {
 		buf := &Buffer{}
 		data := getTestdataJSONGz(b, file)
 		size := int64(len(data))

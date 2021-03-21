@@ -62,9 +62,6 @@ func (h *ifaceUnmarshaller) HandleAnyValue(data []byte) (int, error) {
 		pp, err = ReadNull(data)
 	case StringType:
 		h.val, pp, err = ReadString(data, nil)
-		if err != nil {
-			fmt.Println("ReadString error")
-		}
 	case NumberType:
 		h.val, pp, err = ReadFloat64(data)
 	case TrueType, FalseType:

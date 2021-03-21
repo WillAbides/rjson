@@ -6,19 +6,6 @@ CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 make -s bin/go-fuzz bin/go-fuzz-build bin/jq
 PATH="$(pwd)/bin:$PATH"
 
-mkdir -p fuzz
-
-# download the initial corpus if it doesn't already exist
-if [ ! -d "fuzz/corpus" ]; then
-  corpus_ref="$(
-    script/bindown dependency info go-fuzz-corpus --vars --json |
-      jq '."darwin/amd64".vars.ref' -r
-  )"
-
-  script/bindown extract go-fuzz-corpus --output tmp
-  mv "tmp/go-fuzz-corpus-$corpus_ref/json/corpus" "fuzz/corpus"
-  rm -rf "tmp/go-fuzz-corpus-$corpus_ref"
-fi
-
-GO111MODULE=off go-fuzz-build -o fuzz/fuzz-rjson.zip
-go-fuzz -dup -bin fuzz/fuzz-rjson.zip -procs 1 -workdir fuzz
+GO111MODULE=off go-fuzz-build -o tmp/fuzz-rjson.zip
+mkdir -p tmp
+go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 1 -workdir testdata/fuzz

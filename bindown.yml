@@ -2,12 +2,6 @@ systems:
 - darwin/amd64
 - linux/amd64
 dependencies:
-  go-fuzz-corpus:
-    url: https://github.com/dvyukov/go-fuzz-corpus/archive/{{.ref}}.tar.gz
-    vars:
-      ref: c42c1b2914c7503500996ee15927d3ab3d2ba968
-    required_vars:
-    - ref
   gobin:
     template: origin#gobin
     vars:
@@ -163,7 +157,6 @@ templates:
 template_sources:
   origin: https://raw.githubusercontent.com/WillAbides/bindown-templates/master/bindown.yml
 url_checksums:
-  https://github.com/dvyukov/go-fuzz-corpus/archive/c42c1b2914c7503500996ee15927d3ab3d2ba968.tar.gz: ba5d183a75d04ff48699c2bd9c832ee8e278ed75a06e2026eddc906cc77b00f3
   https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_darwin_amd64.tar.gz: d644549b478340f5346fd58c945ed74fb969d2ca1c85e28735f07aa8dbd5a572
   https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_linux_amd64.tar.gz: 33980a05fc892b89b83c3c430bf7a98566bdb16304b20e7aba1ebf570296acb5
   https://github.com/golangci/golangci-lint/releases/download/v1.28.2/golangci-lint-1.28.2-darwin-amd64.tar.gz: 6e6952a4d72906f6265c379743f274b7609a289cc9cbb19bf6ff94e6f8f00daf

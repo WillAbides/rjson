@@ -30,6 +30,40 @@ var jsonTestFiles = []string{
 	"sample.json",
 }
 
+func Test_fuzzers(t *testing.T) {
+	corpusDir := filepath.FromSlash(`fuzz/corpus`)
+	if !fileExists(t, filepath.FromSlash(corpusDir)) {
+		t.Skip()
+	}
+
+	for _, td := range []struct {
+		name   string
+		fuzzer fuzzer
+	}{
+		{name: "fuzzIfaceUnmarshaller", fuzzer: fuzzIfaceUnmarshaller},
+		{name: "fuzzSkip", fuzzer: fuzzSkip},
+		{name: "fuzzNextToken", fuzzer: fuzzNextToken},
+		{name: "fuzzReadUint64", fuzzer: fuzzReadUint64},
+		{name: "fuzzReadInt64", fuzzer: fuzzReadInt64},
+		{name: "fuzzReadUint32", fuzzer: fuzzReadUint32},
+		{name: "fuzzReadInt32", fuzzer: fuzzReadInt32},
+		{name: "fuzzReadInt", fuzzer: fuzzReadInt},
+		{name: "fuzzReadUint", fuzzer: fuzzReadUint},
+		{name: "fuzzReadFloat64", fuzzer: fuzzReadFloat64},
+	} {
+		t.Run(td.name, func(t *testing.T) {
+			dir, err := ioutil.ReadDir(corpusDir)
+			require.NoError(t, err)
+			for _, info := range dir {
+				data, err := ioutil.ReadFile(filepath.Join(corpusDir, info.Name()))
+				require.NoError(t, err)
+				_, err = td.fuzzer(data)
+				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filepath.Join(corpusDir, info.Name()), string(data))
+			}
+		})
+	}
+}
+
 func TestUnmarshalFace(t *testing.T) {
 	for _, s := range jsonTestFiles {
 		t.Run(s, func(t *testing.T) {
@@ -51,6 +85,8 @@ func TestUnmarshalFace(t *testing.T) {
 		"{\"\x1b\":true}",
 		"\"\x1f\"",
 		"\"\\'\"",
+		"80000000000000000000",
+		"999999999999999999",
 	} {
 		t.Run(fuzzy, func(t *testing.T) {
 			assertIfaceUnmarshalsSame(t, []byte(fuzzy))

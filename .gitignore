@@ -1,4 +1,6 @@
 tmp/
 bin/
 .bindown/
-fuzz/
+fuzz-rjson.zip
+coverprofile
+sonarprofile

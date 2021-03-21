@@ -88,8 +88,16 @@ func getu4(s []byte) rune {
 	return r
 }
 
-func readFloat64Helper(digits []byte) (float64, error) {
-	return strconv.ParseFloat(unsafeBytesToString(digits), 64)
+func readFloat64Helper(hasDecimal, hasExp bool, digits []byte) (float64, error) {
+	if hasDecimal || hasExp || len(digits) > 18 {
+		return strconv.ParseFloat(unsafeBytesToString(digits), 64)
+	}
+	if digits[0] == '-' {
+		n, err := readInt64Helper(true, digits[1:])
+		return float64(n), err
+	}
+	n, err := readUint64Helper(digits)
+	return float64(n), err
 }
 
 func unsafeBytesToString(b []byte) string {
@@ -134,8 +142,8 @@ func readUint64Helper(data []byte) (uint64, error) {
 			if val > cutoff {
 				return 0, fmt.Errorf(`value out of uint64 range`)
 			}
-			val *= 10
-			newVal := val + v
+			newVal := val * 10
+			newVal += v
 			if newVal < val {
 				return 0, fmt.Errorf(`value out of uint64 range`)
 			}
@@ -168,22 +176,22 @@ func readUint32Helper(data []byte) (uint32, error) {
 	const cutoff = (1<<32-1)/10 + 1
 	const zero = uint32('0')
 	ld := len(data)
-	if ld > 10 {
-		data = data[:10]
+	if ld > 9 {
+		data = data[:9]
 	}
 	for _, digit := range data {
 		v := uint32(digit) - zero
 		val = (val * 10) + v
 	}
 
-	if ld > 10 {
-		for _, digit := range data[10:ld] {
+	if ld > 9 {
+		for _, digit := range data[9:ld] {
 			v := uint32(digit) - zero
 			if val > cutoff {
 				return 0, fmt.Errorf(`value out of uint32 range`)
 			}
-			val *= 10
-			newVal := val + v
+			newVal := val * 10
+			newVal += v
 			if newVal < val {
 				return 0, fmt.Errorf(`value out of uint32 range`)
 			}

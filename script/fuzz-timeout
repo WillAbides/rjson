@@ -19,7 +19,7 @@ mkdir -p tmp
 GO111MODULE=off go get github.com/dvyukov/go-fuzz/go-fuzz-dep
 GO111MODULE=off go-fuzz-build -o tmp/fuzz-rjson.zip
 
-go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 1 -workdir testdata/fuzz &
+go-fuzz -dup -bin tmp/fuzz-rjson.zip -workdir testdata/fuzz &
 
 pid=$!
 

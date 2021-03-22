@@ -19,3 +19,9 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
       - run: script/fuzz-timeout 60
+      - uses: peter-evans/create-pull-request@v3.8.2
+        with:
+          branch: fuzz-update
+          title: update fuzz data
+          delete-branch: true
+          body: update fuzz data

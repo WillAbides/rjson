@@ -25,7 +25,7 @@ jobs:
       - name: restore corpus
         shell: bash
         run: |
-          if [ -n "$(git branch --list fuzz-update)" ]; then
+          if [ -z "$(git ls-remote --heads https://github.com/willabides/rjson fuzz-update)" ]; then
             exit
           fi
           git restore -s origin/fuzz-update testdata/fuzz

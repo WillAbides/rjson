@@ -91,6 +91,10 @@ func removeJSONRuneError(rjsonVal, jsonVal interface{}) (rvRes, jvRes interface{
 		}
 		var jvv interface{}
 		for k, rvv := range rvMap {
+			if strings.ContainsRune(k, utf8.RuneError) {
+				delete(rvMap, k)
+				continue
+			}
 			jvv, ok = jvMap[k]
 			if !ok {
 				delete(rvMap, k)

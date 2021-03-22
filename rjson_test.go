@@ -87,6 +87,7 @@ func TestUnmarshalFace(t *testing.T) {
 		"\"\\'\"",
 		"80000000000000000000",
 		"999999999999999999",
+		"{\"�\":\"0\",\"\xbd\":\"\"}",
 	} {
 		t.Run(fuzzy, func(t *testing.T) {
 			assertIfaceUnmarshalsSame(t, []byte(fuzzy))
@@ -108,7 +109,7 @@ func assertIfaceUnmarshalsSame(t *testing.T, data []byte) bool {
 		return false
 	}
 	got, want := removeJSONRuneError(handler.val, want)
-	return assert.Equal(t, want, got)
+	return assert.NoError(t, ifaceCompare(want, got, []string{"ROOT"}))
 }
 
 func TestBuffer_SkipValue(t *testing.T) {

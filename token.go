@@ -4,8 +4,10 @@ import (
 	"fmt"
 )
 
+// TokenType is the type of a json token
 type TokenType uint8
 
+// TokenTypes
 const (
 	InvalidType TokenType = iota
 	NullType

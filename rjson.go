@@ -12,13 +12,9 @@ import (
 //go:generate script/generate-ragel-file object_handler_machine.rl
 //go:generate script/generate-ragel-file read_machines.rl
 
-var whitespace = [256]bool{
-	' ':  true,
-	'\r': true,
-	'\t': true,
-	'\n': true,
-}
-
+// NextToken finds the first json token in data. token is the token itself, p is the position in data where
+// the token was found. NextToken errors if it finds anything besides json whitespace before the first valid
+// token. It returns io.EOF if data is empty or contains only whitespace.
 func NextToken(data []byte) (token byte, p int, err error) {
 	if len(data) == 0 {
 		return 0, 0, io.EOF
@@ -40,6 +36,9 @@ func NextToken(data []byte) (token byte, p int, err error) {
 	return b, p + 1, nil
 }
 
+// NextTokenType finds the first json token in data and returns its TokenType. p is the position in data where
+// the token was found. NextToken errors if it finds anything besides json whitespace before the first valid
+// token. It returns io.EOF if data is empty or contains only whitespace.
 func NextTokenType(data []byte) (TokenType, int, error) {
 	if len(data) == 0 {
 		return 0, 0, io.EOF
@@ -58,74 +57,96 @@ func NextTokenType(data []byte) (TokenType, int, error) {
 	return tokenTypes[data[p]], p + 1, nil
 }
 
+var whitespace = [256]bool{
+	' ':  true,
+	'\r': true,
+	'\t': true,
+	'\n': true,
+}
+
+// ObjectValueHandler is a handler for json objects.
 type ObjectValueHandler interface {
 	HandleObjectValue(fieldname, data []byte) (int, error)
 }
 
+// ObjectValueHandlerFunc is a function that implements ObjectValueHandler
 type ObjectValueHandlerFunc func(fieldname, data []byte) (int, error)
 
+// HandleObjectValue meets ObjectValueHandler.HandleObjectValue
 func (fn ObjectValueHandlerFunc) HandleObjectValue(fieldname, data []byte) (int, error) {
 	return fn(fieldname, data)
 }
 
+// ValueHandler is a handler for json values
 type ValueHandler interface {
 	HandleValue(data []byte) (int, error)
 }
 
+// ValueHandlerFunc is a function that implements ValueHandler
 type ValueHandlerFunc func(data []byte) (int, error)
 
+// HandleValue meets ValueHandler.HandleValue
 func (fn ValueHandlerFunc) HandleValue(data []byte) (int, error) {
 	return fn(data)
 }
 
-func ReadUint64(data []byte) (val uint64, n int, err error) {
+// ReadUint64 reads a uint64 value at the beginning of data. p is the first position in data after the value.
+func ReadUint64(data []byte) (val uint64, p int, err error) {
 	return readUint64(data)
 }
 
-func ReadInt64(data []byte) (val int64, n int, err error) {
+// ReadInt64 reads an int64 value at the beginning of data. p is the first position in data after the value.
+func ReadInt64(data []byte) (val int64, p int, err error) {
 	return readInt64(data)
 }
 
-func ReadInt32(data []byte) (val int32, n int, err error) {
+// ReadInt32 reads an int32 value at the beginning of data. p is the first position in data after the value.
+func ReadInt32(data []byte) (val int32, p int, err error) {
 	return readInt32(data)
 }
 
-func ReadUint32(data []byte) (val uint32, n int, err error) {
+// ReadUint32 reads a uint32 value at the beginning of data. p is the first position in data after the value.
+func ReadUint32(data []byte) (val uint32, p int, err error) {
 	return readUint32(data)
 }
 
-func ReadInt(data []byte) (val, n int, err error) {
+// ReadInt reads an int value at the beginning of data. p is the first position in data after the value.
+func ReadInt(data []byte) (val, p int, err error) {
 	switch strconv.IntSize {
 	case 64:
-		val, n, err := ReadInt64(data)
-		return int(val), n, err
+		val, p, err := ReadInt64(data)
+		return int(val), p, err
 	case 32:
-		val, n, err := ReadInt32(data)
-		return int(val), n, err
+		val, p, err := ReadInt32(data)
+		return int(val), p, err
 	default:
 		return 0, 0, fmt.Errorf("unsupported int size: %d", strconv.IntSize)
 	}
 }
 
-func ReadUint(data []byte) (val uint, n int, err error) {
+// ReadUint reads a uint value at the beginning of data. p is the first position in data after the value.
+func ReadUint(data []byte) (val uint, p int, err error) {
 	switch strconv.IntSize {
 	case 64:
-		val, n, err := ReadUint64(data)
-		return uint(val), n, err
+		val, p, err := ReadUint64(data)
+		return uint(val), p, err
 	case 32:
-		val, n, err := ReadUint32(data)
-		return uint(val), n, err
+		val, p, err := ReadUint32(data)
+		return uint(val), p, err
 	default:
 		return 0, 0, fmt.Errorf("unsupported int size: %d", strconv.IntSize)
 	}
 }
 
-func ReadFloat64(data []byte) (val float64, n int, err error) {
+// ReadFloat64 reads a float64 value at the beginning of data. p is the first position in data after the value.
+func ReadFloat64(data []byte) (val float64, p int, err error) {
 	return readFloat64(data)
 }
 
-func ReadStringBytes(data, buf []byte) (val []byte, n int, err error) {
-	p := countWhitespace(data)
+// ReadStringBytes reads a string value at the beginning of data and appends it to buf. p is the first position in
+// data after the value.
+func ReadStringBytes(data, buf []byte) (val []byte, p int, err error) {
+	p = countWhitespace(data)
 	if data[p] != '"' {
 		return buf, p, fmt.Errorf("not a string")
 	}
@@ -152,7 +173,11 @@ func ReadStringBytes(data, buf []byte) (val []byte, n int, err error) {
 	return data, p, fmt.Errorf("not a string")
 }
 
-func ReadString(data, buf []byte) (val string, n int, err error) {
+// ReadString reads a string value at the beginning of data. p is the first position in data after the value. If buf
+// is not nil, it will be used as a working for building the string value.
+//
+// If you are concerned about memory allocation, try using ReadStringBytes instead.
+func ReadString(data, buf []byte) (val string, p int, err error) {
 	b, p, err := ReadStringBytes(data, buf)
 	if err != nil {
 		return "", p, err
@@ -160,48 +185,67 @@ func ReadString(data, buf []byte) (val string, n int, err error) {
 	return string(b), p, err
 }
 
-func ReadBool(data []byte) (val bool, n int, err error) {
+// ReadBool reads a boolean value at the beginning of data. p is the first position in data after the value.
+func ReadBool(data []byte) (val bool, p int, err error) {
 	return readBool(data)
 }
 
-func ReadNull(data []byte) (n int, err error) {
+// ReadNull reads 'null' at the beginning of data. p is the first position after 'null'
+func ReadNull(data []byte) (p int, err error) {
 	return readNull(data)
 }
 
+// Buffer is a reusable stack buffer for operations that walk a json document.
 type Buffer struct {
 	stackBuf []int
 }
 
-func (h *Buffer) HandleObjectValues(data []byte, handler ObjectValueHandler) (n int, err error) {
-	n, h.stackBuf, err = handleObjectValues(data, handler, h.stackBuf)
-	return n, err
+// HandleObjectValues runs handler.HandleObjectValue on each field in the object at the beginning of data until it
+// encounters an error or reaches the end of the object. p is the position after the last byte it read. When err
+// is nil, p will be the position after the object.
+func (h *Buffer) HandleObjectValues(data []byte, handler ObjectValueHandler) (p int, err error) {
+	p, h.stackBuf, err = handleObjectValues(data, handler, h.stackBuf)
+	return p, err
 }
 
-func HandleObjectValues(data []byte, handler ObjectValueHandler) (int, error) {
-	n, _, err := handleObjectValues(data, handler, nil)
-	return n, err
+// HandleObjectValues runs handler.HandleObjectValue on each field in the object at the beginning of data until it
+// encounters an error or reaches the end of the object. p is the position after the last byte it read. When err
+// is nil, p will be the position after the object.
+func HandleObjectValues(data []byte, handler ObjectValueHandler) (p int, err error) {
+	p, _, err = handleObjectValues(data, handler, nil)
+	return p, err
 }
 
-func (h *Buffer) HandleArrayValues(data []byte, handler ValueHandler) (n int, err error) {
-	n, h.stackBuf, err = handleArrayValues(data, handler, h.stackBuf)
-	return n, err
+// HandleArrayValues runs handler.HandleValue on each item in the array at the beginning of data until it encounters
+// an error or reaches the end of the array. p is the position after the last byte it read. When err is nil, p will
+// be the position after the object.
+func (h *Buffer) HandleArrayValues(data []byte, handler ValueHandler) (p int, err error) {
+	p, h.stackBuf, err = handleArrayValues(data, handler, h.stackBuf)
+	return p, err
 }
 
-func HandleArrayValues(data []byte, handler ValueHandler) (int, error) {
+// HandleArrayValues runs handler.HandleValue on each item in the array at the beginning of data until it encounters
+// an error or reaches the end of the array. p is the position after the last byte it read. When err is nil, p will
+// be the position after the object.
+func HandleArrayValues(data []byte, handler ValueHandler) (p int, err error) {
 	n, _, err := handleArrayValues(data, handler, nil)
 	return n, err
 }
 
-func (h *Buffer) SkipValue(data []byte) (n int, err error) {
-	n, h.stackBuf, err = skipValue(data, h.stackBuf)
-	return n, err
+// SkipValue skips the first json value in data. p is the position after the skipped value.
+func (h *Buffer) SkipValue(data []byte) (p int, err error) {
+	p, h.stackBuf, err = skipValue(data, h.stackBuf)
+	return p, err
 }
 
-func SkipValue(data []byte) (int, error) {
-	n, _, err := skipValue(data, nil)
-	return n, err
+// SkipValue skips the first json value in data. p is the position after the skipped value.
+func SkipValue(data []byte) (p int, err error) {
+	p, _, err = skipValue(data, nil)
+	return p, err
 }
 
-func UnescapeStringContent(data, dst []byte) (val []byte, n int, err error) {
+// UnescapeStringContent unescapes the content of a raw json string. data must be the content of the raw string without
+// starting and ending double quotes. This function is useful with ObjectValueHandler.HandleObjectValue.
+func UnescapeStringContent(data, dst []byte) (val []byte, p int, err error) {
 	return unescapeStringContent(data, dst)
 }

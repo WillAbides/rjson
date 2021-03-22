@@ -1,7 +1,7 @@
 # configure golangci-lint
 # see https://github.com/golangci/golangci-lint/blob/master/.golangci.example.yml
 issues:
-  exclude-use-default: true
+  exclude-use-default: false
   exclude-rules:
     - path: _test\.go
       linters:

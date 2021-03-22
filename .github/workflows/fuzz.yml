@@ -1,6 +1,8 @@
 name: fuzz
-on: [ workflow_dispatch ]
-
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '54 * * * *'
 jobs:
   fuzz:
     name: fuzz
@@ -27,7 +29,7 @@ jobs:
             exit
           fi
           git restore -s origin/fuzz-update testdata/fuzz
-      - run: script/fuzz-timeout 60
+      - run: script/fuzz-timeout 300
       - uses: peter-evans/create-pull-request@v3.8.2
         with:
           branch: fuzz-update

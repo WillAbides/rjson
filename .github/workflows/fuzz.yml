@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: WillAbides/setup-go-faster@v1
         id: setup-go
         with:
@@ -18,6 +20,13 @@ jobs:
             ${{ steps.setup-go.outputs.GOMODCACHE }}
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
+      - name: restore corpus
+        shell: bash
+        run: |
+          if [ -n "$(git branch --list fuzz-update)" ]; then
+            exit
+          fi
+          git restore -s fuzz-update testdata/fuzz
       - run: script/fuzz-timeout 60
       - uses: peter-evans/create-pull-request@v3.8.2
         with:

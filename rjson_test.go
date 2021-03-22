@@ -31,7 +31,7 @@ var jsonTestFiles = []string{
 }
 
 func Test_fuzzers(t *testing.T) {
-	corpusDir := filepath.FromSlash(`fuzz/corpus`)
+	corpusDir := filepath.FromSlash(`testdata/fuzz/corpus`)
 	if !fileExists(t, filepath.FromSlash(corpusDir)) {
 		t.Skip()
 	}

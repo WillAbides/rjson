@@ -14,6 +14,7 @@ fi
 make -s bin/go-fuzz bin/go-fuzz-build bin/jq
 PATH="$(pwd)/bin:$PATH"
 
+GO111MODULE=off go get github.com/dvyukov/go-fuzz/go-fuzz-dep
 GO111MODULE=off go-fuzz-build -o tmp/fuzz-rjson.zip
 mkdir -p tmp
 go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 1 -workdir testdata/fuzz &

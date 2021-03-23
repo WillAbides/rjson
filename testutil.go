@@ -174,6 +174,18 @@ func fuzzIfaceUnmarshaller(data []byte) (int, error) {
 	return 1, nil
 }
 
+func fuzzValid(data []byte) (int, error) {
+	want := json.Valid(data)
+	got := Valid(data)
+	if want && !got {
+		return 0, fmt.Errorf("expected valid but got invalid")
+	}
+	if got && !want {
+		return 0, fmt.Errorf("expected invalid but got valid")
+	}
+	return 0, nil
+}
+
 func fuzzSkip(data []byte) (int, error) {
 	skippedBytes, err := SkipValue(data)
 	gotValid := err == nil

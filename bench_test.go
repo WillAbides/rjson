@@ -7,24 +7,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var benchInt int
+var (
+	benchBool bool
+	benchBuf  = &Buffer{}
+)
 
-func BenchmarkSkip(b *testing.B) {
-	var err error
+func BenchmarkValid(b *testing.B) {
 	for _, file := range jsonTestFiles {
-		buf := &Buffer{}
 		data := getTestdataJSONGz(b, file)
 		size := int64(len(data))
 		b.Run(file, func(b *testing.B) {
 			b.ReportAllocs()
 			b.SetBytes(size)
 			for i := 0; i < b.N; i++ {
-				benchInt, err = buf.SkipValue(data)
-				if err != nil {
-					break
-				}
+				benchBool = benchBuf.Valid(data)
 			}
-			require.NoError(b, err)
+			require.True(b, benchBool)
 		})
 	}
 }

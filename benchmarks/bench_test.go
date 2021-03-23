@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -158,19 +157,17 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 	})
 }
 
-func BenchmarkSkipValue(b *testing.B) {
+func BenchmarkValid(b *testing.B) {
 	for _, sample := range benchSamples(b) {
 		data := sample.data
 		b.Run(sample.name, func(b *testing.B) {
 			b.Run("rjson", func(b *testing.B) {
-				buffer := &rjson.Buffer{}
-				var err error
 				b.ReportAllocs()
 				b.SetBytes(int64(len(data)))
 				for i := 0; i < b.N; i++ {
-					benchInt, err = buffer.SkipValue(data)
+					benchBool = benchBuf.Valid(data)
 				}
-				require.NoError(b, err)
+				require.True(b, benchBool)
 			})
 
 			b.Run("gjson", func(b *testing.B) {
@@ -192,27 +189,20 @@ func BenchmarkSkipValue(b *testing.B) {
 			})
 
 			b.Run("jsoniter", func(b *testing.B) {
-				iter := jsoniter.NewIterator(jsoniter.ConfigFastest)
-				var err error
 				b.ReportAllocs()
 				b.SetBytes(int64(len(data)))
 				for i := 0; i < b.N; i++ {
-					iter.ResetBytes(data)
-					iter.Skip()
-					err = iter.Error
+					benchBool = jsoniter.Valid(data)
 				}
-				if err == io.EOF {
-					err = nil
-				}
-				require.NoError(b, err)
+				require.True(b, benchBool)
 			})
 		})
 	}
 }
 
 var (
-	benchInt  int
 	benchBool bool
+	benchBuf  = &rjson.Buffer{}
 )
 
 type benchSample struct {

@@ -24,6 +24,7 @@ func Fuzz(data []byte) int {
 		{name: "fuzzReadInt", fuzzer: fuzzReadInt},
 		{name: "fuzzReadUint", fuzzer: fuzzReadUint},
 		{name: "fuzzReadFloat64", fuzzer: fuzzReadFloat64},
+		{name: "fuzzValid", fuzzer: fuzzValid},
 	} {
 		d := make([]byte, len(data))
 		copy(d, data)

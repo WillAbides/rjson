@@ -249,3 +249,31 @@ func SkipValue(data []byte) (p int, err error) {
 func UnescapeStringContent(data, dst []byte) (val []byte, p int, err error) {
 	return unescapeStringContent(data, dst)
 }
+
+// Valid returns true if data contains a single valid json value
+func (h *Buffer) Valid(data []byte) bool {
+	var p int
+	var err error
+	_, h.stackBuf, err = skipValue(data, h.stackBuf)
+	if err != nil {
+		return false
+	}
+	if p > len(data) {
+		return true
+	}
+	return p+countWhitespace(data[p:]) >= len(data)
+}
+
+// Valid returns true if data contains a single valid json value
+func Valid(data []byte) bool {
+	var p int
+	var err error
+	p, _, err = skipValue(data, nil)
+	if err != nil {
+		return false
+	}
+	if p > len(data) {
+		return true
+	}
+	return p+countWhitespace(data[p:]) >= len(data)
+}

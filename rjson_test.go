@@ -56,6 +56,7 @@ func Test_fuzzers(t *testing.T) {
 		{name: "fuzzReadInt", fuzzer: fuzzReadInt},
 		{name: "fuzzReadUint", fuzzer: fuzzReadUint},
 		{name: "fuzzReadFloat64", fuzzer: fuzzReadFloat64},
+		{name: "fuzzValid", fuzzer: fuzzValid},
 	} {
 		t.Run(td.name, func(t *testing.T) {
 			dir, err := ioutil.ReadDir(corpusDir)
@@ -70,6 +71,24 @@ func Test_fuzzers(t *testing.T) {
 	}
 }
 
+// various values that fuzz has crashed on in the past
+var oldCrashers = []string{
+	`"浱up蔽Cr"`,
+	"{\"\":\"0\xc9\"}",
+	"\"\x90\"",
+	"{\"\x14\":0}",
+	"0\xff",
+	"{\"a\": \"b\", \"\xbf\":\"\"}",
+	"\"\x1b\"",
+	"{\"a\":\"\x1b\"}",
+	"{\"\x1b\":true}",
+	"\"\x1f\"",
+	"\"\\'\"",
+	"80000000000000000000",
+	"999999999999999999",
+	"{\"�\":\"0\",\"\xbd\":\"\"}",
+}
+
 func TestUnmarshalFace(t *testing.T) {
 	for _, s := range jsonTestFiles {
 		t.Run(s, func(t *testing.T) {
@@ -79,24 +98,39 @@ func TestUnmarshalFace(t *testing.T) {
 	}
 
 	// various values that fuzz has crashed on in the past
-	for _, fuzzy := range []string{
-		`"浱up蔽Cr"`,
-		"{\"\":\"0\xc9\"}",
-		"\"\x90\"",
-		"{\"\x14\":0}",
-		"0\xff",
-		"{\"a\": \"b\", \"\xbf\":\"\"}",
-		"\"\x1b\"",
-		"{\"a\":\"\x1b\"}",
-		"{\"\x1b\":true}",
-		"\"\x1f\"",
-		"\"\\'\"",
-		"80000000000000000000",
-		"999999999999999999",
-		"{\"�\":\"0\",\"\xbd\":\"\"}",
-	} {
+	for _, fuzzy := range oldCrashers {
 		t.Run(fuzzy, func(t *testing.T) {
 			assertIfaceUnmarshalsSame(t, []byte(fuzzy))
+		})
+	}
+}
+
+func TestValid(t *testing.T) {
+	assert.True(t, Valid([]byte(`"hi"`)))
+	t.Run("invalidJSON", func(t *testing.T) {
+		for _, s := range invalidJSON {
+			assert.Equalf(t,
+				json.Valid([]byte(s)),
+				Valid([]byte(s)),
+				"failed on input: %s", s,
+			)
+		}
+	})
+
+	t.Run("oldCrashers", func(t *testing.T) {
+		for _, s := range oldCrashers {
+			assert.Equalf(t,
+				json.Valid([]byte(s)),
+				Valid([]byte(s)),
+				"failed on input: %s", s,
+			)
+		}
+	})
+
+	for _, s := range jsonTestFiles {
+		t.Run(s, func(t *testing.T) {
+			data := getTestdataJSONGz(t, s)
+			assert.Equal(t, json.Valid(data), Valid(data))
 		})
 	}
 }

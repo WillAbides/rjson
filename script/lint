@@ -7,3 +7,6 @@ CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 make -s bin/golangci-lint bin/shellcheck
 bin/golangci-lint run ./...
 bin/shellcheck script/*
+
+cd benchmarks
+../bin/golangci-lint run --config ../.golangci.yml .

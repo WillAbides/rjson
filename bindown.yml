@@ -2,6 +2,10 @@ systems:
 - darwin/amd64
 - linux/amd64
 dependencies:
+  benchdiff:
+    template: benchdiff#benchdiff
+    vars:
+      version: 0.6.2
   gobin:
     template: origin#gobin
     vars:
@@ -23,6 +27,14 @@ dependencies:
     vars:
       version: 0.7.1
 templates:
+  benchdiff#benchdiff:
+    url: https://github.com/WillAbides/benchdiff/releases/download/v{{.version}}/benchdiff_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+    required_vars:
+    - version
+    systems:
+    - darwin/amd64
+    - linux/386
+    - linux/amd64
   origin#gobin:
     url: https://github.com/myitcv/gobin/releases/download/v{{.version}}/{{.os}}-{{.arch}}
     archive_path: '{{.os}}-{{.arch}}'
@@ -155,8 +167,11 @@ templates:
     - linux/amd64
     - windows/amd64
 template_sources:
+  benchdiff: https://raw.githubusercontent.com/WillAbides/benchdiff/main/bindown.yml
   origin: https://raw.githubusercontent.com/WillAbides/bindown-templates/master/bindown.yml
 url_checksums:
+  https://github.com/WillAbides/benchdiff/releases/download/v0.6.2/benchdiff_0.6.2_darwin_amd64.tar.gz: 240c33329a304cc3f20238bdb2d4aed1b182cf540fd53402ac6aa6d421b08faf
+  https://github.com/WillAbides/benchdiff/releases/download/v0.6.2/benchdiff_0.6.2_linux_amd64.tar.gz: b5e10486be1c07f3dc54a3cfbfa794922830dda55974ed137c7c6f9cf91e8e8e
   https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_darwin_amd64.tar.gz: d644549b478340f5346fd58c945ed74fb969d2ca1c85e28735f07aa8dbd5a572
   https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_linux_amd64.tar.gz: 33980a05fc892b89b83c3c430bf7a98566bdb16304b20e7aba1ebf570296acb5
   https://github.com/golangci/golangci-lint/releases/download/v1.28.2/golangci-lint-1.28.2-darwin-amd64.tar.gz: 6e6952a4d72906f6265c379743f274b7609a289cc9cbb19bf6ff94e6f8f00daf

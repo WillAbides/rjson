@@ -8,9 +8,29 @@ import (
 )
 
 var (
+	benchInt  int
 	benchBool bool
 	benchBuf  = &Buffer{}
 )
+
+func BenchmarkSkip(b *testing.B) {
+	for _, file := range jsonTestFiles {
+		data := getTestdataJSONGz(b, file)
+		size := int64(len(data))
+
+		b.Run(file, func(b *testing.B) {
+			b.Run("Skip", func(b *testing.B) {
+				b.ReportAllocs()
+				b.SetBytes(size)
+				var err error
+				for i := 0; i < b.N; i++ {
+					benchInt, err = benchBuf.SkipValue(data)
+				}
+				require.NoError(b, err)
+			})
+		})
+	}
+}
 
 func BenchmarkValid(b *testing.B) {
 	for _, file := range jsonTestFiles {

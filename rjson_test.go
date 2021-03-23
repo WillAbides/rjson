@@ -36,6 +36,18 @@ var jsonTestFiles = []string{
 	"sample.json",
 }
 
+func Test_skipValueFast(t *testing.T) {
+	for _, s := range jsonTestFiles {
+		t.Run(s, func(t *testing.T) {
+			data := getTestdataJSONGz(t, s)
+			wantP, wantErr := SkipValue(data)
+			gotP,_ ,gotErr := skipValueFast(data, nil)
+			assert.Equal(t, wantP, gotP)
+			assert.Equal(t, wantErr, gotErr)
+		})
+	}
+}
+
 func Test_fuzzers(t *testing.T) {
 	corpusDir := filepath.FromSlash(`testdata/fuzz/corpus`)
 	if !fileExists(t, filepath.FromSlash(corpusDir)) {

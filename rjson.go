@@ -66,11 +66,11 @@ var whitespace = [256]bool{
 
 // ObjectValueHandler is a handler for json objects.
 type ObjectValueHandler interface {
-	HandleObjectValue(fieldname, data []byte) (int, error)
+	HandleObjectValue(fieldname, data []byte) (p int, err error)
 }
 
 // ObjectValueHandlerFunc is a function that implements ObjectValueHandler
-type ObjectValueHandlerFunc func(fieldname, data []byte) (int, error)
+type ObjectValueHandlerFunc func(fieldname, data []byte) (p int, err error)
 
 // HandleObjectValue meets ObjectValueHandler.HandleObjectValue
 func (fn ObjectValueHandlerFunc) HandleObjectValue(fieldname, data []byte) (int, error) {
@@ -79,11 +79,11 @@ func (fn ObjectValueHandlerFunc) HandleObjectValue(fieldname, data []byte) (int,
 
 // ValueHandler is a handler for json values
 type ValueHandler interface {
-	HandleValue(data []byte) (int, error)
+	HandleValue(data []byte) (p int, err error)
 }
 
 // ValueHandlerFunc is a function that implements ValueHandler
-type ValueHandlerFunc func(data []byte) (int, error)
+type ValueHandlerFunc func(data []byte) (p int, err error)
 
 // HandleValue meets ValueHandler.HandleValue
 func (fn ValueHandlerFunc) HandleValue(data []byte) (int, error) {

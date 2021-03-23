@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/buger/jsonparser"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
@@ -122,6 +123,38 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 		}
 		require.Equal(b, wantRes, res)
 		require.NoError(b, iter.Error)
+	})
+
+	b.Run("jsonparser", func(b *testing.B) {
+		var res resType
+		doneErr := fmt.Errorf("done")
+		var seenRepos, seenGists, seenLogin bool
+		callback := func(key, value []byte, dataType jsonparser.ValueType, offset int) error {
+			var err error
+			switch string(key) {
+			case "public_gists":
+				res.PublicGists, err = jsonparser.ParseInt(value)
+				seenGists = true
+			case "public_repos":
+				res.PublicRepos, err = jsonparser.ParseInt(value)
+				seenRepos = true
+			case "login":
+				res.Login, err = jsonparser.ParseString(value)
+				seenLogin = true
+			}
+			if err == nil && seenGists && seenRepos && seenLogin {
+				return doneErr
+			}
+			return err
+		}
+		var err error
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			seenGists, seenGists, seenLogin = false, false, false
+			err = jsonparser.ObjectEach(data, callback)
+		}
+		require.Equal(b, wantRes, res)
+		require.EqualError(b, err, "done")
 	})
 }
 

@@ -3,13 +3,81 @@ package benchmarks
 import (
 	"compress/gzip"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/willabides/rjson"
 )
+
+func BenchmarkSkipValue(b *testing.B) {
+	for _, sample := range benchSamples(b) {
+		b.Run(sample.name, func(b *testing.B) {
+			data := sample.data
+			buffer := &rjson.Buffer{}
+			var err error
+			b.ReportAllocs()
+			b.SetBytes(int64(len(data)))
+			for i := 0; i < b.N; i++ {
+				benchInt, err = buffer.SkipValue(data)
+			}
+			require.NoError(b, err)
+		})
+	}
+}
+
+func BenchmarkGetValuesFromObject(b *testing.B) {
+	type resType struct {
+		PublicGists int64  `json:"public_gists"`
+		PublicRepos int64  `json:"public_repos"`
+		Login       string `json:"login"`
+	}
+
+	wantRes := resType{
+		PublicGists: 8,
+		PublicRepos: 8,
+		Login:       "octocat",
+	}
+
+	data := []byte(exampleGithubUser)
+
+	var res resType
+	doneErr := fmt.Errorf("done")
+	var err error
+	buffer := &rjson.Buffer{}
+	var stringBuf []byte
+	var seenRepos, seenGists, seenLogin bool
+	handler := rjson.ObjectValueHandlerFunc(func(fieldname, data []byte) (p int, err error) {
+		switch string(fieldname) {
+		case `public_gists`:
+			res.PublicGists, p, err = rjson.ReadInt64(data)
+			seenGists = true
+		case `public_repos`:
+			res.PublicRepos, p, err = rjson.ReadInt64(data)
+			seenRepos = true
+		case `login`:
+			stringBuf, p, err = rjson.ReadStringBytes(data, stringBuf[:0])
+			res.Login = string(stringBuf)
+			seenLogin = true
+		default:
+			p, err = buffer.SkipValue(data)
+		}
+		if err == nil && seenGists && seenRepos && seenLogin {
+			return p, doneErr
+		}
+		return p, err
+	})
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		seenGists, seenGists, seenLogin = false, false, false
+		_, err = buffer.HandleObjectValues(data, handler)
+	}
+	require.Equal(b, wantRes, res)
+	require.EqualError(b, err, "done")
+}
 
 var (
 	benchInt  int
@@ -30,6 +98,10 @@ func benchSamples(t testing.TB) []benchSample {
 		{
 			name: "large object",
 			data: getTestdataJSONGz(t, "citm_catalog.json"),
+		},
+		{
+			name: "unicode-heavy object",
+			data: getTestdataJSONGz(t, "sample.json"),
 		},
 		{
 			name: "string",

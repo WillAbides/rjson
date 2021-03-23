@@ -14,7 +14,7 @@ import (
 	"github.com/willabides/rjson"
 )
 
-func BenchmarkGetValuesFromObject(b *testing.B) {
+func BenchmarkGetValuesFromObjectComparison(b *testing.B) {
 	type resType struct {
 		PublicGists int64  `json:"public_gists"`
 		PublicRepos int64  `json:"public_repos"`
@@ -51,7 +51,7 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 			default:
 				p, err = buffer.SkipValue(data)
 			}
-			if err == nil && seenGists && seenRepos && seenLogin{
+			if err == nil && seenGists && seenRepos && seenLogin {
 				return p, doneErr
 			}
 			return p, err
@@ -122,8 +122,8 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 	})
 }
 
-func BenchmarkSkipValue(b *testing.B) {
-	for _, sample := range benchSamples(b) {
+func BenchmarkSkipValueComparison(b *testing.B) {
+	for _, sample := range compSamples(b) {
 		data := sample.data
 		b.Run(sample.name, func(b *testing.B) {
 			b.Run("rjson", func(b *testing.B) {
@@ -171,5 +171,26 @@ func BenchmarkSkipValue(b *testing.B) {
 				require.NoError(b, err)
 			})
 		})
+	}
+}
+
+func compSamples(t testing.TB) []benchSample {
+	return []benchSample{
+		{
+			name: "github user",
+			data: []byte(exampleGithubUser),
+		},
+		{
+			name: "large object",
+			data: getTestdataJSONGz(t, "citm_catalog.json"),
+		},
+		{
+			name: "unicode-heavy object",
+			data: getTestdataJSONGz(t, "sample.json"),
+		},
+		{
+			name: "canada.json",
+			data: getTestdataJSONGz(t, "canada.json"),
+		},
 	}
 }

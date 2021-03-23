@@ -5,5 +5,4 @@ set -e
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 
 make -s bin/benchdiff >/dev/null
-cd benchmarks
-../bin/benchdiff "$@"
+bin/benchdiff "$@"

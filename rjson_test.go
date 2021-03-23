@@ -16,9 +16,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// These are the files in testdata.  They all come directly from github.com/pkg/json, but I'm keeping the comments
-// about where they are originally from.
+// These are the files in testdata.
 var jsonTestFiles = []string{
+	// from querying github's REST api
+	"github_user.json", "github_repo.json",
+
+	// from json checker test suite
+	"jsonchecker_pass1.json",
+
+	// The files below all come directly from github.com/pkg/json, but I'm keeping the comments about where they are originally from.
 
 	// from https://github.com/miloyip/nativejson-benchmark
 	"canada.json", "citm_catalog.json", "twitter.json", "code.json",

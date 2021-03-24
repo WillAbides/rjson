@@ -99,7 +99,6 @@ read_uint = (
    @err{return 0, p, errInvalidUInt}
 ;
 
-
 }%%
 
 func readInt64(data []byte) (int64, int, error) {

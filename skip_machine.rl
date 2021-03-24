@@ -10,7 +10,7 @@ skip_json_value = (json_simple_value
   | '{'@{fcall skip_object;}
   );
 
-skip_array := (
+skip_array_def = (
   json_space*
   ( skip_json_value ( json_space* ',' json_space*  skip_json_value )* )? json_space*
   ']'
@@ -18,7 +18,7 @@ skip_array := (
     @eof{err = errUnexpectedEOF; fbreak;}
     @err{err = errInvalidArray; fbreak;};
 
-skip_object := (
+skip_object_def = (
     json_space*
   (
     json_string json_space* ':' json_space* skip_json_value
@@ -33,19 +33,12 @@ skip_object := (
     @eof{err = errUnexpectedEOF; fbreak;}
     @err{err = errInvalidObject; fbreak;};
 
-}%%
-
-%%{
-machine fast_skipper;
-
-include common "common.rl";
-
 skip_json_value_fast = (json_bool | json_null | json_string | json_number
   | '['@{fcall skip_array_fast;}
   | '{'@{fcall skip_object_fast;}
   );
 
-skip_array_fast := (
+skip_array_fast_def = (
   [^[\]"]* (
     json_string
     | [^[\]"]+
@@ -56,7 +49,7 @@ skip_array_fast := (
     @eof{err = errUnexpectedEOF; fbreak;}
     @err{err = errInvalidArray; fbreak;};
 
-skip_object_fast := (
+skip_object_fast_def = (
   [^{}"]* (
     json_string
     | [^{}"]+
@@ -79,7 +72,10 @@ func skipValueFast(data []byte, stack []int) (int, []int ,error) {
 %%{
 machine skipValueFast;
 
-include fast_skipper "skip_machine.rl";
+include skipper "skip_machine.rl";
+
+skip_array_fast := skip_array_fast_def;
+skip_object_fast := skip_object_fast_def;
 
 prepush {
   if top + 1 >= len(stack) {
@@ -98,7 +94,6 @@ write data; write init;  write exec;
   return p,stack, err
 }
 
-
 func skipValue(data []byte, stack []int) (int, []int ,error) {
   var top int
   cs, p := 0, 0
@@ -110,6 +105,9 @@ func skipValue(data []byte, stack []int) (int, []int ,error) {
 machine skipValue;
 
 include skipper "skip_machine.rl";
+
+skip_array := skip_array_def;
+skip_object := skip_object_def;
 
 prepush {
   if top + 1 >= len(stack) {

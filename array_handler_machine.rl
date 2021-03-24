@@ -34,6 +34,9 @@ action try_handler_simple {
   }
 }
 
+skip_array := skip_array_def;
+skip_object := skip_object_def;
+
 handled_value =
  json_bool >(try_handler_simple)
  | json_null >(try_handler_simple)

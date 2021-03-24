@@ -157,6 +157,34 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 	})
 }
 
+func BenchmarkSkipFast(b *testing.B) {
+	for _, sample := range benchSamples(b) {
+		data := sample.data
+		b.Run(sample.name, func(b *testing.B) {
+			b.Run("rjson", func(b *testing.B) {
+				var err error
+				b.ReportAllocs()
+				b.SetBytes(int64(len(data)))
+				for i := 0; i < b.N; i++ {
+					benchInt, err = benchBuf.SkipValueFast(data)
+				}
+				require.NoError(b, err)
+			})
+
+			b.Run("jsonparser", func(b *testing.B) {
+				var err error
+				b.ReportAllocs()
+				b.SetBytes(int64(len(data)))
+				for i := 0; i < b.N; i++ {
+					_, _, benchInt, err = jsonparser.Get(data)
+				}
+				require.NoError(b, err)
+			})
+		})
+
+	}
+}
+
 func BenchmarkValid(b *testing.B) {
 	for _, sample := range benchSamples(b) {
 		data := sample.data
@@ -201,6 +229,7 @@ func BenchmarkValid(b *testing.B) {
 }
 
 var (
+	benchInt  int
 	benchBool bool
 	benchBuf  = &rjson.Buffer{}
 )

@@ -19,12 +19,22 @@ func BenchmarkSkip(b *testing.B) {
 		size := int64(len(data))
 
 		b.Run(file, func(b *testing.B) {
-			b.Run("Skip", func(b *testing.B) {
+			b.Run("SkipValue", func(b *testing.B) {
 				b.ReportAllocs()
 				b.SetBytes(size)
 				var err error
 				for i := 0; i < b.N; i++ {
 					benchInt, err = benchBuf.SkipValue(data)
+				}
+				require.NoError(b, err)
+			})
+
+			b.Run("SkipValueFast", func(b *testing.B) {
+				b.ReportAllocs()
+				b.SetBytes(size)
+				var err error
+				for i := 0; i < b.N; i++ {
+					benchInt, err = benchBuf.SkipValueFast(data)
 				}
 				require.NoError(b, err)
 			})
@@ -80,7 +90,7 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 			res.Login = string(stringBuf)
 			seenLogin = true
 		default:
-			p, err = buffer.SkipValue(data)
+			p, err = buffer.SkipValueFast(data)
 		}
 		if err == nil && seenGists && seenRepos && seenLogin {
 			return p, doneErr

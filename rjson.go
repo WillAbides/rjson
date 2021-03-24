@@ -244,6 +244,18 @@ func SkipValue(data []byte) (p int, err error) {
 	return p, err
 }
 
+// SkipValueFast is like SkipValue but it speeds things up by skipping validation on objects and arrays.
+func (h *Buffer) SkipValueFast(data []byte) (p int, err error) {
+	p, h.stackBuf, err = skipValueFast(data, h.stackBuf)
+	return p, err
+}
+
+// SkipValueFast is like SkipValue but it speeds things up by skipping validation on objects and arrays.
+func SkipValueFast(data []byte) (p int, err error) {
+	p, _, err = skipValueFast(data, nil)
+	return p, err
+}
+
 // UnescapeStringContent unescapes the content of a raw json string. data must be the content of the raw string without
 // starting and ending double quotes. This function is useful with ObjectValueHandler.HandleObjectValue.
 func UnescapeStringContent(data, dst []byte) (val []byte, p int, err error) {
@@ -254,7 +266,7 @@ func UnescapeStringContent(data, dst []byte) (val []byte, p int, err error) {
 func (h *Buffer) Valid(data []byte) bool {
 	var p int
 	var err error
-	_, h.stackBuf, err = skipValue(data, h.stackBuf)
+	p, h.stackBuf, err = skipValue(data, h.stackBuf)
 	if err != nil {
 		return false
 	}

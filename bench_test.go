@@ -8,9 +8,11 @@ import (
 )
 
 var (
-	benchInt  int
-	benchBool bool
-	benchBuf  = &Buffer{}
+	benchInt   int
+	benchInt64 int64
+	benchBool  bool
+	benchBuf   = &Buffer{}
+	benchFloat float64
 )
 
 func BenchmarkSkip(b *testing.B) {
@@ -104,4 +106,45 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 	}
 	require.Equal(b, wantRes, res)
 	require.EqualError(b, err, "done")
+}
+
+func BenchmarkReadFloat64(b *testing.B) {
+	datas := [][]byte{
+		[]byte(`-123456789`),
+		[]byte(`123`),
+		[]byte(`123e45`),
+		[]byte(`12.123456789012345`),
+	}
+	var err error
+	b.ReportAllocs()
+benchLoop:
+	for i := 0; i < b.N; i++ {
+		for _, data := range datas {
+			benchFloat, _, err = ReadFloat64(data)
+			if err != nil {
+				break benchLoop
+			}
+		}
+	}
+	require.NoError(b, err)
+	_ = benchFloat
+}
+
+func BenchmarkReadInt64(b *testing.B) {
+	datas := [][]byte{
+		[]byte(`-123456789`),
+		[]byte(`123`),
+		[]byte(`1234512345123451234`),
+	}
+	var err error
+	b.ReportAllocs()
+benchLoop:
+	for i := 0; i < b.N; i++ {
+		for _, data := range datas {
+			benchInt64, _, err = ReadInt64(data)
+			if err != nil {
+				break benchLoop
+			}
+		}
+	}
 }

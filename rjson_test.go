@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,6 +68,14 @@ func Test_fuzzers(t *testing.T) {
 				_, err = td.fuzzer(data)
 				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filepath.Join(corpusDir, info.Name()), string(data))
 			}
+
+			for _, name := range jsontestsuiteFiles(t) {
+				data, err := ioutil.ReadFile(name)
+				require.NoError(t, err)
+				_, err = td.fuzzer(data)
+				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", name, string(data))
+
+			}
 		})
 	}
 }
@@ -105,8 +114,23 @@ func TestUnmarshalFace(t *testing.T) {
 	}
 }
 
+func jsontestsuiteFiles(t testing.TB) []string {
+	t.Helper()
+	var files []string
+	testdir := filepath.FromSlash("testdata/jsontestsuite")
+	dir, err := ioutil.ReadDir(testdir)
+	require.NoError(t, err)
+	for _, info := range dir {
+		name := info.Name()
+		if info.IsDir() || !strings.HasSuffix(name, ".json") {
+			continue
+		}
+		files = append(files, filepath.Join(testdir, name))
+	}
+	return files
+}
+
 func TestValid(t *testing.T) {
-	assert.True(t, Valid([]byte(`"hi"`)))
 	t.Run("invalidJSON", func(t *testing.T) {
 		for _, s := range invalidJSON {
 			assert.Equalf(t,
@@ -116,6 +140,24 @@ func TestValid(t *testing.T) {
 			)
 		}
 	})
+
+	for _, name := range jsontestsuiteFiles(t) {
+		data, err := ioutil.ReadFile(name)
+		require.NoError(t, err)
+		t.Run(name, func(t *testing.T) {
+			var want bool
+			switch filepath.Base(name)[0] {
+			case 'y':
+				want = true
+			case 'n':
+				want = false
+			default:
+				want = json.Valid(data)
+			}
+			got := Valid(data)
+			require.Equal(t, want, got, string(data))
+		})
+	}
 
 	t.Run("oldCrashers", func(t *testing.T) {
 		for _, s := range oldCrashers {

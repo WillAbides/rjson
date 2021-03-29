@@ -37,3 +37,8 @@ bin/go-fuzz-build: bin/gobin
 bin/go-fuzz: bin/gobin
 	GOBIN=${CURDIR}/bin \
 	go install github.com/dvyukov/go-fuzz/go-fuzz@$(GO_FUZZ_REV)
+
+BENCHSTAT_REV := 40a54f11e90963acb1c431127af77c095654c32d
+bin/benchstat:
+	GOBIN=${CURDIR}/bin \
+	go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_REV)

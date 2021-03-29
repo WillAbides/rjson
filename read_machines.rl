@@ -74,29 +74,32 @@ write data; write init; write exec;
 machine intReader;
 include common "common.rl";
 
+non_zero_uint = [1-9][0-9]*;
+
 read_int = (
  ('-' @{neg = true})?
- json_uint >{start = p}
- [^.0-9eE]  @{fhold; fbreak;}
- ) @eof{
-     if p == 0 {
-       return 0, p, errInvalidInt
+ (
+  ('0' >{start = p} >{start = p} [^.eE] @{fhold; fbreak;})
+  | (non_zero_uint >{start = p} [^.0-9eE] @{fhold; fbreak;})
+ )) @eof{
+       if p == 0 {
+         return 0, p, errInvalidInt
+       }
+       fhold; fbreak;
      }
-     fhold; fbreak;
-   }
-   @err{return 0, p, errInvalidInt}
-;
+     @err{return 0, p, errInvalidInt}
+  ;
 
 read_uint = (
- json_uint >{start = p}
- [^.0-9eE]  @{fhold; fbreak;}
- ) @eof{
+  ('0' >{start = p} >{start = p} [^.eE] @{fhold; fbreak;})
+  | (non_zero_uint >{start = p} [^.0-9eE] @{fhold; fbreak;})
+) @eof{
      if p == 0 {
        return 0, p, errInvalidUInt
      }
      fhold; fbreak;
    }
-   @err{return 0, p, errInvalidUInt}
+   @err{err = errInvalidUInt}
 ;
 
 }%%
@@ -146,6 +149,7 @@ func readUint64(data []byte) (uint64, int, error) {
   	pe := len(data)
   	eof := len(data)
   	var start int
+  	var err error
 
 %%{
 
@@ -156,6 +160,9 @@ main := read_uint;
 write data; write init; write exec;
 }%%
 
+  if err != nil {
+    return 0, p, err
+  }
   n, err := readUint64Helper(data[start:p])
   return n, p, err
 }
@@ -165,6 +172,7 @@ func readUint32(data []byte) (uint32, int, error) {
   	pe := len(data)
   	eof := len(data)
   	var start int
+  	var err error
 
 %%{
 
@@ -175,6 +183,9 @@ main := read_uint;
 write data; write init; write exec;
 }%%
 
+  if err != nil {
+    return 0, p, err
+  }
   n, err := readUint32Helper(data[start:p])
   return n, p, err
 }

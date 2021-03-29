@@ -8,11 +8,13 @@ import (
 )
 
 var (
-	benchInt   int
-	benchInt64 int64
-	benchBool  bool
-	benchBuf   = &Buffer{}
-	benchFloat float64
+	benchString string
+	benchInt    int
+	benchInt64  int64
+	benchBool   bool
+	benchBuf    = &Buffer{}
+	benchFloat  float64
+	benchFace   interface{}
 )
 
 func BenchmarkSkip(b *testing.B) {
@@ -55,6 +57,23 @@ func BenchmarkValid(b *testing.B) {
 				benchBool = benchBuf.Valid(data)
 			}
 			require.True(b, benchBool)
+		})
+	}
+}
+
+func BenchmarkReadObject(b *testing.B) {
+	for _, file := range jsonTestFiles {
+		data := getTestdataJSONGz(b, file)
+		size := int64(len(data))
+		b.Run(file, func(b *testing.B) {
+			var err error
+			b.ReportAllocs()
+			b.SetBytes(size)
+			h := &ValueReader{}
+			for i := 0; i < b.N; i++ {
+				benchFace, _, err = h.ReadValue(data)
+			}
+			require.NoError(b, err)
 		})
 	}
 }
@@ -147,4 +166,15 @@ benchLoop:
 			}
 		}
 	}
+}
+
+func BenchmarkReadString(b *testing.B) {
+	data := []byte(`"hello this is a string of somewhat normal length"`)
+	var err error
+	b.ReportAllocs()
+	b.SetBytes(int64(len(data)))
+	for i := 0; i < b.N; i++ {
+		benchString, benchInt, err = ReadString(data, nil)
+	}
+	require.NoError(b, err)
 }

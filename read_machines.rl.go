@@ -681,6 +681,8 @@ func readInt64(data []byte) (int64, int, error) {
 			goto st_case_6
 		case 4:
 			goto st_case_4
+		case 7:
+			goto st_case_7
 		case 5:
 			goto st_case_5
 		}
@@ -720,6 +722,7 @@ func readInt64(data []byte) (int64, int, error) {
 		goto tr0
 	tr2:
 		start = p
+		start = p
 		goto st3
 	st3:
 		if p++; p == pe {
@@ -732,9 +735,6 @@ func readInt64(data []byte) (int64, int, error) {
 		case 69:
 			goto tr0
 		case 101:
-			goto tr0
-		}
-		if 48 <= data[p] && data[p] <= 57 {
 			goto tr0
 		}
 		goto tr4
@@ -771,7 +771,21 @@ func readInt64(data []byte) (int64, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st5
 		}
-		goto tr4
+		goto tr5
+	tr5:
+		p--
+		{
+			p++
+			cs = 7
+			goto _out
+		}
+		goto st7
+	st7:
+		if p++; p == pe {
+			goto _test_eof7
+		}
+	st_case_7:
+		goto st0
 	st5:
 		if p++; p == pe {
 			goto _test_eof5
@@ -788,7 +802,7 @@ func readInt64(data []byte) (int64, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st5
 		}
-		goto tr4
+		goto tr5
 	st_out:
 	_test_eof2:
 		cs = 2
@@ -801,6 +815,9 @@ func readInt64(data []byte) (int64, int, error) {
 		goto _test_eof
 	_test_eof4:
 		cs = 4
+		goto _test_eof
+	_test_eof7:
+		cs = 7
 		goto _test_eof
 	_test_eof5:
 		cs = 5
@@ -870,6 +887,8 @@ func readInt32(data []byte) (int32, int, error) {
 			goto st_case_6
 		case 4:
 			goto st_case_4
+		case 7:
+			goto st_case_7
 		case 5:
 			goto st_case_5
 		}
@@ -909,6 +928,7 @@ func readInt32(data []byte) (int32, int, error) {
 		goto tr0
 	tr2:
 		start = p
+		start = p
 		goto st3
 	st3:
 		if p++; p == pe {
@@ -921,9 +941,6 @@ func readInt32(data []byte) (int32, int, error) {
 		case 69:
 			goto tr0
 		case 101:
-			goto tr0
-		}
-		if 48 <= data[p] && data[p] <= 57 {
 			goto tr0
 		}
 		goto tr4
@@ -960,7 +977,21 @@ func readInt32(data []byte) (int32, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st5
 		}
-		goto tr4
+		goto tr5
+	tr5:
+		p--
+		{
+			p++
+			cs = 7
+			goto _out
+		}
+		goto st7
+	st7:
+		if p++; p == pe {
+			goto _test_eof7
+		}
+	st_case_7:
+		goto st0
 	st5:
 		if p++; p == pe {
 			goto _test_eof5
@@ -977,7 +1008,7 @@ func readInt32(data []byte) (int32, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st5
 		}
-		goto tr4
+		goto tr5
 	st_out:
 	_test_eof2:
 		cs = 2
@@ -990,6 +1021,9 @@ func readInt32(data []byte) (int32, int, error) {
 		goto _test_eof
 	_test_eof4:
 		cs = 4
+		goto _test_eof
+	_test_eof7:
+		cs = 7
 		goto _test_eof
 	_test_eof5:
 		cs = 5
@@ -1030,6 +1064,7 @@ func readUint64(data []byte) (uint64, int, error) {
 	pe := len(data)
 	eof := len(data)
 	var start int
+	var err error
 
 	const readUint64_start int = 1
 	const readUint64_first_final int = 5
@@ -1056,6 +1091,8 @@ func readUint64(data []byte) (uint64, int, error) {
 			goto st_case_5
 		case 3:
 			goto st_case_3
+		case 6:
+			goto st_case_6
 		case 4:
 			goto st_case_4
 		}
@@ -1069,13 +1106,14 @@ func readUint64(data []byte) (uint64, int, error) {
 		}
 		goto tr0
 	tr0:
-		return 0, p, errInvalidUInt
+		err = errInvalidUInt
 		goto st0
 	st_case_0:
 	st0:
 		cs = 0
 		goto _out
 	tr1:
+		start = p
 		start = p
 		goto st2
 	st2:
@@ -1089,9 +1127,6 @@ func readUint64(data []byte) (uint64, int, error) {
 		case 69:
 			goto tr0
 		case 101:
-			goto tr0
-		}
-		if 48 <= data[p] && data[p] <= 57 {
 			goto tr0
 		}
 		goto tr3
@@ -1128,7 +1163,21 @@ func readUint64(data []byte) (uint64, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st4
 		}
-		goto tr3
+		goto tr4
+	tr4:
+		p--
+		{
+			p++
+			cs = 6
+			goto _out
+		}
+		goto st6
+	st6:
+		if p++; p == pe {
+			goto _test_eof6
+		}
+	st_case_6:
+		goto st0
 	st4:
 		if p++; p == pe {
 			goto _test_eof4
@@ -1145,7 +1194,7 @@ func readUint64(data []byte) (uint64, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st4
 		}
-		goto tr3
+		goto tr4
 	st_out:
 	_test_eof2:
 		cs = 2
@@ -1155,6 +1204,9 @@ func readUint64(data []byte) (uint64, int, error) {
 		goto _test_eof
 	_test_eof3:
 		cs = 3
+		goto _test_eof
+	_test_eof6:
+		cs = 6
 		goto _test_eof
 	_test_eof4:
 		cs = 4
@@ -1177,7 +1229,7 @@ func readUint64(data []byte) (uint64, int, error) {
 					goto _out
 				}
 
-				return 0, p, errInvalidUInt
+				err = errInvalidUInt
 			}
 		}
 
@@ -1186,6 +1238,9 @@ func readUint64(data []byte) (uint64, int, error) {
 		}
 	}
 
+	if err != nil {
+		return 0, p, err
+	}
 	n, err := readUint64Helper(data[start:p])
 	return n, p, err
 }
@@ -1195,6 +1250,7 @@ func readUint32(data []byte) (uint32, int, error) {
 	pe := len(data)
 	eof := len(data)
 	var start int
+	var err error
 
 	const readUint32_start int = 1
 	const readUint32_first_final int = 5
@@ -1221,6 +1277,8 @@ func readUint32(data []byte) (uint32, int, error) {
 			goto st_case_5
 		case 3:
 			goto st_case_3
+		case 6:
+			goto st_case_6
 		case 4:
 			goto st_case_4
 		}
@@ -1234,13 +1292,14 @@ func readUint32(data []byte) (uint32, int, error) {
 		}
 		goto tr0
 	tr0:
-		return 0, p, errInvalidUInt
+		err = errInvalidUInt
 		goto st0
 	st_case_0:
 	st0:
 		cs = 0
 		goto _out
 	tr1:
+		start = p
 		start = p
 		goto st2
 	st2:
@@ -1254,9 +1313,6 @@ func readUint32(data []byte) (uint32, int, error) {
 		case 69:
 			goto tr0
 		case 101:
-			goto tr0
-		}
-		if 48 <= data[p] && data[p] <= 57 {
 			goto tr0
 		}
 		goto tr3
@@ -1293,7 +1349,21 @@ func readUint32(data []byte) (uint32, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st4
 		}
-		goto tr3
+		goto tr4
+	tr4:
+		p--
+		{
+			p++
+			cs = 6
+			goto _out
+		}
+		goto st6
+	st6:
+		if p++; p == pe {
+			goto _test_eof6
+		}
+	st_case_6:
+		goto st0
 	st4:
 		if p++; p == pe {
 			goto _test_eof4
@@ -1310,7 +1380,7 @@ func readUint32(data []byte) (uint32, int, error) {
 		if 48 <= data[p] && data[p] <= 57 {
 			goto st4
 		}
-		goto tr3
+		goto tr4
 	st_out:
 	_test_eof2:
 		cs = 2
@@ -1320,6 +1390,9 @@ func readUint32(data []byte) (uint32, int, error) {
 		goto _test_eof
 	_test_eof3:
 		cs = 3
+		goto _test_eof
+	_test_eof6:
+		cs = 6
 		goto _test_eof
 	_test_eof4:
 		cs = 4
@@ -1342,7 +1415,7 @@ func readUint32(data []byte) (uint32, int, error) {
 					goto _out
 				}
 
-				return 0, p, errInvalidUInt
+				err = errInvalidUInt
 			}
 		}
 
@@ -1351,6 +1424,9 @@ func readUint32(data []byte) (uint32, int, error) {
 		}
 	}
 
+	if err != nil {
+		return 0, p, err
+	}
 	n, err := readUint32Helper(data[start:p])
 	return n, p, err
 }

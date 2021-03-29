@@ -17,10 +17,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+//go:generate go run ./internal/fuzzgen
+
 // These are the files in testdata.
 var jsonTestFiles = []string{
 	// from querying github's REST api
-	"github_user.json", "github_repo.json",
+	"github_user.json",
+	"github_repo.json",
 
 	// from json checker test suite
 	"jsonchecker_pass1.json",
@@ -28,7 +31,10 @@ var jsonTestFiles = []string{
 	// The files below all come directly from github.com/pkg/json, but I'm keeping the comments about where they are originally from.
 
 	// from https://github.com/miloyip/nativejson-benchmark
-	"canada.json", "citm_catalog.json", "twitter.json", "code.json",
+	"canada.json",
+	"citm_catalog.json",
+	"twitter.json",
+	"code.json",
 
 	// from https://raw.githubusercontent.com/mailru/easyjson/master/benchmark/example.json
 	"example.json",
@@ -43,36 +49,23 @@ func Test_fuzzers(t *testing.T) {
 		t.Skip()
 	}
 
-	for _, td := range []struct {
-		name   string
-		fuzzer fuzzer
-	}{
-		{name: "fuzzIfaceUnmarshaller", fuzzer: fuzzIfaceUnmarshaller},
-		{name: "fuzzSkip", fuzzer: fuzzSkip},
-		{name: "fuzzNextToken", fuzzer: fuzzNextToken},
-		{name: "fuzzReadUint64", fuzzer: fuzzReadUint64},
-		{name: "fuzzReadInt64", fuzzer: fuzzReadInt64},
-		{name: "fuzzReadUint32", fuzzer: fuzzReadUint32},
-		{name: "fuzzReadInt32", fuzzer: fuzzReadInt32},
-		{name: "fuzzReadInt", fuzzer: fuzzReadInt},
-		{name: "fuzzReadUint", fuzzer: fuzzReadUint},
-		{name: "fuzzReadFloat64", fuzzer: fuzzReadFloat64},
-		{name: "fuzzValid", fuzzer: fuzzValid},
-	} {
+	for _, td := range fuzzers {
+		td := td
 		t.Run(td.name, func(t *testing.T) {
+			t.Parallel()
 			dir, err := ioutil.ReadDir(corpusDir)
 			require.NoError(t, err)
 			for _, info := range dir {
 				data, err := ioutil.ReadFile(filepath.Join(corpusDir, info.Name()))
 				require.NoError(t, err)
-				_, err = td.fuzzer(data)
+				_, err = td.fn(data)
 				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filepath.Join(corpusDir, info.Name()), string(data))
 			}
 
 			for _, name := range jsontestsuiteFiles(t) {
 				data, err := ioutil.ReadFile(name)
 				require.NoError(t, err)
-				_, err = td.fuzzer(data)
+				_, err = td.fn(data)
 				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", name, string(data))
 
 			}
@@ -96,22 +89,6 @@ var oldCrashers = []string{
 	"80000000000000000000",
 	"999999999999999999",
 	"{\"�\":\"0\",\"\xbd\":\"\"}",
-}
-
-func TestUnmarshalFace(t *testing.T) {
-	for _, s := range jsonTestFiles {
-		t.Run(s, func(t *testing.T) {
-			data := getTestdataJSONGz(t, s)
-			assertIfaceUnmarshalsSame(t, data)
-		})
-	}
-
-	// various values that fuzz has crashed on in the past
-	for _, fuzzy := range oldCrashers {
-		t.Run(fuzzy, func(t *testing.T) {
-			assertIfaceUnmarshalsSame(t, []byte(fuzzy))
-		})
-	}
 }
 
 func jsontestsuiteFiles(t testing.TB) []string {
@@ -175,23 +152,6 @@ func TestValid(t *testing.T) {
 			assert.Equal(t, json.Valid(data), Valid(data))
 		})
 	}
-}
-
-// asserts that ifaceUnmarshaller{} gets the same result as (*json.Decoder).Decode
-// first it must fix an issue with *json.Decoder decoding some chars to RuneError
-func assertIfaceUnmarshalsSame(t *testing.T, data []byte) bool {
-	handler := &ifaceUnmarshaller{}
-	_, gotErr := handler.HandleAnyValue(data)
-	var want interface{}
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	if wantErr != nil {
-		return assert.Errorf(t, gotErr, "we got no error but encoding/json got: %v", wantErr)
-	}
-	if !assert.NoError(t, gotErr) {
-		return false
-	}
-	got, want := removeJSONRuneError(handler.val, want)
-	return assert.NoError(t, ifaceCompare(want, got, []string{"ROOT"}))
 }
 
 func TestBuffer_SkipValue(t *testing.T) {
@@ -285,23 +245,17 @@ func fileExists(t testing.TB, filename string) bool {
 	return true
 }
 
-func runChecker(t *testing.T, data []byte, checker func(t *testing.T, data []byte) int) {
-	t.Helper()
-	handler := &simpleValueHandler{
-		simpleValueHandler: ValueHandlerFunc(func(data []byte) (int, error) {
-			t.Helper()
-			p := checker(t, data)
-			return p, nil
-		}),
-	}
-	_, err := handler.HandleValue(data)
-	require.NoError(t, err)
-}
-
 func getUnmarshalResult(data []byte, v interface{}) (offset int, null bool, err error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	var token json.Token
 	token, err = decoder.Token()
+
+	switch token {
+	case json.Delim('['), json.Delim('{'):
+		decoder = json.NewDecoder(bytes.NewReader(data))
+		err = decoder.Decode(&v)
+		return int(decoder.InputOffset()), false, err
+	}
 	offset = int(decoder.InputOffset())
 	if err != nil {
 		return offset, false, err
@@ -314,6 +268,10 @@ func getUnmarshalResult(data []byte, v interface{}) (offset int, null bool, err 
 }
 
 func assertMatchesUnmarshal(t *testing.T, data []byte, got interface{}, gotP int, gotErr error) int {
+	t.Helper()
+	if got == nil {
+		return assertNilMatchesUnmarshal(t, data, gotP, gotErr)
+	}
 	umVal := reflect.New(reflect.TypeOf(got)).Interface()
 	gotAnError := gotErr != nil
 	umOffset, umNull, umErr := getUnmarshalResult(data, &umVal)
@@ -337,193 +295,29 @@ func assertMatchesUnmarshal(t *testing.T, data []byte, got interface{}, gotP int
 	return gotP
 }
 
-func TestReadStringBytes(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadStringBytes(data, nil)
-		return assertMatchesUnmarshal(t, data, string(got), p, err)
+func assertNilMatchesUnmarshal(t *testing.T, data []byte, gotP int, gotErr error) int {
+	t.Helper()
+	var umVal interface{}
+	umOffset, _, umErr := getUnmarshalResult(data, &umVal)
+	pp := gotP
+	if umOffset > pp {
+		pp = umOffset
 	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-}
-
-func TestReadString(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadString(data, nil)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-}
-
-func TestReadUint64(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadUint64(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadUint(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadUint(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadUint32(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadUint32(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadInt(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadInt(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadInt32(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadInt32(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadInt64(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadInt64(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadFloat64(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadFloat64(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadBool(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		got, p, err := ReadBool(data)
-		return assertMatchesUnmarshal(t, data, got, p, err)
-	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
-	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
-}
-
-func TestReadNull(t *testing.T) {
-	t.Parallel()
-
-	checker := func(t *testing.T, data []byte) int {
-		t.Helper()
-		p, err := ReadNull(data)
-		var umVal interface{}
-		umOffset, umNull, umErr := getUnmarshalResult(data, &umVal)
-		if umErr != nil || !umNull {
-			assert.Error(t, err)
-			return 0
+	if umVal == nil {
+		if umErr == nil {
+			assert.NoError(t, gotErr)
+			assert.Equal(t, umOffset, gotP)
+			return pp
 		}
-		assert.NoError(t, err)
-		assert.Equal(t, umOffset, p)
-		return p
+		assert.Error(t, gotErr)
+		return 0
 	}
-
-	for _, file := range jsonTestFiles {
-		runChecker(t, getTestdataJSONGz(t, file), checker)
+	if umErr != nil {
+		assert.Error(t, gotErr)
+		return 0
 	}
-	for _, s := range invalidJSON {
-		checker(t, []byte(s))
-	}
+	assert.Failf(t, "wrong val", "expected %v but got nil", umVal)
+	return pp
 }
 
 func TestNextToken(t *testing.T) {

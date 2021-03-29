@@ -5,82 +5,20 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 	"unicode/utf8"
 )
 
-// ifaceUnmarshaller unmarshalls json to an interface
-type ifaceUnmarshaller struct {
-	val    interface{}
-	buffer Buffer
+type fuzzer struct {
+	name string
+	fn   func([]byte) (int, error)
 }
 
-func (h *ifaceUnmarshaller) HandleObjectValue(fieldname, data []byte) (int, error) {
-	mpVal, ok := h.val.(map[string]interface{})
-	if !ok {
-		return 0, fmt.Errorf("expected a map")
-	}
-	name, _, err := UnescapeStringContent(fieldname, nil)
-	if err != nil {
-		return 0, err
-	}
-	um := &ifaceUnmarshaller{}
-	p, err := um.HandleAnyValue(data)
-	if err != nil {
-		return p, err
-	}
-
-	mpVal[string(name)] = um.val
-	return p, nil
-}
-
-func (h *ifaceUnmarshaller) HandleValue(data []byte) (int, error) {
-	sliceVal, ok := h.val.([]interface{})
-	if !ok {
-		return 0, fmt.Errorf("expected a slice")
-	}
-	um := &ifaceUnmarshaller{}
-	p, err := um.HandleAnyValue(data)
-	if err != nil {
-		return p, err
-	}
-	sliceVal = append(sliceVal, um.val)
-	h.val = sliceVal
-	return p, err
-}
-
-func (h *ifaceUnmarshaller) HandleAnyValue(data []byte) (int, error) {
-	tknType, p, err := NextTokenType(data)
-	if err != nil {
-		return p, err
-	}
-	p--
-	data = data[p:]
-	var pp int
-	switch tknType {
-	case InvalidType:
-		err = fmt.Errorf("invalid type")
-	case NullType:
-		h.val = nil
-		pp, err = ReadNull(data)
-	case StringType:
-		h.val, pp, err = ReadString(data, nil)
-	case NumberType:
-		h.val, pp, err = ReadFloat64(data)
-	case TrueType, FalseType:
-		h.val, pp, err = ReadBool(data)
-	case ObjectStartType:
-		h.val = map[string]interface{}{}
-		pp, err = h.buffer.HandleObjectValues(data, h)
-	case ArrayStartType:
-		h.val = []interface{}{}
-		pp, err = h.buffer.HandleArrayValues(data, h)
-	default:
-		err = fmt.Errorf("unexpected token: %s", tknType)
-	}
-	return p + pp, err
-}
+var fuzzers = append(generatedFuzzers,
+	fuzzer{name: "fuzzSkip", fn: fuzzSkip},
+	fuzzer{name: "fuzzNextToken", fn: fuzzNextToken},
+	fuzzer{name: "fuzzValid", fn: fuzzValid},
+)
 
 // removeJSONRuneError because encoding/json incorrectly unmarshals some characters to RuneError
 // when we see that rjson differs from encoding/json change both values to ""  before comparing
@@ -151,29 +89,6 @@ func removeJSONRuneError(rjsonVal, jsonVal interface{}) (rvRes, jvRes interface{
 	return rjsonVal, jsonVal
 }
 
-type fuzzer func([]byte) (int, error)
-
-func fuzzIfaceUnmarshaller(data []byte) (int, error) {
-	var jsonVal interface{}
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&jsonVal)
-
-	handler := &ifaceUnmarshaller{}
-	_, gotErr := handler.HandleAnyValue(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil {
-		return 0, err
-	}
-	if wantErr != nil {
-		return 0, nil
-	}
-	gotVal, wantVal := removeJSONRuneError(handler.val, jsonVal)
-	err = ifaceCompare(wantVal, gotVal, []string{"ROOT"})
-	if err != nil {
-		return 0, err
-	}
-	return 1, nil
-}
-
 func fuzzValid(data []byte) (int, error) {
 	want := json.Valid(data)
 	got := Valid(data)
@@ -199,154 +114,6 @@ func fuzzSkip(data []byte) (int, error) {
 	}
 	if !wantValid && gotValid {
 		return 0, fmt.Errorf("failed to detect invalid json")
-	}
-	return 0, nil
-}
-
-var (
-	startsWithNull = regexp.MustCompile(`^[\t\r\n ]*null`)
-	startsWith00   = regexp.MustCompile(`^[\t\r\n ]*-?0[0-9eE]`)
-)
-
-func checkValidNumberFuzzers(data []byte) bool {
-	if startsWithNull.Match(data) {
-		return false
-	}
-	if startsWith00.Match(data) {
-		return false
-	}
-	return true
-}
-
-func fuzzPrepReadData(data []byte) []byte {
-	if len(data) == 0 {
-		return data
-	}
-	return data[countWhitespace(data):]
-}
-
-func fuzzReadUint64(data []byte) (int, error) {
-	data = fuzzPrepReadData(data)
-	if !checkValidNumberFuzzers(data) {
-		return 0, nil
-	}
-	var want uint64
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	got, _, gotErr := ReadUint64(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
-		return 0, err
-	}
-	if got != want {
-		return 0, fmt.Errorf("expected %v but got %v", want, got)
-	}
-	return 0, nil
-}
-
-func fuzzReadInt64(data []byte) (int, error) {
-	data = fuzzPrepReadData(data)
-	if !checkValidNumberFuzzers(data) {
-		return 0, nil
-	}
-	var want int64
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	got, _, gotErr := ReadInt64(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
-		return 0, err
-	}
-	if got != want {
-		return 0, fmt.Errorf("expected %v but got %v", want, got)
-	}
-	return 0, nil
-}
-
-func fuzzReadUint32(data []byte) (int, error) {
-	data = fuzzPrepReadData(data)
-	if !checkValidNumberFuzzers(data) {
-		return 0, nil
-	}
-	var want uint32
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	got, _, gotErr := ReadUint32(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
-		return 0, err
-	}
-	if got != want {
-		return 0, fmt.Errorf("expected %v but got %v", want, got)
-	}
-	return 0, nil
-}
-
-func fuzzReadInt32(data []byte) (int, error) {
-	data = fuzzPrepReadData(data)
-	if !checkValidNumberFuzzers(data) {
-		return 0, nil
-	}
-	var want int32
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	got, _, gotErr := ReadInt32(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
-		return 0, err
-	}
-	if got != want {
-		return 0, fmt.Errorf("expected %v but got %v", want, got)
-	}
-	return 0, nil
-}
-
-func fuzzReadFloat64(data []byte) (int, error) {
-	data = fuzzPrepReadData(data)
-	if !checkValidNumberFuzzers(data) {
-		return 0, nil
-	}
-	var want float64
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	got, _, gotErr := ReadFloat64(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
-		return 0, err
-	}
-	if got != want {
-		return 0, fmt.Errorf("expected %v but got %v", want, got)
-	}
-	return 0, nil
-}
-
-func fuzzReadUint(data []byte) (int, error) {
-	data = fuzzPrepReadData(data)
-	if !checkValidNumberFuzzers(data) {
-		return 0, nil
-	}
-	var want uint
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	got, _, gotErr := ReadUint(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
-		return 0, err
-	}
-	if got != want {
-		return 0, fmt.Errorf("expected %v but got %v", want, got)
-	}
-	return 0, nil
-}
-
-func fuzzReadInt(data []byte) (int, error) {
-	data = fuzzPrepReadData(data)
-	if !checkValidNumberFuzzers(data) {
-		return 0, nil
-	}
-	var want int
-	wantErr := json.NewDecoder(bytes.NewReader(data)).Decode(&want)
-	got, _, gotErr := ReadInt(data)
-	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
-		return 0, err
-	}
-	if got != want {
-		return 0, fmt.Errorf("expected %v but got %v", want, got)
 	}
 	return 0, nil
 }
@@ -429,6 +196,17 @@ func wrongValErr(path []string, a, b interface{}) *pathErr {
 
 func wrongTypeErr(path []string, a, b interface{}) *pathErr {
 	return newPathErr(path, "wrong type. wanted %T but got %T", a, b)
+}
+
+func fuzzCompare(want, got interface{}) error {
+	switch want.(type) {
+	case map[string]interface{}, []interface{}:
+		return ifaceCompare(want, got, []string{"ROOT"})
+	}
+	if got != want {
+		return fmt.Errorf("expected %v but got %v", want, got)
+	}
+	return nil
 }
 
 func ifaceCompare(want, got interface{}, path []string) error {

@@ -1,16 +1,13 @@
 package rjson
 
 import (
-	"fmt"
 	"io"
-	"strconv"
 )
 
 //go:generate script/generate-ragel-file misc_machines.rl
 //go:generate script/generate-ragel-file skip_machine.rl
 //go:generate script/generate-ragel-file array_handler_machine.rl
 //go:generate script/generate-ragel-file object_handler_machine.rl
-//go:generate script/generate-ragel-file read_machines.rl
 
 // NextToken finds the first json token in data. token is the token itself, p is the position in data where
 // the token was found. NextToken errors if it finds anything besides json whitespace before the first valid
@@ -88,111 +85,6 @@ type ValueHandlerFunc func(data []byte) (p int, err error)
 // HandleValue meets ValueHandler.HandleValue
 func (fn ValueHandlerFunc) HandleValue(data []byte) (int, error) {
 	return fn(data)
-}
-
-// ReadUint64 reads a uint64 value at the beginning of data. p is the first position in data after the value.
-func ReadUint64(data []byte) (val uint64, p int, err error) {
-	return readUint64(data)
-}
-
-// ReadInt64 reads an int64 value at the beginning of data. p is the first position in data after the value.
-func ReadInt64(data []byte) (val int64, p int, err error) {
-	return readInt64(data)
-}
-
-// ReadInt32 reads an int32 value at the beginning of data. p is the first position in data after the value.
-func ReadInt32(data []byte) (val int32, p int, err error) {
-	return readInt32(data)
-}
-
-// ReadUint32 reads a uint32 value at the beginning of data. p is the first position in data after the value.
-func ReadUint32(data []byte) (val uint32, p int, err error) {
-	return readUint32(data)
-}
-
-// ReadInt reads an int value at the beginning of data. p is the first position in data after the value.
-func ReadInt(data []byte) (val, p int, err error) {
-	switch strconv.IntSize {
-	case 64:
-		val, p, err := ReadInt64(data)
-		return int(val), p, err
-	case 32:
-		val, p, err := ReadInt32(data)
-		return int(val), p, err
-	default:
-		return 0, 0, fmt.Errorf("unsupported int size: %d", strconv.IntSize)
-	}
-}
-
-// ReadUint reads a uint value at the beginning of data. p is the first position in data after the value.
-func ReadUint(data []byte) (val uint, p int, err error) {
-	switch strconv.IntSize {
-	case 64:
-		val, p, err := ReadUint64(data)
-		return uint(val), p, err
-	case 32:
-		val, p, err := ReadUint32(data)
-		return uint(val), p, err
-	default:
-		return 0, 0, fmt.Errorf("unsupported int size: %d", strconv.IntSize)
-	}
-}
-
-// ReadFloat64 reads a float64 value at the beginning of data. p is the first position in data after the value.
-func ReadFloat64(data []byte) (val float64, p int, err error) {
-	return readFloat64(data)
-}
-
-// ReadStringBytes reads a string value at the beginning of data and appends it to buf. p is the first position in
-// data after the value.
-func ReadStringBytes(data, buf []byte) (val []byte, p int, err error) {
-	p = countWhitespace(data)
-	if data[p] != '"' {
-		return buf, p, fmt.Errorf("not a string")
-	}
-	p++
-	start := p
-	for ; p < len(data); p++ {
-		var pp int
-		var err error
-		if data[p] <= 0x1f {
-			buf, pp, err = appendRemainderOfString(data[p:], buf)
-			p += pp
-			return buf, p, err
-		}
-		switch data[p] {
-		case '"':
-			return append(buf, data[start:p]...), p + 1, nil
-		case '\\':
-			buf = append(buf, data[start:p]...)
-			buf, pp, err = appendRemainderOfString(data[p:], buf)
-			p += pp
-			return buf, p, err
-		}
-	}
-	return data, p, fmt.Errorf("not a string")
-}
-
-// ReadString reads a string value at the beginning of data. p is the first position in data after the value. If buf
-// is not nil, it will be used as a working for building the string value.
-//
-// If you are concerned about memory allocation, try using ReadStringBytes instead.
-func ReadString(data, buf []byte) (val string, p int, err error) {
-	b, p, err := ReadStringBytes(data, buf)
-	if err != nil {
-		return "", p, err
-	}
-	return string(b), p, err
-}
-
-// ReadBool reads a boolean value at the beginning of data. p is the first position in data after the value.
-func ReadBool(data []byte) (val bool, p int, err error) {
-	return readBool(data)
-}
-
-// ReadNull reads 'null' at the beginning of data. p is the first position after 'null'
-func ReadNull(data []byte) (p int, err error) {
-	return readNull(data)
 }
 
 // Buffer is a reusable stack buffer for operations that walk a json document.

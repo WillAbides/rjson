@@ -1,6 +1,7 @@
 package benchmarks
 
 import (
+	"fmt"
 	"io"
 
 	jsoniter "github.com/json-iterator/go"
@@ -102,4 +103,16 @@ func (h *jsoniterGetValuesFromRepoHelper) callback(it *jsoniter.Iterator, field 
 		return false
 	}
 	return true
+}
+
+func (x *jsoniterBencher) readString(data []byte) (string, error) {
+	x.resetIter(data)
+	if x.iter.WhatIsNext() != jsoniter.StringValue {
+		return "", fmt.Errorf("not a string")
+	}
+	s := x.iter.ReadString()
+	if x.iter.Error != nil {
+		return "", x.iter.Error
+	}
+	return s, nil
 }

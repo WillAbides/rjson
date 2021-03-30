@@ -74,3 +74,7 @@ func (h *jsonparserReadRepoDataHandler) callback(key, value []byte, dataType jso
 	}
 	return err
 }
+
+func (x *jsonparserBencher) readString(data []byte) (string, error) {
+	return jsonparser.GetString(data)
+}

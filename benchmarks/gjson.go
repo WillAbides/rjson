@@ -77,3 +77,15 @@ func (x *gjsonBencher) readRepoData(data []byte, result *repoData) error {
 	}
 	return nil
 }
+
+func (x *gjsonBencher) readString(data []byte) (string, error) {
+	result := gjson.ParseBytes(data)
+	val, ok := result.Value().(string)
+	if !ok {
+		return "", fmt.Errorf("not a string")
+	}
+	if !gjson.ValidBytes(data) {
+		return "", fmt.Errorf("not a valid string")
+	}
+	return val, nil
+}

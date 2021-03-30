@@ -49,3 +49,7 @@ type repoData struct {
 type repoDataReader interface {
 	readRepoData(data []byte, val *repoData) error
 }
+
+type stringReader interface {
+	readString(data []byte) (string, error)
+}

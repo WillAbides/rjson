@@ -81,3 +81,15 @@ func (x *fastjsonBencher) readRepoData(data []byte, result *repoData) error {
 	}
 	return nil
 }
+
+func (x *fastjsonBencher) readString(data []byte) (string, error) {
+	parsed, err := x.parser.ParseBytes(data)
+	if err != nil {
+		return "", err
+	}
+	val, err := parsed.StringBytes()
+	if err != nil {
+		return "", err
+	}
+	return string(val), err
+}

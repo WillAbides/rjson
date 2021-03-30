@@ -1,7 +1,9 @@
 package benchmarks
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 )
 
 type jsonBencher struct{}
@@ -11,13 +13,30 @@ func (x *jsonBencher) name() string {
 }
 
 func (x *jsonBencher) readFloat64(data []byte) (val float64, err error) {
-	err = json.Unmarshal(data, &val)
-	return val, err
+	tkn, err := json.NewDecoder(bytes.NewReader(data)).Token()
+	if err != nil {
+		return 0, err
+	}
+	var ok bool
+	val, ok = tkn.(float64)
+	if ok {
+		return val, nil
+	}
+	return 0, fmt.Errorf("not a number")
 }
 
 func (x *jsonBencher) readInt64(data []byte) (val int64, err error) {
-	err = json.Unmarshal(data, &val)
-	return val, err
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	tkn, err := decoder.Token()
+	if err != nil {
+		return 0, err
+	}
+	num, ok := tkn.(json.Number)
+	if ok {
+		return num.Int64()
+	}
+	return 0, fmt.Errorf("not a number")
 }
 
 func (x *jsonBencher) readObject(data []byte) (val map[string]interface{}, err error) {
@@ -34,4 +53,17 @@ func (x *jsonBencher) valid(data []byte) bool {
 
 func (x *jsonBencher) readRepoData(data []byte, val *repoData) error {
 	return json.Unmarshal(data, &val)
+}
+
+func (x *jsonBencher) readString(data []byte) (string, error) {
+	tkn, err := json.NewDecoder(bytes.NewReader(data)).Token()
+	if err != nil {
+		return "", err
+	}
+	var ok bool
+	s, ok := tkn.(string)
+	if ok {
+		return s, nil
+	}
+	return "", fmt.Errorf("not a string")
 }

@@ -139,6 +139,7 @@ func TestReadInt64(t *testing.T) {
 		want    int64
 		wantErr bool
 	}{
+		{data: `null`, wantErr: true},
 		{data: `42 `, want: 42},
 		{data: ` 42`, want: 42},
 		{data: `42.1`, wantErr: true},
@@ -177,6 +178,7 @@ func TestReadFloat64(t *testing.T) {
 		want    float64
 		wantErr bool
 	}{
+		{data: `null`, wantErr: true},
 		{data: `42 `, want: 42},
 		{data: ` 42`, want: 42},
 		{data: `42.1`, want: 42.1},
@@ -195,6 +197,53 @@ func TestReadFloat64(t *testing.T) {
 			for _, td := range readTests {
 				t.Run(td.data, func(t *testing.T) {
 					got, err := runner.readFloat64([]byte(td.data))
+					if td.wantErr {
+						assert.Error(t, err)
+						return
+					}
+					assert.NoError(t, err)
+					assert.Equal(t, td.want, got)
+				})
+			}
+		})
+	}
+}
+
+func Test_readString(t *testing.T) {
+	readTests := []struct {
+		data    string
+		want    string
+		wantErr bool
+	}{
+		{data: `"invalid`, wantErr: true},
+		{data: `"hello"`, want: `hello`},
+		{data: ` "hello" `, want: `hello`},
+		{data: `null`, wantErr: true},
+		{
+			data: `"@aym0566x \n\n名前:前田あゆみ\n第一印象:なんか怖っ！\n今の印象:とりあえずキモい。噛み合わない\n好きなところ:ぶすでキモいとこ😋✨✨\n思い出:んーーー、ありすぎ😊❤️\nLINE交換できる？:あぁ……ごめん✋\nトプ画をみて:照れますがな😘✨\n一言:お前は一生もんのダチ💖"`,
+			want: "@aym0566x \n\n名前:前田あゆみ\n第一印象:なんか怖っ！\n今の印象:とりあえずキモい。噛み合わない\n好きなところ:ぶすでキモいとこ😋✨✨\n思い出:んーーー、ありすぎ😊❤️\nLINE交換できる？:あぁ……ごめん✋\nトプ画をみて:照れますがな😘✨\n一言:お前は一生もんのダチ💖",
+		},
+		{data: `"\u005C\u005C"`, want: "\u005C\u005C"},
+	}
+	for _, bb := range benchers {
+		initBencher(bb)
+		runner, ok := bb.(stringReader)
+		if !ok {
+			continue
+		}
+		t.Run(bb.name(), func(t *testing.T) {
+			for _, td := range readTests {
+				t.Run(td.data, func(t *testing.T) {
+					got, err := runner.readString([]byte(td.data))
+					if td.wantErr {
+						assert.Error(t, err)
+						return
+					}
+					assert.NoError(t, err)
+					assert.Equal(t, td.want, got)
+
+					// do it again
+					got, err = runner.readString([]byte(td.data))
 					if td.wantErr {
 						assert.Error(t, err)
 						return
@@ -257,7 +306,7 @@ func Test_validRunners(t *testing.T) {
 					assert.Equalf(t, want, got, "data: %s", string(data))
 					assert.Equal(t, origData, data)
 
-					// do it again with the same pool
+					// do it again
 					data = make([]byte, len(origData))
 					copy(data, origData)
 					got = runner.valid(data)

@@ -10,6 +10,7 @@ type rjsonBencher struct {
 	valueReader         rjson.ValueReader
 	buffer              rjson.Buffer
 	readRepoDataHandler *rjsonReadRepoDataHandler
+	stringBuffer        []byte
 }
 
 func (x *rjsonBencher) init() {
@@ -99,4 +100,13 @@ func (h *rjsonReadRepoDataHandler) HandleObjectValue(fieldname, data []byte) (p 
 		return p, h.doneErr
 	}
 	return p, err
+}
+
+func (x *rjsonBencher) readString(data []byte) (string, error) {
+	var err error
+	x.stringBuffer, _, err = rjson.ReadStringBytes(data, x.stringBuffer[:0])
+	if err != nil {
+		return "", err
+	}
+	return string(x.stringBuffer), nil
 }

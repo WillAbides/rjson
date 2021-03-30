@@ -91,16 +91,3 @@ func appendRemainderOfString(data []byte, dst []byte) ([]byte, int, error) {
 
    return dst, p,nil
 }
-
-func countWhitespace(data []byte) int {
-  cs, p := 0, 0
-  pe := len(data)
-  %%{
-    machine countWhitespace;
-    include common "common.rl";
-    main := json_space*;
-    write data; write init; write exec;
-  }%%
-
-  return p
-}

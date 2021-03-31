@@ -14,7 +14,10 @@ func errUnexpectedByteInString(b byte) error {
 	return fmt.Errorf("unexpected byte found in string: %q", string(b))
 }
 
+const skipMaxDepth = 10_000
+
 var (
+	errMaxDepth      = fmt.Errorf("exceeded max depth")
 	errUnexpectedEOF = fmt.Errorf("unexpected end of json")
 	errInvalidString = fmt.Errorf("invalid json string")
 	errInvalidArray  = fmt.Errorf("invalid json array")

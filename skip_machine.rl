@@ -78,6 +78,10 @@ skip_array_fast := skip_array_fast_def;
 skip_object_fast := skip_object_fast_def;
 
 prepush {
+  if top == skipMaxDepth {
+    err = errMaxDepth
+    fbreak;
+  }
   if top + 1 >= len(stack) {
     stack = append(stack, make([]int, 1 + top - len(stack))...)
   }
@@ -110,6 +114,10 @@ skip_array := skip_array_def;
 skip_object := skip_object_def;
 
 prepush {
+  if top == skipMaxDepth {
+    err = errMaxDepth
+    fbreak;
+  }
   if top + 1 >= len(stack) {
     stack = append(stack, make([]int, 1 + top - len(stack))...)
   }

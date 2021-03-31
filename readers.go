@@ -234,6 +234,8 @@ func ReadNull(data []byte) (p int, err error) {
 	return readNull(data)
 }
 
+const valueReaderMaxDepth = 10_000
+
 // ValueReader is a handler for reading complex json data types (Objects and Arrays).
 type ValueReader struct {
 	buf          Buffer
@@ -242,6 +244,7 @@ type ValueReader struct {
 	arrVal       []interface{}
 	fieldNameBuf []byte
 	stringBuf    []byte
+	depth        int
 
 	newMapSize  int
 	lastMapSize int
@@ -254,9 +257,12 @@ type ValueReader struct {
 func (h *ValueReader) borrowValueReader() *ValueReader {
 	x, ok := h.pool.Get().(*ValueReader)
 	if !ok {
-		x = &ValueReader{}
+		x = &ValueReader{
+			depth: h.depth + 1,
+		}
 	}
 	x.newMapSize = 0
+	x.depth = h.depth + 1
 	return x
 }
 
@@ -279,6 +285,9 @@ func (h *ValueReader) HandleValue(data []byte) (p int, err error) {
 	switch tknType {
 	case ObjectStartType:
 		h2 := h.borrowValueReader()
+		if h2.depth > valueReaderMaxDepth {
+			return p, errMaxDepth
+		}
 		h2.newMapSize = h.maxMapSize
 		val, pp, err = h2.ReadObject(data)
 		mpLen := len(val.(map[string]interface{}))
@@ -288,6 +297,9 @@ func (h *ValueReader) HandleValue(data []byte) (p int, err error) {
 		h.returnValueReader(h2)
 	case ArrayStartType:
 		h2 := h.borrowValueReader()
+		if h2.depth > valueReaderMaxDepth {
+			return p, errMaxDepth
+		}
 		val, pp, err = h2.ReadArray(data)
 		h.returnValueReader(h2)
 	default:
@@ -324,6 +336,9 @@ func (h *ValueReader) HandleObjectValue(fieldname, data []byte) (p int, err erro
 	switch tknType {
 	case ObjectStartType:
 		h2 := h.borrowValueReader()
+		if h2.depth > valueReaderMaxDepth {
+			return p, errMaxDepth
+		}
 		h2.newMapSize = h.maxMapSize
 		val, pp, err = h2.ReadObject(data)
 		mpLen := len(val.(map[string]interface{}))
@@ -333,6 +348,9 @@ func (h *ValueReader) HandleObjectValue(fieldname, data []byte) (p int, err erro
 		h.returnValueReader(h2)
 	case ArrayStartType:
 		h2 := h.borrowValueReader()
+		if h2.depth > valueReaderMaxDepth {
+			return p, errMaxDepth
+		}
 		val, pp, err = h2.ReadArray(data)
 		h.returnValueReader(h2)
 	default:
@@ -406,6 +424,10 @@ func ReadObject(data []byte) (val map[string]interface{}, p int, err error) {
 // ReadObject reads an object value from the front of data and returns it as a map[string]interface{}. p is the first
 // position in data after the value.
 func (h *ValueReader) ReadObject(data []byte) (val map[string]interface{}, p int, err error) {
+	if h.depth == 0 {
+		h.depth = 1
+		defer func() { h.depth = 0 }()
+	}
 	mapSize := h.newMapSize
 	if mapSize == 0 {
 		mapSize = h.lastMapSize
@@ -439,6 +461,12 @@ func ReadArray(data []byte) (val []interface{}, p int, err error) {
 // ReadArray reads an array from the front of data and returns it as a []interface{}. p is the first position in data
 // after the value.
 func (h *ValueReader) ReadArray(data []byte) (val []interface{}, p int, err error) {
+	if h.depth == 0 {
+		h.depth = 1
+		defer func() {
+			h.depth = 0
+		}()
+	}
 	sliceSize := h.newSliceSize
 	if sliceSize == 0 {
 		sliceSize = h.lastSliceSize

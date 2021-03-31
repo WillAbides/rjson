@@ -735,6 +735,14 @@ func skipValueFast(data []byte, stack []int) (int, []int, error) {
 		goto st0
 	tr6:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -861,6 +869,14 @@ func skipValueFast(data []byte, stack []int) (int, []int, error) {
 		goto st0
 	tr10:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -993,6 +1009,14 @@ func skipValueFast(data []byte, stack []int) (int, []int, error) {
 		goto st33
 	tr35:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -1274,6 +1298,14 @@ func skipValueFast(data []byte, stack []int) (int, []int, error) {
 		goto st49
 	tr52:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -3028,6 +3060,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto st0
 	tr6:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -3154,6 +3194,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto st0
 	tr10:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -3812,6 +3860,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr33
 	tr55:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -3990,6 +4046,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr33
 	tr59:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -4383,6 +4447,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr33
 	tr39:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -4561,6 +4633,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr33
 	tr44:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -5428,6 +5508,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr111
 	tr147:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -5606,6 +5694,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr111
 	tr151:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -6127,6 +6223,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr111
 	tr125:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
@@ -6305,6 +6409,14 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		goto tr111
 	tr129:
 		{
+			if top == skipMaxDepth {
+				err = errMaxDepth
+				{
+					p++
+					cs = 0
+					goto _out
+				}
+			}
 			if top+1 >= len(stack) {
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}

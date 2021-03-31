@@ -2,6 +2,7 @@ package rjson
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"sync"
 )
@@ -10,38 +11,116 @@ import (
 
 // ReadUint64 reads a uint64 value at the beginning of data. p is the first position in data after the value.
 func ReadUint64(data []byte) (val uint64, p int, err error) {
+	const cutoff = (1<<64-1)/10 + 1
+	const zero = uint64('0')
 	p = countWhitespace(data)
 	if p == len(data) {
 		return 0, p, errInvalidUInt
 	}
-	return readUint64(data[p:])
+	if data[p] == '0' {
+		p++
+		if len(data[p:]) == 0 {
+			return 0, p, nil
+		}
+		switch data[p] {
+		case '.', 'e', 'E':
+			return 0, p, errInvalidUInt
+		}
+		return 0, p, nil
+	}
+	startP := p
+	for ; p < len(data); p++ {
+		if p-startP == 18 || data[p] < '0' || data[p] > '9' {
+			break
+		}
+		val *= 10
+		val += uint64(data[p]) - zero
+	}
+	if p-startP == 18 {
+		for ; p < len(data); p++ {
+			if data[p] < '0' || data[p] > '9' {
+				break
+			}
+			if val > cutoff {
+				return 0, p, fmt.Errorf(`value out of uint64 range`)
+			}
+			v := uint64(data[p]) - zero
+			newVal := val * 10
+			newVal += v
+			if newVal < val {
+				return 0, p, fmt.Errorf(`value out of uint64 range`)
+			}
+			val = newVal
+		}
+	}
+	if p-startP == 0 {
+		return 0, p, errInvalidUInt
+	}
+	if p == len(data) {
+		return val, p, nil
+	}
+	switch data[p] {
+	case '.', 'e', 'E':
+		return 0, p, errInvalidUInt
+	}
+	return val, p, nil
 }
 
 // ReadUint32 reads a uint32 value at the beginning of data. p is the first position in data after the value.
 func ReadUint32(data []byte) (val uint32, p int, err error) {
-	p = countWhitespace(data)
-	if p == len(data) {
-		return 0, p, errInvalidUInt
+	var val64 uint64
+	val64, p, err = ReadUint64(data)
+	if err == nil && val64 > math.MaxUint32 {
+		val64 = 0
+		err = errInvalidUInt
 	}
-	return readUint32(data[p:])
+	return uint32(val64), p, err
 }
 
 // ReadInt64 reads an int64 value at the beginning of data. p is the first position in data after the value.
 func ReadInt64(data []byte) (val int64, p int, err error) {
+	const cutoff = uint64(1 << uint64(63))
 	p = countWhitespace(data)
 	if p == len(data) {
 		return 0, p, errInvalidInt
 	}
-	return readInt64(data[p:])
+	neg := data[0] == '-'
+	if neg {
+		p++
+		if p == len(data) {
+			return 0, p, errInvalidInt
+		}
+	}
+	var u64Val uint64
+	var pp int
+	u64Val, pp, err = ReadUint64(data[p:])
+	p += pp
+	if err != nil {
+		return 0, p, err
+	}
+	if neg {
+		if u64Val > cutoff {
+			return 0, p, fmt.Errorf("value out of int64 range")
+		}
+		return -int64(u64Val), p, nil
+	}
+	if u64Val >= cutoff {
+		return 0, p, fmt.Errorf("value out of int64 range")
+	}
+	return int64(u64Val), p, nil
 }
 
 // ReadInt32 reads an int32 value at the beginning of data. p is the first position in data after the value.
 func ReadInt32(data []byte) (val int32, p int, err error) {
-	p = countWhitespace(data)
-	if p == len(data) {
+	var val64 int64
+	val64, p, err = ReadInt64(data)
+	if err != nil {
+		return 0, p, err
+	}
+	if val64 > math.MaxInt32 || val64 < math.MinInt32 {
 		return 0, p, errInvalidInt
 	}
-	return readInt32(data[p:])
+	return int32(val64), p, nil
 }
 
 // ReadInt reads an int value at the beginning of data. p is the first position in data after the value.

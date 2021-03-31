@@ -13,6 +13,15 @@ func TestReadNull(t *testing.T) {
 	testReadChecker(t, readNullChecker, true)
 }
 
+func TestReadUint64(t *testing.T) {
+	data := []byte(`83640
+}`)
+	val, p, err := ReadUint64(data)
+	assert.NoError(t, err)
+	assert.EqualValues(t, 5, p)
+	assert.EqualValues(t, 83640, val)
+}
+
 func readNullChecker(t *testing.T, data []byte) int {
 	t.Helper()
 	p, err := ReadNull(data)

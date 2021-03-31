@@ -181,3 +181,12 @@ func Valid(data []byte) bool {
 	}
 	return p+countWhitespace(data[p:]) >= len(data)
 }
+
+func countWhitespace(data []byte) int {
+	for i := 0; i < len(data); i++ {
+		if !whitespace[data[i]] {
+			return i
+		}
+	}
+	return len(data)
+}

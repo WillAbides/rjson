@@ -178,3 +178,17 @@ func BenchmarkReadString(b *testing.B) {
 	}
 	require.NoError(b, err)
 }
+
+func BenchmarkReadStringBytes(b *testing.B) {
+	data := []byte(`"@aym0566x \n\n名前:前田あゆみ\n第一印象:なんか怖っ！\n今の印象:とりあえずキモい。噛み合わない\n好きなところ:ぶすでキモいとこ😋✨✨\n思い出:んーーー、ありすぎ😊❤️\nLINE交換できる？:あぁ……ごめん✋\nトプ画をみて:照れますがな😘✨\n一言:お前は一生もんのダチ💖"`)
+	var buf []byte
+	var err error
+	b.ReportAllocs()
+	b.SetBytes(int64(len(data)))
+
+	for i := 0; i < b.N; i++ {
+		buf, benchInt, err = ReadStringBytes(data, buf[:0])
+	}
+	require.NoError(b, err)
+	_ = buf
+}

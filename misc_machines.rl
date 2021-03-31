@@ -19,15 +19,15 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
  (
    not_double_quote_or_escape >{segStart = p} %{dst = append(dst, data[segStart:p] ...)}
 
-     | /\\"/ @{dst = append(dst, '"')}
-     | /\\\\/ @{dst = append(dst, '\\')}
-     | /\\\// @{dst = append(dst, '/')}
-     | /\\'/ @{dst = append(dst, '\'')}
-     | /\\b/ @{dst = append(dst, '\b')}
-     | /\\f/ @{dst = append(dst, '\f')}
-     | /\\n/ @{dst = append(dst, '\n')}
-     | /\\r/ @{dst = append(dst, '\r')}
-     | /\\t/ @{dst = append(dst, '\t')}
+     | '\\"' @{dst = append(dst, '"')}
+     | '\\\\' @{dst = append(dst, '\\')}
+     | '\\/' @{dst = append(dst, '/')}
+     | '\\\'' @{dst = append(dst, '\'')}
+     | '\\b' @{dst = append(dst, '\b')}
+     | '\\f' @{dst = append(dst, '\f')}
+     | '\\n' @{dst = append(dst, '\n')}
+     | '\\r' @{dst = append(dst, '\r')}
+     | '\\t' @{dst = append(dst, '\t')}
      | escaped_unicode >{ segStart = p } @{
        dst, unescapeUnicodeCharBytes, ok = unescapeUnicodeChar(data[segStart:], dst)
        if !ok {
@@ -65,14 +65,15 @@ func appendRemainderOfString(data []byte, dst []byte) ([]byte, int, error) {
  (
    not_double_quote_or_escape >{segStart = p} %{dst = append(dst, data[segStart:p] ...)}
 
-     | /\\"/ @{dst = append(dst, '"')}
-     | /\\\\/ @{dst = append(dst, '\\')}
-     | /\\\// @{dst = append(dst, '/')}
-     | /\\b/ @{dst = append(dst, '\b')}
-     | /\\f/ @{dst = append(dst, '\f')}
-     | /\\n/ @{dst = append(dst, '\n')}
-     | /\\r/ @{dst = append(dst, '\r')}
-     | /\\t/ @{dst = append(dst, '\t')}
+     | '\\"' @{dst = append(dst, '"')}
+     | '\\\\' @{dst = append(dst, '\\')}
+     | '\\/' @{dst = append(dst, '/')}
+     | '\\b' @{dst = append(dst, '\b')}
+     | '\\f' @{dst = append(dst, '\f')}
+     | '\\n' @{dst = append(dst, '\n')}
+     | '\\r' @{dst = append(dst, '\r')}
+     | '\\t' @{dst = append(dst, '\t')}
+
      | escaped_unicode >{ segStart = p } @{
        dst, unescapeUnicodeCharBytes, ok = unescapeUnicodeChar(data[segStart:], dst)
        if !ok {

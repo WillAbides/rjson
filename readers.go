@@ -315,7 +315,7 @@ func (h *ValueReader) HandleValue(data []byte) (p int, err error) {
 func (h *ValueReader) HandleObjectValue(fieldname, data []byte) (p int, err error) {
 	for i := 0; i < len(fieldname); i++ {
 		if fieldname[i] == '\\' {
-			h.fieldNameBuf, _, err = unescapeStringContent(fieldname[i:], append(h.fieldNameBuf[:0], fieldname[:i]...))
+			h.fieldNameBuf, _, err = UnescapeStringContent(fieldname[i:], append(h.fieldNameBuf[:0], fieldname[:i]...))
 			if err != nil {
 				return 0, err
 			}
@@ -433,7 +433,7 @@ func (h *ValueReader) ReadObject(data []byte) (val map[string]interface{}, p int
 		mapSize = h.lastMapSize
 	}
 	h.objVal = make(map[string]interface{}, mapSize)
-	p, err = h.buf.HandleObjectValues(data[p:], h)
+	p, err = HandleObjectValues(data[p:], h, &h.buf)
 	if err != nil {
 		return nil, p, err
 	}
@@ -472,7 +472,7 @@ func (h *ValueReader) ReadArray(data []byte) (val []interface{}, p int, err erro
 		sliceSize = h.lastSliceSize
 	}
 	h.arrVal = make([]interface{}, 0, sliceSize)
-	p, err = h.buf.HandleArrayValues(data, h)
+	p, err = HandleArrayValues(data, h, &h.buf)
 	if err != nil {
 		return nil, p, err
 	}

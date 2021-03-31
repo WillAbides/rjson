@@ -39,14 +39,14 @@ func (x *rjsonBencher) readObject(data []byte) (val map[string]interface{}, err 
 }
 
 func (x *rjsonBencher) valid(data []byte) bool {
-	return x.buffer.Valid(data)
+	return rjson.Valid(data, &x.buffer)
 }
 
 func (x *rjsonBencher) readRepoData(data []byte, val *repoData) error {
 	h := x.readRepoDataHandler
 	h.seenFullName, h.seenForks, h.seenArchived = false, false, false
 	h.res = val
-	_, err := h.buffer.HandleObjectValues(data, h)
+	_, err := rjson.HandleObjectValues(data, h, &h.buffer)
 	if err == h.doneErr {
 		err = nil
 	}
@@ -94,7 +94,7 @@ func (h *rjsonReadRepoDataHandler) HandleObjectValue(fieldname, data []byte) (p 
 		h.stringBuf, p, err = rjson.ReadStringBytes(data, h.stringBuf[:0])
 		h.res.FullName = string(h.stringBuf)
 	default:
-		p, err = h.buffer.SkipValue(data)
+		p, err = rjson.SkipValue(data, &h.buffer)
 	}
 	if err == nil && h.seenFullName && h.seenForks && h.seenArchived {
 		return p, h.doneErr

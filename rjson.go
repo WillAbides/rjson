@@ -54,13 +54,6 @@ func NextTokenType(data []byte) (TokenType, int, error) {
 	return tokenTypes[data[p]], p + 1, nil
 }
 
-var whitespace = [256]bool{
-	' ':  true,
-	'\r': true,
-	'\t': true,
-	'\n': true,
-}
-
 // ObjectValueHandler is a handler for json objects.
 type ObjectValueHandler interface {
 	HandleObjectValue(fieldname, data []byte) (p int, err error)
@@ -87,7 +80,8 @@ func (fn ValueHandlerFunc) HandleValue(data []byte) (int, error) {
 	return fn(data)
 }
 
-// Buffer is a reusable stack buffer for operations that walk a json document.
+// Buffer is a reusable stack buffer for functions that read nested objects and arrays.
+// Buffer is not thread-safe.
 type Buffer struct {
 	stackBuf []int
 }
@@ -95,56 +89,48 @@ type Buffer struct {
 // HandleObjectValues runs handler.HandleObjectValue on each field in the object at the beginning of data until it
 // encounters an error or reaches the end of the object. p is the position after the last byte it read. When err
 // is nil, p will be the position after the object.
-func (h *Buffer) HandleObjectValues(data []byte, handler ObjectValueHandler) (p int, err error) {
-	p, h.stackBuf, err = handleObjectValues(data, handler, h.stackBuf)
-	return p, err
-}
-
-// HandleObjectValues runs handler.HandleObjectValue on each field in the object at the beginning of data until it
-// encounters an error or reaches the end of the object. p is the position after the last byte it read. When err
-// is nil, p will be the position after the object.
-func HandleObjectValues(data []byte, handler ObjectValueHandler) (p int, err error) {
-	p, _, err = handleObjectValues(data, handler, nil)
-	return p, err
-}
-
-// HandleArrayValues runs handler.HandleValue on each item in the array at the beginning of data until it encounters
-// an error or reaches the end of the array. p is the position after the last byte it read. When err is nil, p will
-// be the position after the object.
-func (h *Buffer) HandleArrayValues(data []byte, handler ValueHandler) (p int, err error) {
-	p, h.stackBuf, err = handleArrayValues(data, handler, h.stackBuf)
+// buffer is optional. Reusing a buffer can reduce memory allocations.
+func HandleObjectValues(data []byte, handler ObjectValueHandler, buffer *Buffer) (p int, err error) {
+	if buffer == nil {
+		p, _, err = handleObjectValues(data, handler, nil)
+		return p, err
+	}
+	p, buffer.stackBuf, err = handleObjectValues(data, handler, buffer.stackBuf)
 	return p, err
 }
 
 // HandleArrayValues runs handler.HandleValue on each item in the array at the beginning of data until it encounters
 // an error or reaches the end of the array. p is the position after the last byte it read. When err is nil, p will
 // be the position after the object.
-func HandleArrayValues(data []byte, handler ValueHandler) (p int, err error) {
-	n, _, err := handleArrayValues(data, handler, nil)
-	return n, err
-}
-
-// SkipValue skips the first json value in data. p is the position after the skipped value.
-func (h *Buffer) SkipValue(data []byte) (p int, err error) {
-	p, h.stackBuf, err = skipValue(data, h.stackBuf)
+// buffer is optional. Reusing a buffer can reduce memory allocations.
+func HandleArrayValues(data []byte, handler ValueHandler, buffer *Buffer) (p int, err error) {
+	if buffer == nil {
+		p, _, err = handleArrayValues(data, handler, nil)
+		return p, err
+	}
+	p, buffer.stackBuf, err = handleArrayValues(data, handler, buffer.stackBuf)
 	return p, err
 }
 
 // SkipValue skips the first json value in data. p is the position after the skipped value.
-func SkipValue(data []byte) (p int, err error) {
-	p, _, err = skipValue(data, nil)
+// buffer is optional. Reusing a buffer can reduce memory allocations.
+func SkipValue(data []byte, buffer *Buffer) (p int, err error) {
+	if buffer == nil {
+		p, _, err = skipValue(data, nil)
+		return p, err
+	}
+	p, buffer.stackBuf, err = skipValue(data, buffer.stackBuf)
 	return p, err
 }
 
 // SkipValueFast is like SkipValue but it speeds things up by skipping validation on objects and arrays.
-func (h *Buffer) SkipValueFast(data []byte) (p int, err error) {
-	p, h.stackBuf, err = skipValueFast(data, h.stackBuf)
-	return p, err
-}
-
-// SkipValueFast is like SkipValue but it speeds things up by skipping validation on objects and arrays.
-func SkipValueFast(data []byte) (p int, err error) {
-	p, _, err = skipValueFast(data, nil)
+// buffer is optional. Reusing a buffer can reduce memory allocations.
+func SkipValueFast(data []byte, buffer *Buffer) (p int, err error) {
+	if buffer == nil {
+		p, _, err = skipValueFast(data, nil)
+		return p, err
+	}
+	p, buffer.stackBuf, err = skipValueFast(data, buffer.stackBuf)
 	return p, err
 }
 
@@ -154,11 +140,17 @@ func UnescapeStringContent(data, dst []byte) (val []byte, p int, err error) {
 	return unescapeStringContent(data, dst)
 }
 
-// Valid returns true if data contains a single valid json value
-func (h *Buffer) Valid(data []byte) bool {
+// Valid returns true if data contains a single valid json value.
+// buffer is optional. Reusing a buffer can reduce memory allocations.
+func Valid(data []byte, buffer *Buffer) bool {
 	var p int
 	var err error
-	p, h.stackBuf, err = skipValue(data, h.stackBuf)
+	if buffer == nil {
+		p, _, err = skipValue(data, nil)
+	} else {
+		p, buffer.stackBuf, err = skipValue(data, buffer.stackBuf)
+	}
+
 	if err != nil {
 		return false
 	}
@@ -168,18 +160,11 @@ func (h *Buffer) Valid(data []byte) bool {
 	return p+countWhitespace(data[p:]) >= len(data)
 }
 
-// Valid returns true if data contains a single valid json value
-func Valid(data []byte) bool {
-	var p int
-	var err error
-	p, _, err = skipValue(data, nil)
-	if err != nil {
-		return false
-	}
-	if p > len(data) {
-		return true
-	}
-	return p+countWhitespace(data[p:]) >= len(data)
+var whitespace = [256]bool{
+	' ':  true,
+	'\r': true,
+	'\t': true,
+	'\n': true,
 }
 
 func countWhitespace(data []byte) int {

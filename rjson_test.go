@@ -112,7 +112,7 @@ func TestValid(t *testing.T) {
 		for _, s := range invalidJSON {
 			assert.Equalf(t,
 				json.Valid([]byte(s)),
-				Valid([]byte(s)),
+				Valid([]byte(s), nil),
 				"failed on input: %s", s,
 			)
 		}
@@ -131,7 +131,7 @@ func TestValid(t *testing.T) {
 			default:
 				want = json.Valid(data)
 			}
-			got := Valid(data)
+			got := Valid(data, nil)
 			require.Equal(t, want, got, string(data))
 		})
 	}
@@ -140,7 +140,7 @@ func TestValid(t *testing.T) {
 		for _, s := range oldCrashers {
 			assert.Equalf(t,
 				json.Valid([]byte(s)),
-				Valid([]byte(s)),
+				Valid([]byte(s), nil),
 				"failed on input: %s", s,
 			)
 		}
@@ -149,41 +149,16 @@ func TestValid(t *testing.T) {
 	for _, s := range jsonTestFiles {
 		t.Run(s, func(t *testing.T) {
 			data := getTestdataJSONGz(t, s)
-			assert.Equal(t, json.Valid(data), Valid(data))
+			assert.Equal(t, json.Valid(data), Valid(data, nil))
 		})
 	}
-}
-
-func TestBuffer_SkipValue(t *testing.T) {
-	buf := new(Buffer)
-	for _, s := range jsonTestFiles {
-		t.Run(s, func(t *testing.T) {
-			data := getTestdataJSONGz(t, s)
-			skippedBytes, err := buf.SkipValue(data)
-			gotValid := err == nil
-			skippedData := bytes.TrimLeft(data[:skippedBytes], " \t\n\r")
-			wantValid := json.Valid(skippedData)
-			require.Equal(t, wantValid, gotValid)
-		})
-	}
-
-	t.Run("invalid json", func(t *testing.T) {
-		for _, s := range invalidJSON {
-			data := []byte(s)
-			skippedBytes, err := buf.SkipValue(data)
-			gotValid := err == nil
-			skippedData := bytes.TrimLeft(data[:skippedBytes], " \t\n\r")
-			wantValid := json.Valid(skippedData)
-			require.Equalf(t, wantValid, gotValid, "not equal for %q", s)
-		}
-	})
 }
 
 func TestSkipValue(t *testing.T) {
 	for _, s := range jsonTestFiles {
 		t.Run(s, func(t *testing.T) {
 			data := getTestdataJSONGz(t, s)
-			skippedBytes, err := SkipValue(data)
+			skippedBytes, err := SkipValue(data, nil)
 			gotValid := err == nil
 			skippedData := bytes.TrimLeft(data[:skippedBytes], " \t\n\r")
 			wantValid := json.Valid(skippedData)
@@ -194,7 +169,7 @@ func TestSkipValue(t *testing.T) {
 	t.Run("invalid json", func(t *testing.T) {
 		for _, s := range invalidJSON {
 			data := []byte(s)
-			skippedBytes, err := SkipValue(data)
+			skippedBytes, err := SkipValue(data, nil)
 			gotValid := err == nil
 			skippedData := bytes.TrimLeft(data[:skippedBytes], " \t\n\r")
 			wantValid := json.Valid(skippedData)
@@ -410,7 +385,7 @@ func countTokens(data []byte) int {
 		data = data[p-1:]
 		switch tp {
 		case NullType, StringType, TrueType, FalseType, NumberType:
-			p, err = buf.SkipValueFast(data)
+			p, err = SkipValueFast(data, buf)
 			if err != nil {
 				return count
 			}
@@ -449,9 +424,9 @@ func (h *simpleValueHandler) HandleValue(data []byte) (int, error) {
 	var pp int
 	switch tknType {
 	case ObjectStartType:
-		pp, err = h.buffer.HandleObjectValues(data, h)
+		pp, err = HandleObjectValues(data, h, &h.buffer)
 	case ArrayStartType:
-		pp, err = h.buffer.HandleArrayValues(data, h)
+		pp, err = HandleArrayValues(data, h, &h.buffer)
 	default:
 		pp, err = h.simpleValueHandler.HandleValue(data)
 	}

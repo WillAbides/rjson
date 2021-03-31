@@ -91,7 +91,7 @@ func removeJSONRuneError(rjsonVal, jsonVal interface{}) (rvRes, jvRes interface{
 
 func fuzzValid(data []byte) (int, error) {
 	want := json.Valid(data)
-	got := Valid(data)
+	got := Valid(data, nil)
 	if want && !got {
 		return 0, fmt.Errorf("expected valid but got invalid")
 	}
@@ -102,7 +102,8 @@ func fuzzValid(data []byte) (int, error) {
 }
 
 func fuzzSkip(data []byte) (int, error) {
-	skippedBytes, err := SkipValue(data)
+	var buf Buffer
+	skippedBytes, err := SkipValue(data, &buf)
 	gotValid := err == nil
 	skippedData := data
 	if skippedBytes < len(skippedData) {

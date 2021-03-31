@@ -12,7 +12,7 @@ var (
 	benchInt    int
 	benchInt64  int64
 	benchBool   bool
-	benchBuf    = &Buffer{}
+	benchBuf    Buffer
 	benchFloat  float64
 	benchFace   interface{}
 )
@@ -28,7 +28,7 @@ func BenchmarkSkip(b *testing.B) {
 				b.SetBytes(size)
 				var err error
 				for i := 0; i < b.N; i++ {
-					benchInt, err = benchBuf.SkipValue(data)
+					benchInt, err = SkipValue(data, &benchBuf)
 				}
 				require.NoError(b, err)
 			})
@@ -38,7 +38,7 @@ func BenchmarkSkip(b *testing.B) {
 				b.SetBytes(size)
 				var err error
 				for i := 0; i < b.N; i++ {
-					benchInt, err = benchBuf.SkipValueFast(data)
+					benchInt, err = SkipValueFast(data, &benchBuf)
 				}
 				require.NoError(b, err)
 			})
@@ -54,7 +54,7 @@ func BenchmarkValid(b *testing.B) {
 			b.ReportAllocs()
 			b.SetBytes(size)
 			for i := 0; i < b.N; i++ {
-				benchBool = benchBuf.Valid(data)
+				benchBool = Valid(data, &benchBuf)
 			}
 			require.True(b, benchBool)
 		})
@@ -111,7 +111,7 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 			res.Login = string(stringBuf)
 			seenLogin = true
 		default:
-			p, err = buffer.SkipValueFast(data)
+			p, err = SkipValueFast(data, buffer)
 		}
 		if err == nil && seenGists && seenRepos && seenLogin {
 			return p, doneErr
@@ -121,7 +121,7 @@ func BenchmarkGetValuesFromObject(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		seenGists, seenGists, seenLogin = false, false, false
-		_, err = buffer.HandleObjectValues(data, handler)
+		_, err = HandleObjectValues(data, handler, buffer)
 	}
 	require.Equal(b, wantRes, res)
 	require.EqualError(b, err, "done")

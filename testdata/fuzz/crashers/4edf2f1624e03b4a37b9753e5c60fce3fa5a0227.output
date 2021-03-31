@@ -1,0 +1,11 @@
+panic: fuzzReadInt64Gen
+we got no error but json got: invalid character '\n' in numeric literal
+
+goroutine 1 [running]:
+_/home/runner/work/rjson/rjson.Fuzz(0x7f7b672d7000, 0x3, 0x3, 0x3)
+	/home/runner/work/rjson/rjson/fuzz.go:18 +0x33f
+go-fuzz-dep.Main(0xc00009cf70, 0x1, 0x1)
+	go-fuzz-dep/main.go:36 +0x1b8
+main.main()
+	_/home/runner/work/rjson/rjson/go.fuzz.main/main.go:15 +0x52
+exit status 2

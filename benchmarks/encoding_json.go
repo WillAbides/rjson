@@ -60,10 +60,21 @@ func (x *jsonBencher) readString(data []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var ok bool
 	s, ok := tkn.(string)
 	if ok {
 		return s, nil
 	}
 	return "", fmt.Errorf("not a string")
+}
+
+func (x *jsonBencher) readBool(data []byte) (bool, error) {
+	tkn, err := json.NewDecoder(bytes.NewReader(data)).Token()
+	if err != nil {
+		return false, err
+	}
+	b, ok := tkn.(bool)
+	if ok {
+		return b, nil
+	}
+	return false, fmt.Errorf("not a bool")
 }

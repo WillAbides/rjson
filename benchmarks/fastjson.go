@@ -93,3 +93,11 @@ func (x *fastjsonBencher) readString(data []byte) (string, error) {
 	}
 	return string(val), err
 }
+
+func (x *fastjsonBencher) readBool(data []byte) (bool, error) {
+	parsed, err := x.parser.ParseBytes(data)
+	if err != nil {
+		return false, err
+	}
+	return parsed.Bool()
+}

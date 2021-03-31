@@ -110,3 +110,8 @@ func (x *rjsonBencher) readString(data []byte) (string, error) {
 	}
 	return string(x.stringBuffer), nil
 }
+
+func (x *rjsonBencher) readBool(data []byte) (bool, error) {
+	val, _, err := rjson.ReadBool(data)
+	return val, err
+}

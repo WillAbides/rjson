@@ -205,3 +205,24 @@ func benchReadString(b *testing.B, data []byte) {
 		})
 	}
 }
+
+func BenchmarkReadBool(b *testing.B) {
+	for _, bb := range benchers {
+		data := []byte(`true`)
+		initBencher(bb)
+		runner, ok := bb.(boolReader)
+		if !ok {
+			continue
+		}
+		var err error
+		b.Run(bb.name(), func(b *testing.B) {
+			b.ReportAllocs()
+			b.SetBytes(int64(len(data)))
+			for i := 0; i < b.N; i++ {
+				boolResult, err = runner.readBool(data)
+			}
+			require.NoError(b, err)
+			_ = boolResult
+		})
+	}
+}

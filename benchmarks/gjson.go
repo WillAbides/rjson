@@ -89,3 +89,15 @@ func (x *gjsonBencher) readString(data []byte) (string, error) {
 	}
 	return val, nil
 }
+
+func (x *gjsonBencher) readBool(data []byte) (bool, error) {
+	if !gjson.ValidBytes(data) {
+		return false, fmt.Errorf("not a bool")
+	}
+	result := gjson.ParseBytes(data)
+	val, ok := result.Value().(bool)
+	if !ok {
+		return false, fmt.Errorf("not a bool")
+	}
+	return val, nil
+}

@@ -116,3 +116,11 @@ func (x *jsoniterBencher) readString(data []byte) (string, error) {
 	}
 	return s, nil
 }
+
+func (x *jsoniterBencher) readBool(data []byte) (bool, error) {
+	x.resetIter(data)
+	if x.iter.WhatIsNext() != jsoniter.BoolValue {
+		return false, fmt.Errorf("not a bool")
+	}
+	return x.iter.ReadBool(), x.iter.Error
+}

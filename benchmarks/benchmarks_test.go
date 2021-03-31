@@ -209,6 +209,39 @@ func TestReadFloat64(t *testing.T) {
 	}
 }
 
+func Test_readBool(t *testing.T) {
+	readTests := []struct {
+		data    string
+		want    bool
+		wantErr bool
+	}{
+		{data: `true`, want: true},
+		{data: ` false `, want: false},
+		{data: `fals`, wantErr: true},
+		{data: `tru`, wantErr: true},
+	}
+	for _, bb := range benchers {
+		initBencher(bb)
+		runner, ok := bb.(boolReader)
+		if !ok {
+			continue
+		}
+		t.Run(bb.name(), func(t *testing.T) {
+			for _, td := range readTests {
+				t.Run(td.data, func(t *testing.T) {
+					got, err := runner.readBool([]byte(td.data))
+					if td.wantErr {
+						assert.Error(t, err)
+						return
+					}
+					assert.NoError(t, err)
+					assert.Equal(t, td.want, got)
+				})
+			}
+		})
+	}
+}
+
 func Test_readString(t *testing.T) {
 	readTests := []struct {
 		data    string

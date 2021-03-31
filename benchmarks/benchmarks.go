@@ -53,3 +53,7 @@ type repoDataReader interface {
 type stringReader interface {
 	readString(data []byte) (string, error)
 }
+
+type boolReader interface {
+	readBool(data []byte) (bool, error)
+}

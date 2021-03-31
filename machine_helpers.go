@@ -95,63 +95,24 @@ func readFloat64Helper(hasDecimal, hasExp bool, digits []byte) (float64, error) 
 	if hasDecimal || hasExp || len(digits) > 18 {
 		return strconv.ParseFloat(unsafeBytesToString(digits), 64)
 	}
+	neg := false
 	if digits[0] == '-' {
-		n, err := readInt64Helper(true, digits[1:])
-		return float64(n), err
+		neg = true
+		digits = digits[1:]
 	}
-	n, err := readUint64Helper(digits)
-	return float64(n), err
+
+	var val uint64
+	for _, digit := range digits {
+		val = (val * 10) + (uint64(digit) - '0')
+	}
+	if neg {
+		return -(float64(val)), nil
+	}
+	return float64(val), nil
 }
 
 func unsafeBytesToString(b []byte) string {
 	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&b)) //nolint:gosec // ok
 	stringHeader := reflect.StringHeader{Data: sliceHeader.Data, Len: sliceHeader.Len}
 	return *(*string)(unsafe.Pointer(&stringHeader)) //nolint:gosec // ok
-}
-
-func readInt64Helper(neg bool, digits []byte) (int64, error) {
-	const cutoff = uint64(1 << uint64(63))
-	un, err := readUint64Helper(digits)
-	if err != nil {
-		return 0, err
-	}
-	if neg {
-		if un > cutoff {
-			return 0, fmt.Errorf(`value out of int64 range`)
-		}
-		return -int64(un), nil
-	}
-	if un >= cutoff {
-		return 0, fmt.Errorf(`value out of int64 range`)
-	}
-	return int64(un), nil
-}
-
-func readUint64Helper(data []byte) (uint64, error) {
-	val := uint64(0)
-	const cutoff = (1<<64-1)/10 + 1
-	const zero = uint64('0')
-	ld := len(data)
-	if ld > 19 {
-		data = data[:19]
-	}
-	for _, digit := range data {
-		v := uint64(digit) - zero
-		val = (val * 10) + v
-	}
-	if ld > 19 {
-		for _, digit := range data[19:ld] {
-			v := uint64(digit) - zero
-			if val > cutoff {
-				return 0, fmt.Errorf(`value out of uint64 range`)
-			}
-			newVal := val * 10
-			newVal += v
-			if newVal < val {
-				return 0, fmt.Errorf(`value out of uint64 range`)
-			}
-			val = newVal
-		}
-	}
-	return val, nil
 }

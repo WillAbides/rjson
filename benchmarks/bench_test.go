@@ -38,6 +38,22 @@ func BenchmarkReadFloat64_smallInt(b *testing.B) {
 	runBenchFloat64(b, []byte(`42`))
 }
 
+/*
+BenchmarkReadFloat64_negExp
+BenchmarkReadFloat64_negExp/encoding_json
+BenchmarkReadFloat64_negExp/encoding_json-8         	 1368542	       865.4 ns/op	  10.40 MB/s	    2488 B/op	       7 allocs/op
+BenchmarkReadFloat64_negExp/rjson
+BenchmarkReadFloat64_negExp/rjson-8                 	19272309	        62.29 ns/op	 144.49 MB/s	       0 B/op	       0 allocs/op
+BenchmarkReadFloat64_negExp/gjson
+BenchmarkReadFloat64_negExp/gjson-8                 	13825930	        84.34 ns/op	 106.71 MB/s	      16 B/op	       1 allocs/op
+BenchmarkReadFloat64_negExp/jsoniter
+BenchmarkReadFloat64_negExp/jsoniter-8              	 9509692	       125.8 ns/op	  71.55 MB/s	      16 B/op	       1 allocs/op
+BenchmarkReadFloat64_negExp/jsonparser
+BenchmarkReadFloat64_negExp/jsonparser-8            	17330732	        69.67 ns/op	 129.18 MB/s	       0 B/op	       0 allocs/op
+BenchmarkReadFloat64_negExp/fastjson
+BenchmarkReadFloat64_negExp/fastjson-8              	26906496	        43.75 ns/op	 205.71 MB/s	       0 B/op	       0 allocs/op
+*/
+
 func BenchmarkReadFloat64_negExp(b *testing.B) {
 	runBenchFloat64(b, []byte(`-42.123e5`))
 }

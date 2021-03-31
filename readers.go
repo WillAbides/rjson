@@ -84,10 +84,10 @@ func ReadInt64(data []byte) (val int64, p int, err error) {
 	if p == len(data) {
 		return 0, p, errInvalidInt
 	}
-	neg := data[0] == '-'
+	neg := data[p] == '-'
 	if neg {
 		p++
-		if p == len(data) {
+		if p == len(data) || whitespace[data[p]] {
 			return 0, p, errInvalidInt
 		}
 	}

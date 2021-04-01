@@ -5,6 +5,8 @@ import (
 	"math"
 	"strconv"
 	"sync"
+
+	"github.com/willabides/rjson/internal/fp"
 )
 
 //go:generate script/generate-ragel-file read_machines.rl
@@ -157,7 +159,9 @@ func ReadFloat64(data []byte) (val float64, p int, err error) {
 	if p == len(data) {
 		return 0, p, errInvalidNumber
 	}
-	return readFloat64(data[p:])
+	var pp int
+	val, pp, err = fp.ParseJSONFloatPrefix(data[p:])
+	return val, p + pp, err
 }
 
 // ReadStringBytes reads a string value at the beginning of data and appends it to buf. p is the first position in

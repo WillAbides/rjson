@@ -275,8 +275,8 @@ func (h *ValueReader) returnValueReader(x *ValueReader) {
 	h.pool.Put(x)
 }
 
-// HandleValue implements ValueHandler.HandleValue
-func (h *ValueReader) HandleValue(data []byte) (p int, err error) {
+// HandleArrayValue implements ArrayValueHandler.HandleArrayValue
+func (h *ValueReader) HandleArrayValue(data []byte) (p int, err error) {
 	var tknType TokenType
 	tknType, p, err = NextTokenType(data)
 	if err != nil {

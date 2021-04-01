@@ -53,12 +53,12 @@ func testReadChecker(t *testing.T, checker func(t *testing.T, data []byte) int, 
 func runChecker(t *testing.T, data []byte, checker func(t *testing.T, data []byte) int) {
 	t.Helper()
 	handler := &simpleValueHandler{
-		simpleValueHandler: ValueHandlerFunc(func(data []byte) (int, error) {
+		simpleValueHandler: ArrayValueHandlerFunc(func(data []byte) (int, error) {
 			t.Helper()
 			p := checker(t, data)
 			return p, nil
 		}),
 	}
-	_, err := handler.HandleValue(data)
+	_, err := handler.HandleArrayValue(data)
 	assert.NoError(t, err)
 }

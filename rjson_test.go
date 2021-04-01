@@ -407,14 +407,14 @@ func countTokens(data []byte) int {
 
 type simpleValueHandler struct {
 	buffer             Buffer
-	simpleValueHandler ValueHandler
+	simpleValueHandler ArrayValueHandler
 }
 
 func (h *simpleValueHandler) HandleObjectValue(fieldname, data []byte) (int, error) {
-	return h.HandleValue(data)
+	return h.HandleArrayValue(data)
 }
 
-func (h *simpleValueHandler) HandleValue(data []byte) (int, error) {
+func (h *simpleValueHandler) HandleArrayValue(data []byte) (int, error) {
 	tknType, p, err := NextTokenType(data)
 	if err != nil {
 		return p, err
@@ -428,7 +428,7 @@ func (h *simpleValueHandler) HandleValue(data []byte) (int, error) {
 	case ArrayStartType:
 		pp, err = HandleArrayValues(data, h, &h.buffer)
 	default:
-		pp, err = h.simpleValueHandler.HandleValue(data)
+		pp, err = h.simpleValueHandler.HandleArrayValue(data)
 	}
 	return pp, err
 }

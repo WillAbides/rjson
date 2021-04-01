@@ -62,21 +62,21 @@ type ObjectValueHandler interface {
 // ObjectValueHandlerFunc is a function that implements ObjectValueHandler
 type ObjectValueHandlerFunc func(fieldname, data []byte) (p int, err error)
 
-// HandleObjectValue meets ObjectValueHandler.HandleObjectValue
+// HandleObjectValue implements ObjectValueHandler.HandleObjectValue
 func (fn ObjectValueHandlerFunc) HandleObjectValue(fieldname, data []byte) (int, error) {
 	return fn(fieldname, data)
 }
 
-// ValueHandler is a handler for json values
-type ValueHandler interface {
-	HandleValue(data []byte) (p int, err error)
+// ArrayValueHandler is a handler for values in a json array
+type ArrayValueHandler interface {
+	HandleArrayValue(data []byte) (p int, err error)
 }
 
-// ValueHandlerFunc is a function that implements ValueHandler
-type ValueHandlerFunc func(data []byte) (p int, err error)
+// ArrayValueHandlerFunc is a function that implements ArrayValueHandler
+type ArrayValueHandlerFunc func(data []byte) (p int, err error)
 
-// HandleValue meets ValueHandler.HandleValue
-func (fn ValueHandlerFunc) HandleValue(data []byte) (int, error) {
+// HandleArrayValue implements ArrayValueHandler.HandleArrayValue
+func (fn ArrayValueHandlerFunc) HandleArrayValue(data []byte) (int, error) {
 	return fn(data)
 }
 
@@ -99,11 +99,11 @@ func HandleObjectValues(data []byte, handler ObjectValueHandler, buffer *Buffer)
 	return p, err
 }
 
-// HandleArrayValues runs handler.HandleValue on each item in the array at the beginning of data until it encounters
+// HandleArrayValues runs handler.HandleArrayValue on each item in the array at the beginning of data until it encounters
 // an error or reaches the end of the array. p is the position after the last byte it read. When err is nil, p will
 // be the position after the object.
 // buffer is optional. Reusing a buffer can reduce memory allocations.
-func HandleArrayValues(data []byte, handler ValueHandler, buffer *Buffer) (p int, err error) {
+func HandleArrayValues(data []byte, handler ArrayValueHandler, buffer *Buffer) (p int, err error) {
 	if buffer == nil {
 		p, _, err = handleArrayValues(data, handler, nil)
 		return p, err

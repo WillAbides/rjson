@@ -2,7 +2,7 @@
 
 package rjson
 
-func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []int, error) {
+func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int, []int, error) {
 	var top, cs, p, pp int
 	var err error
 	pe := len(data)
@@ -1247,7 +1247,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr5:
 
-		pp, err = handler.HandleValue(data[p:])
+		pp, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p + pp, stack, err
 		}
@@ -1398,7 +1398,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr21:
 
-		pp, err = handler.HandleValue(data[p:])
+		pp, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p + pp, stack, err
 		}
@@ -1592,7 +1592,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto st12
 	tr22:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -1612,7 +1612,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr23:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -1782,7 +1782,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr24:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -1850,7 +1850,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr25:
 
-		pp, err = handler.HandleValue(data[p:])
+		pp, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p + pp, stack, err
 		}
@@ -1890,7 +1890,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr26:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -1953,7 +1953,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr27:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2007,7 +2007,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr28:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2061,7 +2061,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr29:
 
-		pp, err = handler.HandleValue(data[p:])
+		pp, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p + pp, stack, err
 		}
@@ -2229,7 +2229,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto st6
 	tr6:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2249,7 +2249,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr7:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2419,7 +2419,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr8:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2487,7 +2487,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr9:
 
-		pp, err = handler.HandleValue(data[p:])
+		pp, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p + pp, stack, err
 		}
@@ -2527,7 +2527,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr11:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2590,7 +2590,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr12:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2644,7 +2644,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr13:
 
-		_, err = handler.HandleValue(data[p:])
+		_, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p, stack, err
 		}
@@ -2698,7 +2698,7 @@ func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []i
 		goto tr0
 	tr14:
 
-		pp, err = handler.HandleValue(data[p:])
+		pp, err = handler.HandleArrayValue(data[p:])
 		if err != nil {
 			return p + pp, stack, err
 		}

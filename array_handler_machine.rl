@@ -1,6 +1,6 @@
 package rjson
 
-func handleArrayValues(data []byte, handler ValueHandler, stack []int) (int, []int, error) {
+func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int, []int, error) {
   var top, cs, p, pp int
   var err error
   pe := len(data)
@@ -18,7 +18,7 @@ prepush {
 }
 
 action try_handler {
-  pp, err = handler.HandleValue(data[p:])
+  pp, err = handler.HandleArrayValue(data[p:])
   if err != nil {
     return p + pp, stack, err
   }
@@ -28,7 +28,7 @@ action try_handler {
 }
 
 action try_handler_simple {
-  _, err = handler.HandleValue(data[p:])
+  _, err = handler.HandleArrayValue(data[p:])
   if err != nil {
     return p, stack, err
   }

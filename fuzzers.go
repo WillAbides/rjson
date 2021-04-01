@@ -53,18 +53,30 @@ func fuzzSkip(data []byte) (int, error) {
 
 func fuzzHandleArrayValues(data []byte) (int, error) {
 	var buf Buffer
-	for _, handlerFunc := range arrayHandlers {
+
+	validArray := false
+	valid := Valid(data, &buf)
+	if valid {
+		tkn, _, err := NextTokenType(data)
+		validArray = err == nil && tkn == ArrayStartType
+	}
+
+	for name, handlerFunc := range arrayHandlers {
+		wantNoErr := validArray && (name == "alwaysZero" || name == "skipValue")
 		_, err := HandleArrayValues(data, handlerFunc, &buf)
-		_ = err //nolint:errcheck // just checking for panic
+		if wantNoErr && err != nil {
+			return 0, err
+		}
 
 		for i := 2; i <= 4; i++ {
-
 			h := nCallArrayValueHandler{
 				handler: handlerFunc,
 				n:       i,
 			}
-			_, err := HandleArrayValues(data, &h, nil)
-			_ = err //nolint:errcheck // just checking for panic
+			_, err = HandleArrayValues(data, &h, nil)
+			if wantNoErr && err != nil {
+				return 0, err
+			}
 		}
 	}
 	return 0, nil

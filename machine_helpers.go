@@ -2,12 +2,9 @@ package rjson
 
 import (
 	"fmt"
-	"reflect"
-	"strconv"
 	"unicode"
 	"unicode/utf16"
 	"unicode/utf8"
-	"unsafe"
 )
 
 func errUnexpectedByteInString(b byte) error {
@@ -89,30 +86,4 @@ func getu4(s []byte) rune {
 		r = r*16 + rune(c)
 	}
 	return r
-}
-
-func readFloat64Helper(hasDecimal, hasExp bool, digits []byte) (float64, error) {
-	if hasDecimal || hasExp || len(digits) > 18 {
-		return strconv.ParseFloat(unsafeBytesToString(digits), 64)
-	}
-	neg := false
-	if digits[0] == '-' {
-		neg = true
-		digits = digits[1:]
-	}
-
-	var val uint64
-	for _, digit := range digits {
-		val = (val * 10) + (uint64(digit) - '0')
-	}
-	if neg {
-		return -(float64(val)), nil
-	}
-	return float64(val), nil
-}
-
-func unsafeBytesToString(b []byte) string {
-	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&b)) //nolint:gosec // ok
-	stringHeader := reflect.StringHeader{Data: sliceHeader.Data, Len: sliceHeader.Len}
-	return *(*string)(unsafe.Pointer(&stringHeader)) //nolint:gosec // ok
 }

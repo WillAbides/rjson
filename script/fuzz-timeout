@@ -16,8 +16,10 @@ PATH="$(pwd)/bin:$PATH"
 
 mkdir -p tmp
 
-GO111MODULE=off go get github.com/dvyukov/go-fuzz/go-fuzz-dep
-GO111MODULE=off go-fuzz-build -o tmp/fuzz-rjson.zip
+go get github.com/dvyukov/go-fuzz@6a8e9d1f241
+trap "go mod tidy" EXIT
+
+go-fuzz-build -o tmp/fuzz-rjson.zip
 
 go-fuzz -dup -bin tmp/fuzz-rjson.zip -workdir testdata/fuzz &
 

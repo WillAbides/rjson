@@ -6,8 +6,10 @@ CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 make -s bin/go-fuzz bin/go-fuzz-build bin/jq
 PATH="$(pwd)/bin:$PATH"
 
+mkdir -p tmp
+
 go get github.com/dvyukov/go-fuzz@6a8e9d1f241
 trap "go mod tidy" EXIT
 go-fuzz-build -o tmp/fuzz-rjson.zip
-mkdir -p tmp
+
 go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 1 -workdir testdata/fuzz

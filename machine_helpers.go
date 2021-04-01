@@ -66,7 +66,6 @@ func unescapeUnicodeChar(s, data []byte) (result []byte, bytesHandled int, ok bo
 //
 // getu4 decodes \uXXXX from the beginning of s, returning the hex value,
 // or it returns -1.
-//nolint:deadcode,unused,gocritic //copied code
 func getu4(s []byte) rune {
 	if len(s) < 6 || s[0] != '\\' || s[1] != 'u' {
 		return -1
@@ -74,11 +73,11 @@ func getu4(s []byte) rune {
 	var r rune
 	for _, c := range s[2:6] {
 		switch {
-		case '0' <= c && c <= '9':
-			c = c - '0'
-		case 'a' <= c && c <= 'f':
+		case c >= '0' && c <= '9':
+			c -= '0'
+		case c >= 'a' && c <= 'f':
 			c = c - 'a' + 10
-		case 'A' <= c && c <= 'F':
+		case c >= 'A' && c <= 'F':
 			c = c - 'A' + 10
 		default:
 			return -1

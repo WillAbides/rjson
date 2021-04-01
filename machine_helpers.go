@@ -25,6 +25,7 @@ var (
 	errNoValidToken  = fmt.Errorf("no valid json token found")
 	errNotNull       = fmt.Errorf("not null")
 	errNotBool       = fmt.Errorf("not a boolean value")
+	errPOutOfRange   = fmt.Errorf("p out of range")
 )
 
 func growBytesSliceCapacity(slice []byte, size int) []byte {

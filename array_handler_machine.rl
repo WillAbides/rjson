@@ -22,7 +22,15 @@ action try_handler {
   if err != nil {
     return p + pp, stack, err
   }
+  if pp < 0 {
+    err = errPOutOfRange
+    fbreak;
+  }
   if pp != 0 {
+    if p + pp - 1 >= pe {
+      err = errPOutOfRange
+      fbreak;
+    }
     fexec p + pp - 1;
   }
 }

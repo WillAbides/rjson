@@ -8,61 +8,22 @@ import (
 )
 
 var generatedFuzzers = []fuzzer{
-	{
-		name: "fuzzReadUint64Gen", 
-		fn:   fuzzReadUint64Gen,
-	},
-	{
-		name: "fuzzReadUint32Gen", 
-		fn:   fuzzReadUint32Gen,
-	},
-	{
-		name: "fuzzReadInt64Gen", 
-		fn:   fuzzReadInt64Gen,
-	},
-	{
-		name: "fuzzReadInt32Gen", 
-		fn:   fuzzReadInt32Gen,
-	},
-	{
-		name: "fuzzReadIntGen", 
-		fn:   fuzzReadIntGen,
-	},
-	{
-		name: "fuzzReadUintGen", 
-		fn:   fuzzReadUintGen,
-	},
-	{
-		name: "fuzzReadFloat64Gen", 
-		fn:   fuzzReadFloat64Gen,
-	},
-	{
-		name: "fuzzReadStringBytesGen", 
-		fn:   fuzzReadStringBytesGen,
-	},
-	{
-		name: "fuzzReadStringGen", 
-		fn:   fuzzReadStringGen,
-	},
-	{
-		name: "fuzzReadBoolGen", 
-		fn:   fuzzReadBoolGen,
-	},
-	{
-		name: "fuzzReadValueGen", 
-		fn:   fuzzReadValueGen,
-	},
-	{
-		name: "fuzzReadObjectGen", 
-		fn:   fuzzReadObjectGen,
-	},
-	{
-		name: "fuzzReadArrayGen", 
-		fn:   fuzzReadArrayGen,
-	},
+	{name: "fuzzReadUint64Gen", fn: fuzzReadUint64Gen},
+	{name: "fuzzReadUint32Gen", fn: fuzzReadUint32Gen},
+	{name: "fuzzReadInt64Gen", fn: fuzzReadInt64Gen},
+	{name: "fuzzReadInt32Gen", fn: fuzzReadInt32Gen},
+	{name: "fuzzReadIntGen", fn: fuzzReadIntGen},
+	{name: "fuzzReadUintGen", fn: fuzzReadUintGen},
+	{name: "fuzzReadFloat64Gen", fn: fuzzReadFloat64Gen},
+	{name: "fuzzReadStringBytesGen", fn: fuzzReadStringBytesGen},
+	{name: "fuzzReadStringGen", fn: fuzzReadStringGen},
+	{name: "fuzzReadBoolGen", fn: fuzzReadBoolGen},
+	{name: "fuzzReadValueGen", fn: fuzzReadValueGen},
+	{name: "fuzzReadObjectGen", fn: fuzzReadObjectGen},
+	{name: "fuzzReadArrayGen", fn: fuzzReadArrayGen},
 }
 
-func fuzzReadUint64Gen (data []byte) (int, error) {
+func fuzzReadUint64Gen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -75,11 +36,11 @@ func fuzzReadUint64Gen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadUint32Gen (data []byte) (int, error) {
+func fuzzReadUint32Gen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -92,11 +53,11 @@ func fuzzReadUint32Gen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadInt64Gen (data []byte) (int, error) {
+func fuzzReadInt64Gen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -109,11 +70,11 @@ func fuzzReadInt64Gen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadInt32Gen (data []byte) (int, error) {
+func fuzzReadInt32Gen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -126,11 +87,11 @@ func fuzzReadInt32Gen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadIntGen (data []byte) (int, error) {
+func fuzzReadIntGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -143,11 +104,11 @@ func fuzzReadIntGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadUintGen (data []byte) (int, error) {
+func fuzzReadUintGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -160,11 +121,11 @@ func fuzzReadUintGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadFloat64Gen (data []byte) (int, error) {
+func fuzzReadFloat64Gen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -177,11 +138,11 @@ func fuzzReadFloat64Gen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadStringBytesGen (data []byte) (int, error) {
+func fuzzReadStringBytesGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -194,11 +155,11 @@ func fuzzReadStringBytesGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(string(got), want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadStringGen (data []byte) (int, error) {
+func fuzzReadStringGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -211,11 +172,11 @@ func fuzzReadStringGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadBoolGen (data []byte) (int, error) {
+func fuzzReadBoolGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -228,11 +189,11 @@ func fuzzReadBoolGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadValueGen (data []byte) (int, error) {
+func fuzzReadValueGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -245,11 +206,11 @@ func fuzzReadValueGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadObjectGen (data []byte) (int, error) {
+func fuzzReadObjectGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -262,11 +223,11 @@ func fuzzReadObjectGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 
-func fuzzReadArrayGen (data []byte) (int, error) {
+func fuzzReadArrayGen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -279,6 +240,6 @@ func fuzzReadArrayGen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }

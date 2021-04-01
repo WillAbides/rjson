@@ -1,24 +1,44 @@
 package rjson
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 	"unicode/utf8"
 )
 
-type fuzzer struct {
-	name string
-	fn   func([]byte) (int, error)
+var arrayHandlers = map[string]ArrayValueHandlerFunc{
+	"alwaysZero":  func(data []byte) (p int, err error) { return 0, nil },
+	"skipValue":   func(data []byte) (p int, err error) { return SkipValue(data, nil) },
+	"alwaysError": func(data []byte) (p int, err error) { return 0, fmt.Errorf("error") },
+	"skipHalf": func(data []byte) (p int, err error) {
+		value, err := SkipValue(data, nil)
+		return value / 2, err
+	},
+	"skipDouble": func(data []byte) (p int, err error) {
+		value, err := SkipValue(data, nil)
+		return value * 2, err
+	},
+	"skipAll":       func(data []byte) (p int, err error) { return len(data), nil },
+	"skipAllTimes2": func(data []byte) (p int, err error) { return len(data) * 2, nil },
+	"skipAllPlus1":  func(data []byte) (p int, err error) { return len(data) + 1, nil },
+	"neg1":          func(data []byte) (p int, err error) { return -1, nil },
+	"neg100_000":    func(data []byte) (p int, err error) { return -100_000, nil },
 }
 
-var fuzzers = append(generatedFuzzers,
-	fuzzer{name: "fuzzSkip", fn: fuzzSkip},
-	fuzzer{name: "fuzzNextToken", fn: fuzzNextToken},
-	fuzzer{name: "fuzzValid", fn: fuzzValid},
-)
+type nCallArrayValueHandler struct {
+	handler   ArrayValueHandler
+	callCount int
+	n         int
+}
+
+func (h *nCallArrayValueHandler) HandleArrayValue(data []byte) (p int, err error) {
+	h.callCount++
+	if h.callCount == h.n {
+		return h.handler.HandleArrayValue(data)
+	}
+	return 0, nil
+}
 
 // removeJSONRuneError because encoding/json incorrectly unmarshals some characters to RuneError
 // when we see that rjson differs from encoding/json change both values to ""  before comparing
@@ -87,82 +107,6 @@ func removeJSONRuneError(rjsonVal, jsonVal interface{}) (rvRes, jvRes interface{
 	}
 
 	return rjsonVal, jsonVal
-}
-
-func fuzzValid(data []byte) (int, error) {
-	want := json.Valid(data)
-	got := Valid(data, nil)
-	if want && !got {
-		return 0, fmt.Errorf("expected valid but got invalid")
-	}
-	if got && !want {
-		return 0, fmt.Errorf("expected invalid but got valid")
-	}
-	return 0, nil
-}
-
-func fuzzSkip(data []byte) (int, error) {
-	var buf Buffer
-	skippedBytes, err := SkipValue(data, &buf)
-	gotValid := err == nil
-	skippedData := data
-	if skippedBytes < len(skippedData) {
-		skippedData = skippedData[:skippedBytes]
-	}
-	wantValid := json.Valid(skippedData)
-	if wantValid && !gotValid {
-		return 0, fmt.Errorf("failed to skip valid json. error: %v", err)
-	}
-	if !wantValid && gotValid {
-		return 0, fmt.Errorf("failed to detect invalid json")
-	}
-	return 0, nil
-}
-
-func checkFuzzErrors(wantErr, gotErr error) error {
-	if wantErr != nil {
-		if gotErr == nil {
-			return fmt.Errorf("we got no error but json got: %v", wantErr)
-		}
-		return nil
-	}
-	if gotErr != nil {
-		return fmt.Errorf("json got no error but we did: %v", gotErr)
-	}
-	return nil
-}
-
-func fuzzNextToken(data []byte) (int, error) {
-	got, _, gotErr := NextToken(data)
-
-	want, wantErr := json.NewDecoder(bytes.NewReader(data)).Token()
-	if wantErr != nil {
-		return 0, nil
-	}
-	if gotErr != nil {
-		return 0, fmt.Errorf("json got no error but we did: %v", gotErr)
-	}
-	var wantType TokenType
-	switch w := want.(type) {
-	case json.Delim:
-		wantType = tokenTypes[w]
-	case bool:
-		wantType = TrueType
-		if !w {
-			wantType = FalseType
-		}
-	case float64:
-		wantType = NumberType
-	case string:
-		wantType = StringType
-	case nil:
-		wantType = NullType
-	}
-	gotType := tokenTypes[got]
-	if wantType != gotType {
-		return 0, fmt.Errorf("got wrong token type. wanted %s but got %s", wantType, gotType)
-	}
-	return 0, nil
 }
 
 type multiPathErr []*pathErr

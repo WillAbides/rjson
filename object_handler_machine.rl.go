@@ -1496,8 +1496,25 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 14
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 14
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		goto st14
@@ -1754,8 +1771,25 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 26
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 26
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		goto st26
@@ -2206,8 +2240,25 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 47
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 47
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{
@@ -2417,8 +2468,25 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 61
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 61
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{
@@ -2971,8 +3039,25 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 87
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 87
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{
@@ -3182,8 +3267,25 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 101
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 101
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{

@@ -17,8 +17,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//go:generate go run ./internal/fuzzgen
-
 // These are the files in testdata.
 var jsonTestFiles = []string{
 	// from querying github's REST api
@@ -27,8 +25,6 @@ var jsonTestFiles = []string{
 
 	// from json checker test suite
 	"jsonchecker_pass1.json",
-
-	// The files below all come directly from github.com/pkg/json, but I'm keeping the comments about where they are originally from.
 
 	// from https://github.com/miloyip/nativejson-benchmark
 	"canada.json",
@@ -43,23 +39,30 @@ var jsonTestFiles = []string{
 	"sample.json",
 }
 
-func Test_fuzzers(t *testing.T) {
+func corpusFiles(t *testing.T) []string {
+	t.Helper()
+	var result []string
 	corpusDir := filepath.FromSlash(`testdata/fuzz/corpus`)
-	if !fileExists(t, filepath.FromSlash(corpusDir)) {
-		t.Skip()
+	dir, err := ioutil.ReadDir(corpusDir)
+	require.NoError(t, err)
+	for _, info := range dir {
+		result = append(result, filepath.Join(corpusDir, info.Name()))
 	}
+	return result
+}
 
+func Test_fuzzers(t *testing.T) {
 	for _, td := range fuzzers {
 		td := td
 		t.Run(td.name, func(t *testing.T) {
 			t.Parallel()
-			dir, err := ioutil.ReadDir(corpusDir)
-			require.NoError(t, err)
-			for _, info := range dir {
-				data, err := ioutil.ReadFile(filepath.Join(corpusDir, info.Name()))
+
+			for _, filename := range corpusFiles(t) {
+				data, err := ioutil.ReadFile(filename)
 				require.NoError(t, err)
 				_, err = td.fn(data)
-				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filepath.Join(corpusDir, info.Name()), string(data))
+				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filename, string(data))
+
 			}
 
 			for _, name := range jsontestsuiteFiles(t) {
@@ -67,7 +70,6 @@ func Test_fuzzers(t *testing.T) {
 				require.NoError(t, err)
 				_, err = td.fn(data)
 				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", name, string(data))
-
 			}
 		})
 	}

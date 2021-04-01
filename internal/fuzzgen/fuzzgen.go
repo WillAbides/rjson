@@ -23,7 +23,7 @@ func generateFuzzers() error {
 	if err != nil {
 		return err
 	}
-	out, err := os.Create("fuzz_gen.go")
+	out, err := os.Create("fuzzers_gen.go")
 	if err != nil {
 		return err
 	}
@@ -44,10 +44,7 @@ var generatedFuzzers = []fuzzer{`)
 	}
 
 	for _, rdr := range rdrs {
-		_, err = fmt.Fprintf(out, `	{
-		name: "fuzz%sGen", 
-		fn:   fuzz%sGen,
-	},
+		_, err = fmt.Fprintf(out, `	{name: "fuzz%sGen", fn: fuzz%sGen},
 `, rdr.FuncName, rdr.FuncName)
 		if err != nil {
 			return err
@@ -67,7 +64,7 @@ var generatedFuzzers = []fuzzer{`)
 }
 
 var tmpl = template.Must(template.New("").Parse(`
-func fuzz{{ .FuncName }}Gen (data []byte) (int, error) {
+func fuzz{{ .FuncName }}Gen(data []byte) (int, error) {
 	nullP, nullErr := ReadNull(data)
 	if nullErr == nil {
 		return nullP, nullErr
@@ -80,7 +77,7 @@ func fuzz{{ .FuncName }}Gen (data []byte) (int, error) {
 		return 0, err
 	}
 	gotVal, wantVal := removeJSONRuneError({{ .GotValCheck }}, want)
-	err = fuzzCompare(wantVal, gotVal )
+	err = fuzzCompare(wantVal, gotVal)
 	return 0, err
 }
 `))

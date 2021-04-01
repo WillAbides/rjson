@@ -1251,8 +1251,25 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 5
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 5
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		goto st5
@@ -1402,8 +1419,25 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 11
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 11
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		goto st11
@@ -1854,8 +1888,25 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 32
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 32
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{
@@ -2065,8 +2116,25 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 46
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 46
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{
@@ -2491,8 +2559,25 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 65
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 65
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{
@@ -2702,8 +2787,25 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		if err != nil {
 			return p + pp, stack, err
 		}
+		if pp < 0 {
+			err = errPOutOfRange
+			{
+				p++
+				cs = 79
+				goto _out
+			}
+		}
 		if pp != 0 {
+			if p+pp-1 >= pe {
+				err = errPOutOfRange
+				{
+					p++
+					cs = 79
+					goto _out
+				}
+			}
 			p = (p + pp - 1) - 1
+
 		}
 
 		{

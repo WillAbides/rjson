@@ -2844,7 +2844,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto st0
 	tr193:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 185
+				goto _out
+			}
+		}
+
 		goto st185
 	st185:
 		if p++; p == pe {
@@ -2853,7 +2862,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 	st_case_185:
 		goto st0
 	tr194:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 186
+				goto _out
+			}
+		}
+
 		goto st186
 	st186:
 		if p++; p == pe {
@@ -3499,7 +3517,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr30
 	tr66:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 43
+				goto _out
+			}
+		}
+
 		goto st43
 	st43:
 		if p++; p == pe {
@@ -3521,7 +3548,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr30
 	tr67:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 44
+				goto _out
+			}
+		}
+
 		goto st44
 	st44:
 		if p++; p == pe {
@@ -3993,7 +4029,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr30
 	tr85:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 71
+				goto _out
+			}
+		}
+
 		goto st71
 	st71:
 		if p++; p == pe {
@@ -4015,7 +4060,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr30
 	tr86:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 72
+				goto _out
+			}
+		}
+
 		goto st72
 	st72:
 		if p++; p == pe {
@@ -4961,7 +5015,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr98
 	tr148:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 122
+				goto _out
+			}
+		}
+
 		goto st122
 	st122:
 		if p++; p == pe {
@@ -4983,7 +5046,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr98
 	tr149:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 123
+				goto _out
+			}
+		}
+
 		goto st123
 	st123:
 		if p++; p == pe {
@@ -5583,7 +5655,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr98
 	tr173:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 157
+				goto _out
+			}
+		}
+
 		goto st157
 	st157:
 		if p++; p == pe {
@@ -5605,7 +5686,16 @@ func skipValue(data []byte, stack []int) (int, []int, error) {
 		}
 		goto tr98
 	tr174:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 158
+				goto _out
+			}
+		}
+
 		goto st158
 	st158:
 		if p++; p == pe {

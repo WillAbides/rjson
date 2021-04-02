@@ -3810,7 +3810,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr118
 	tr154:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 129
+				goto _out
+			}
+		}
+
 		goto st129
 	st129:
 		if p++; p == pe {
@@ -3832,7 +3841,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr118
 	tr155:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 130
+				goto _out
+			}
+		}
+
 		goto st130
 	st130:
 		if p++; p == pe {
@@ -4288,7 +4306,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr118
 	tr173:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 157
+				goto _out
+			}
+		}
+
 		goto st157
 	st157:
 		if p++; p == pe {
@@ -4310,7 +4337,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr118
 	tr174:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 158
+				goto _out
+			}
+		}
+
 		goto st158
 	st158:
 		if p++; p == pe {
@@ -5240,7 +5276,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr186
 	tr236:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 208
+				goto _out
+			}
+		}
+
 		goto st208
 	st208:
 		if p++; p == pe {
@@ -5262,7 +5307,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr186
 	tr237:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 209
+				goto _out
+			}
+		}
+
 		goto st209
 	st209:
 		if p++; p == pe {
@@ -5846,7 +5900,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr186
 	tr261:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 243
+				goto _out
+			}
+		}
+
 		goto st243
 	st243:
 		if p++; p == pe {
@@ -5868,7 +5931,16 @@ func handleObjectValues(data []byte, handler ObjectValueHandler, stack []int) (i
 		}
 		goto tr186
 	tr262:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 244
+				goto _out
+			}
+		}
+
 		goto st244
 	st244:
 		if p++; p == pe {

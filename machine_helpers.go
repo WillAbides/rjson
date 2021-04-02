@@ -88,141 +88,77 @@ func getu4(data []byte) rune {
 	return r
 }
 
-// skipFloatExp skips the part of a float after the e
-func skipFloatExp(data []byte) (p int, err error) {
-	pe := len(data)
+func skipFloatExp(data []byte, p, pe int) (int, error) {
 	if p == pe {
-		return p, errInvalidNumber
+		return p - 1, errInvalidNumber
 	}
-	sawDigit := false
-	switch data[p] {
-	case '+', '-':
-	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		sawDigit = true
-	default:
-		return p, errInvalidNumber
+	startP := p
+	signed := false
+	for ; p < pe; p++ {
+		if digits[data[p]] {
+			continue
+		}
+		if p == startP && signBytes[data[p]] {
+			signed = true
+			continue
+		}
+		break
 	}
-	p++
+	var err error
+	switch p - startP {
+	case 0:
+		err = errInvalidNumber
+	case 1:
+		if signed {
+			err = errInvalidNumber
+		}
+	}
+	return p - 1, err
+}
+
+func skipFloatDec(data []byte, p, pe int) (int, error) {
 	if p == pe {
-		if sawDigit {
-			return p, nil
-		}
-		return p, errInvalidNumber
+		return p - 1, errInvalidNumber
 	}
-	switch data[p] {
-	case '.', 'e', 'E':
-		return p, errInvalidNumber
-	case '0':
-		if !sawDigit {
-			return p, errInvalidNumber
-		}
-		sawDigit = true
-	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		sawDigit = true
-	default:
-		if sawDigit {
-			return p, nil
-		}
-		return p, errInvalidNumber
+	if !digits[data[p]] {
+		return p - 1, errInvalidNumber
 	}
 	p++
 	for ; p < pe; p++ {
-		switch data[p] {
-		case '.', 'e', 'E':
-			return p, errInvalidNumber
-		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		default:
-			return p, nil
+		if !digits[data[p]] {
+			break
 		}
 	}
-	return p, nil
+	if p == pe {
+		return p - 1, nil
+	}
+
+	if expBytes[data[p]] {
+		return skipFloatExp(data, p+1, pe)
+	}
+
+	return p - 1, nil
 }
 
-// skipFloatDec skips the part of a float after the decimal place
-func skipFloatDec(data []byte) (p int, err error) {
-	pe := len(data)
-	if p == pe {
-		return p, errInvalidNumber
-	}
-	switch data[p] {
-	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-	default:
-		return p, errInvalidNumber
-	}
-	p++
-	for ; p < pe; p++ {
-		switch data[p] {
-		case 'e', 'E':
-			p++
-			var pp int
-			pp, err = skipFloatExp(data[p:])
-			return p + pp, err
-		case '.':
-			return p, errInvalidNumber
-		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		default:
-			return p, nil
-		}
-	}
-	return p, nil
+var signBytes = [256]bool{
+	'-': true,
+	'+': true,
 }
 
-func skipFloat(data []byte) (p int, err error) {
-	pe := len(data)
-	if p == pe {
-		return p, errInvalidNumber
-	}
-	if data[p] == '-' {
-		p++
-		if p == pe {
-			return p, errInvalidNumber
-		}
-	}
-	switch data[p] {
-	case '0':
-		p++
-		var pp int
-		pp, err = skipFloatLeadingZero(data[p:])
-		return p + pp, err
-	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
-	default:
-		return p, errInvalidNumber
-	}
-	p++
-	for ; p < pe; p++ {
-		switch data[p] {
-		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		case '.':
-			p++
-			var pp int
-			pp, err = skipFloatDec(data[p:])
-			return p + pp, err
-		case 'e', 'E':
-			p++
-			var pp int
-			pp, err = skipFloatLeadingZero(data[p:])
-			return p + pp, err
-		default:
-			return p, nil
-		}
-	}
-	return p, nil
+var expBytes = [256]bool{
+	'e': true,
+	'E': true,
 }
 
-func skipFloatLeadingZero(data []byte) (p int, err error) {
-	pe := len(data)
-	if p == pe {
-		return p, nil
-	}
-	switch data[p] {
-	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'e', 'E':
-		return p, errInvalidNumber
-	case '.':
-		var pp int
-		p++
-		pp, err = skipFloatDec(data[p:])
-		return p + pp, err
-	default:
-		return p, nil
-	}
+var digits = [256]bool{
+	'0': true,
+	'1': true,
+	'2': true,
+	'3': true,
+	'4': true,
+	'5': true,
+	'6': true,
+	'7': true,
+	'8': true,
+	'9': true,
 }

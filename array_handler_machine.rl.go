@@ -9,11 +9,11 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	eof := len(data)
 
 	const handleArrayValues_start int = 1
-	const handleArrayValues_first_final int = 263
+	const handleArrayValues_first_final int = 243
 	const handleArrayValues_error int = 0
 
 	const handleArrayValues_en_skip_array int = 83
-	const handleArrayValues_en_skip_object int = 160
+	const handleArrayValues_en_skip_object int = 150
 	const handleArrayValues_en_main int = 1
 
 	{
@@ -57,8 +57,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st12
 		case 13:
 			goto st13
-		case 263:
-			goto st263
+		case 243:
+			goto st243
 		case 14:
 			goto st14
 		case 15:
@@ -197,8 +197,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st81
 		case 82:
 			goto st82
-		case 264:
-			goto st264
+		case 244:
+			goto st244
 		case 83:
 			goto st83
 		case 84:
@@ -221,8 +221,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st92
 		case 93:
 			goto st93
-		case 265:
-			goto st265
+		case 245:
+			goto st245
 		case 94:
 			goto st94
 		case 95:
@@ -381,6 +381,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st171
 		case 172:
 			goto st172
+		case 246:
+			goto st246
 		case 173:
 			goto st173
 		case 174:
@@ -401,8 +403,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st181
 		case 182:
 			goto st182
-		case 266:
-			goto st266
 		case 183:
 			goto st183
 		case 184:
@@ -523,46 +523,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st241
 		case 242:
 			goto st242
-		case 243:
-			goto st243
-		case 244:
-			goto st244
-		case 245:
-			goto st245
-		case 246:
-			goto st246
-		case 247:
-			goto st247
-		case 248:
-			goto st248
-		case 249:
-			goto st249
-		case 250:
-			goto st250
-		case 251:
-			goto st251
-		case 252:
-			goto st252
-		case 253:
-			goto st253
-		case 254:
-			goto st254
-		case 255:
-			goto st255
-		case 256:
-			goto st256
-		case 257:
-			goto st257
-		case 258:
-			goto st258
-		case 259:
-			goto st259
-		case 260:
-			goto st260
-		case 261:
-			goto st261
-		case 262:
-			goto st262
 		}
 
 		if p++; p == pe {
@@ -598,8 +558,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st_case_12
 		case 13:
 			goto st_case_13
-		case 263:
-			goto st_case_263
+		case 243:
+			goto st_case_243
 		case 14:
 			goto st_case_14
 		case 15:
@@ -738,8 +698,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st_case_81
 		case 82:
 			goto st_case_82
-		case 264:
-			goto st_case_264
+		case 244:
+			goto st_case_244
 		case 83:
 			goto st_case_83
 		case 84:
@@ -762,8 +722,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st_case_92
 		case 93:
 			goto st_case_93
-		case 265:
-			goto st_case_265
+		case 245:
+			goto st_case_245
 		case 94:
 			goto st_case_94
 		case 95:
@@ -922,6 +882,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st_case_171
 		case 172:
 			goto st_case_172
+		case 246:
+			goto st_case_246
 		case 173:
 			goto st_case_173
 		case 174:
@@ -942,8 +904,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st_case_181
 		case 182:
 			goto st_case_182
-		case 266:
-			goto st_case_266
 		case 183:
 			goto st_case_183
 		case 184:
@@ -1064,46 +1024,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st_case_241
 		case 242:
 			goto st_case_242
-		case 243:
-			goto st_case_243
-		case 244:
-			goto st_case_244
-		case 245:
-			goto st_case_245
-		case 246:
-			goto st_case_246
-		case 247:
-			goto st_case_247
-		case 248:
-			goto st_case_248
-		case 249:
-			goto st_case_249
-		case 250:
-			goto st_case_250
-		case 251:
-			goto st_case_251
-		case 252:
-			goto st_case_252
-		case 253:
-			goto st_case_253
-		case 254:
-			goto st_case_254
-		case 255:
-			goto st_case_255
-		case 256:
-			goto st_case_256
-		case 257:
-			goto st_case_257
-		case 258:
-			goto st_case_258
-		case 259:
-			goto st_case_259
-		case 260:
-			goto st_case_260
-		case 261:
-			goto st_case_261
-		case 262:
-			goto st_case_262
 		}
 		goto st_out
 	st1:
@@ -1138,7 +1058,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _out
 		}
 		goto st0
-	tr166:
+	tr156:
 		err = errInvalidObject
 		{
 			p++
@@ -1188,7 +1108,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 91:
 			goto tr9
 		case 93:
-			goto st263
+			goto st243
 		case 102:
 			goto tr11
 		case 110:
@@ -1226,7 +1146,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 91:
 			goto tr9
 		case 93:
-			goto st263
+			goto st243
 		case 102:
 			goto tr11
 		case 110:
@@ -1316,7 +1236,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -1335,7 +1255,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -1484,17 +1404,17 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
 		}
 		goto tr0
-	st263:
+	st243:
 		if p++; p == pe {
-			goto _test_eof263
+			goto _test_eof243
 		}
-	st_case_263:
+	st_case_243:
 		goto st0
 	st14:
 		if p++; p == pe {
@@ -1669,7 +1589,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st26
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st26
 		}
@@ -1701,7 +1621,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st26
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st26
 		}
@@ -1729,7 +1649,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st26
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st26
 		}
@@ -1779,7 +1699,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		switch {
 		case data[p] > 10:
@@ -1803,7 +1723,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		switch {
 		case data[p] > 10:
@@ -1839,7 +1759,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st26
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st26
 		}
@@ -1869,7 +1789,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st26
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st26
 		}
@@ -1933,7 +1853,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -1996,7 +1916,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2050,7 +1970,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2104,7 +2024,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2144,7 +2064,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			{
 				stack[top] = 46
 				top++
-				goto st160
+				goto st150
 			}
 		}
 		goto st46
@@ -2161,7 +2081,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2340,7 +2260,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st59
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st59
 		}
@@ -2372,7 +2292,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st59
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st59
 		}
@@ -2400,7 +2320,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st59
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st59
 		}
@@ -2450,7 +2370,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		switch {
 		case data[p] > 10:
@@ -2474,7 +2394,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		switch {
 		case data[p] > 10:
@@ -2510,7 +2430,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st59
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st59
 		}
@@ -2540,7 +2460,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 69:
 			goto st59
 		case 93:
-			goto st263
+			goto st243
 		case 101:
 			goto st59
 		}
@@ -2604,7 +2524,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2667,7 +2587,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2721,7 +2641,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2775,7 +2695,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2815,7 +2735,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			{
 				stack[top] = 79
 				top++
-				goto st160
+				goto st150
 			}
 		}
 		goto st79
@@ -2832,7 +2752,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st9
 		case 93:
-			goto st263
+			goto st243
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st8
@@ -2862,14 +2782,14 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 	st_case_82:
 		if data[p] == 108 {
-			goto st264
+			goto st244
 		}
 		goto tr0
-	st264:
+	st244:
 		if p++; p == pe {
-			goto _test_eof264
+			goto _test_eof244
 		}
-	st_case_264:
+	st_case_244:
 		goto st0
 	st83:
 		if p++; p == pe {
@@ -2884,26 +2804,26 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 34:
 			goto st85
 		case 45:
-			goto st134
+			goto st129
 		case 48:
-			goto st135
+			goto st130
 		case 91:
 			goto tr94
 		case 93:
 			goto tr95
 		case 102:
-			goto st146
+			goto st136
 		case 110:
-			goto st151
+			goto st141
 		case 116:
-			goto st155
+			goto st145
 		case 123:
 			goto tr99
 		}
 		switch {
 		case data[p] > 10:
 			if 49 <= data[p] && data[p] <= 57 {
-				goto st143
+				goto st133
 			}
 		case data[p] >= 9:
 			goto st84
@@ -2922,26 +2842,26 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 34:
 			goto st85
 		case 45:
-			goto st134
+			goto st129
 		case 48:
-			goto st135
+			goto st130
 		case 91:
 			goto tr94
 		case 93:
 			goto tr95
 		case 102:
-			goto st146
+			goto st136
 		case 110:
-			goto st151
+			goto st141
 		case 116:
-			goto st155
+			goto st145
 		case 123:
 			goto tr99
 		}
 		switch {
 		case data[p] > 10:
 			if 49 <= data[p] && data[p] <= 57 {
-				goto st143
+				goto st133
 			}
 		case data[p] >= 9:
 			goto st84
@@ -2956,7 +2876,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 34:
 			goto st87
 		case 92:
-			goto st127
+			goto st122
 		}
 		if data[p] <= 31 {
 			goto tr88
@@ -2971,7 +2891,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 34:
 			goto st87
 		case 92:
-			goto st127
+			goto st122
 		}
 		if data[p] <= 31 {
 			goto tr88
@@ -3034,18 +2954,18 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 91:
 			goto tr110
 		case 102:
-			goto st113
+			goto st108
 		case 110:
-			goto st118
+			goto st113
 		case 116:
-			goto st122
+			goto st117
 		case 123:
 			goto tr114
 		}
 		switch {
 		case data[p] > 10:
 			if 49 <= data[p] && data[p] <= 57 {
-				goto st110
+				goto st105
 			}
 		case data[p] >= 9:
 			goto st90
@@ -3070,18 +2990,18 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 91:
 			goto tr110
 		case 102:
-			goto st113
+			goto st108
 		case 110:
-			goto st118
+			goto st113
 		case 116:
-			goto st122
+			goto st117
 		case 123:
 			goto tr114
 		}
 		switch {
 		case data[p] > 10:
 			if 49 <= data[p] && data[p] <= 57 {
-				goto st110
+				goto st105
 			}
 		case data[p] >= 9:
 			goto st90
@@ -3142,12 +3062,12 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			cs = stack[top]
 			goto _again
 		}
-		goto st265
-	st265:
+		goto st245
+	st245:
 		if p++; p == pe {
-			goto _test_eof265
+			goto _test_eof245
 		}
-	st_case_265:
+	st_case_245:
 		goto st0
 	st94:
 		if p++; p == pe {
@@ -3286,7 +3206,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st102
 		}
 		if 49 <= data[p] && data[p] <= 57 {
-			goto st110
+			goto st105
 		}
 		goto tr88
 	st102:
@@ -3302,27 +3222,43 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st89
 		case 46:
-			goto st103
+			goto tr124
 		case 69:
-			goto st106
+			goto tr125
 		case 93:
 			goto tr95
 		case 101:
-			goto st106
+			goto tr125
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st88
 		}
 		goto tr88
+	tr124:
+		p, err = skipFloatDec(data, p+1, pe)
+		goto st103
 	st103:
 		if p++; p == pe {
 			goto _test_eof103
 		}
 	st_case_103:
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st104
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 93:
+			goto tr95
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st88
 		}
 		goto tr88
+	tr125:
+		p, err = skipFloatExp(data, p+1, pe)
+		goto st104
 	st104:
 		if p++; p == pe {
 			goto _test_eof104
@@ -3335,19 +3271,10 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st88
 		case 44:
 			goto st89
-		case 69:
-			goto st106
 		case 93:
 			goto tr95
-		case 101:
-			goto st106
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st105
-			}
-		case data[p] >= 9:
+		if 9 <= data[p] && data[p] <= 10 {
 			goto st88
 		}
 		goto tr88
@@ -3363,17 +3290,19 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st88
 		case 44:
 			goto st89
+		case 46:
+			goto tr124
 		case 69:
-			goto st106
+			goto tr125
 		case 93:
 			goto tr95
 		case 101:
-			goto st106
+			goto tr125
 		}
 		switch {
 		case data[p] > 10:
 			if 48 <= data[p] && data[p] <= 57 {
-				goto st105
+				goto st106
 			}
 		case data[p] >= 9:
 			goto st88
@@ -3385,78 +3314,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 	st_case_106:
 		switch data[p] {
-		case 43:
-			goto st107
-		case 45:
-			goto st107
-		}
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st108
-		}
-		goto tr88
-	st107:
-		if p++; p == pe {
-			goto _test_eof107
-		}
-	st_case_107:
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st108
-		}
-		goto tr88
-	st108:
-		if p++; p == pe {
-			goto _test_eof108
-		}
-	st_case_108:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st109
-			}
-		case data[p] >= 9:
-			goto st88
-		}
-		goto tr88
-	st109:
-		if p++; p == pe {
-			goto _test_eof109
-		}
-	st_case_109:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st109
-			}
-		case data[p] >= 9:
-			goto st88
-		}
-		goto tr88
-	st110:
-		if p++; p == pe {
-			goto _test_eof110
-		}
-	st_case_110:
-		switch data[p] {
 		case 13:
 			goto st88
 		case 32:
@@ -3464,48 +3321,18 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 44:
 			goto st89
 		case 46:
-			goto st103
+			goto tr124
 		case 69:
-			goto st106
+			goto tr125
 		case 93:
 			goto tr95
 		case 101:
-			goto st106
+			goto tr125
 		}
 		switch {
 		case data[p] > 10:
 			if 48 <= data[p] && data[p] <= 57 {
-				goto st111
-			}
-		case data[p] >= 9:
-			goto st88
-		}
-		goto tr88
-	st111:
-		if p++; p == pe {
-			goto _test_eof111
-		}
-	st_case_111:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 46:
-			goto st103
-		case 69:
-			goto st106
-		case 93:
-			goto tr95
-		case 101:
-			goto st106
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st111
+				goto st106
 			}
 		case data[p] >= 9:
 			goto st88
@@ -3517,12 +3344,67 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
 			{
-				stack[top] = 112
+				stack[top] = 107
 				top++
 				goto st83
 			}
 		}
-		goto st112
+		goto st107
+	st107:
+		if p++; p == pe {
+			goto _test_eof107
+		}
+	st_case_107:
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 93:
+			goto tr95
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st88
+		}
+		goto tr88
+	st108:
+		if p++; p == pe {
+			goto _test_eof108
+		}
+	st_case_108:
+		if data[p] == 97 {
+			goto st109
+		}
+		goto tr88
+	st109:
+		if p++; p == pe {
+			goto _test_eof109
+		}
+	st_case_109:
+		if data[p] == 108 {
+			goto st110
+		}
+		goto tr88
+	st110:
+		if p++; p == pe {
+			goto _test_eof110
+		}
+	st_case_110:
+		if data[p] == 115 {
+			goto st111
+		}
+		goto tr88
+	st111:
+		if p++; p == pe {
+			goto _test_eof111
+		}
+	st_case_111:
+		if data[p] == 101 {
+			goto st112
+		}
+		goto tr88
 	st112:
 		if p++; p == pe {
 			goto _test_eof112
@@ -3547,7 +3429,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof113
 		}
 	st_case_113:
-		if data[p] == 97 {
+		if data[p] == 117 {
 			goto st114
 		}
 		goto tr88
@@ -3565,7 +3447,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof115
 		}
 	st_case_115:
-		if data[p] == 115 {
+		if data[p] == 108 {
 			goto st116
 		}
 		goto tr88
@@ -3574,15 +3456,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof116
 		}
 	st_case_116:
-		if data[p] == 101 {
-			goto st117
-		}
-		goto tr88
-	st117:
-		if p++; p == pe {
-			goto _test_eof117
-		}
-	st_case_117:
 		switch data[p] {
 		case 13:
 			goto st88
@@ -3595,6 +3468,15 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st88
+		}
+		goto tr88
+	st117:
+		if p++; p == pe {
+			goto _test_eof117
+		}
+	st_case_117:
+		if data[p] == 114 {
+			goto st118
 		}
 		goto tr88
 	st118:
@@ -3611,7 +3493,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof119
 		}
 	st_case_119:
-		if data[p] == 108 {
+		if data[p] == 101 {
 			goto st120
 		}
 		goto tr88
@@ -3620,10 +3502,32 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof120
 		}
 	st_case_120:
-		if data[p] == 108 {
-			goto st121
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 93:
+			goto tr95
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st88
 		}
 		goto tr88
+	tr114:
+		{
+			if top+1 >= len(stack) {
+				stack = append(stack, make([]int, 1+top-len(stack))...)
+			}
+			{
+				stack[top] = 121
+				top++
+				goto st150
+			}
+		}
+		goto st121
 	st121:
 		if p++; p == pe {
 			goto _test_eof121
@@ -3648,8 +3552,25 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof122
 		}
 	st_case_122:
-		if data[p] == 114 {
+		switch data[p] {
+		case 34:
 			goto st123
+		case 47:
+			goto st123
+		case 92:
+			goto st123
+		case 98:
+			goto st123
+		case 102:
+			goto st123
+		case 110:
+			goto st123
+		case 114:
+			goto st123
+		case 116:
+			goto st123
+		case 117:
+			goto st124
 		}
 		goto tr88
 	st123:
@@ -3657,16 +3578,31 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof123
 		}
 	st_case_123:
-		if data[p] == 117 {
-			goto st124
+		switch data[p] {
+		case 34:
+			goto st87
+		case 92:
+			goto st122
 		}
-		goto tr88
+		if data[p] <= 31 {
+			goto tr88
+		}
+		goto st86
 	st124:
 		if p++; p == pe {
 			goto _test_eof124
 		}
 	st_case_124:
-		if data[p] == 101 {
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st125
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st125
+			}
+		default:
 			goto st125
 		}
 		goto tr88
@@ -3675,49 +3611,35 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof125
 		}
 	st_case_125:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st88
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st126
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st126
+			}
+		default:
+			goto st126
 		}
 		goto tr88
-	tr114:
-		{
-			if top+1 >= len(stack) {
-				stack = append(stack, make([]int, 1+top-len(stack))...)
-			}
-			{
-				stack[top] = 126
-				top++
-				goto st160
-			}
-		}
-		goto st126
 	st126:
 		if p++; p == pe {
 			goto _test_eof126
 		}
 	st_case_126:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st88
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st127
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st127
+			}
+		default:
+			goto st127
 		}
 		goto tr88
 	st127:
@@ -3725,25 +3647,17 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof127
 		}
 	st_case_127:
-		switch data[p] {
-		case 34:
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st128
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st128
+			}
+		default:
 			goto st128
-		case 47:
-			goto st128
-		case 92:
-			goto st128
-		case 98:
-			goto st128
-		case 102:
-			goto st128
-		case 110:
-			goto st128
-		case 114:
-			goto st128
-		case 116:
-			goto st128
-		case 117:
-			goto st129
 		}
 		goto tr88
 	st128:
@@ -3755,7 +3669,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		case 34:
 			goto st87
 		case 92:
-			goto st127
+			goto st122
 		}
 		if data[p] <= 31 {
 			goto tr88
@@ -3766,17 +3680,11 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof129
 		}
 	st_case_129:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st130
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st130
-			}
-		default:
+		if data[p] == 48 {
 			goto st130
+		}
+		if 49 <= data[p] && data[p] <= 57 {
+			goto st133
 		}
 		goto tr88
 	st130:
@@ -3784,53 +3692,68 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof130
 		}
 	st_case_130:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st131
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st131
-			}
-		default:
-			goto st131
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 46:
+			goto tr143
+		case 69:
+			goto tr144
+		case 93:
+			goto tr95
+		case 101:
+			goto tr144
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st88
 		}
 		goto tr88
+	tr143:
+		p, err = skipFloatDec(data, p+1, pe)
+		goto st131
 	st131:
 		if p++; p == pe {
 			goto _test_eof131
 		}
 	st_case_131:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st132
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st132
-			}
-		default:
-			goto st132
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 93:
+			goto tr95
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st88
 		}
 		goto tr88
+	tr144:
+		p, err = skipFloatExp(data, p+1, pe)
+		goto st132
 	st132:
 		if p++; p == pe {
 			goto _test_eof132
 		}
 	st_case_132:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st133
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st133
-			}
-		default:
-			goto st133
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 93:
+			goto tr95
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st88
 		}
 		goto tr88
 	st133:
@@ -3839,27 +3762,72 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 	st_case_133:
 		switch data[p] {
-		case 34:
-			goto st87
-		case 92:
-			goto st127
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 46:
+			goto tr143
+		case 69:
+			goto tr144
+		case 93:
+			goto tr95
+		case 101:
+			goto tr144
 		}
-		if data[p] <= 31 {
-			goto tr88
+		switch {
+		case data[p] > 10:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st134
+			}
+		case data[p] >= 9:
+			goto st88
 		}
-		goto st86
+		goto tr88
 	st134:
 		if p++; p == pe {
 			goto _test_eof134
 		}
 	st_case_134:
-		if data[p] == 48 {
-			goto st135
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 46:
+			goto tr143
+		case 69:
+			goto tr144
+		case 93:
+			goto tr95
+		case 101:
+			goto tr144
 		}
-		if 49 <= data[p] && data[p] <= 57 {
-			goto st143
+		switch {
+		case data[p] > 10:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st134
+			}
+		case data[p] >= 9:
+			goto st88
 		}
 		goto tr88
+	tr94:
+		{
+			if top+1 >= len(stack) {
+				stack = append(stack, make([]int, 1+top-len(stack))...)
+			}
+			{
+				stack[top] = 135
+				top++
+				goto st83
+			}
+		}
+		goto st135
 	st135:
 		if p++; p == pe {
 			goto _test_eof135
@@ -3872,14 +3840,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st88
 		case 44:
 			goto st89
-		case 46:
-			goto st136
-		case 69:
-			goto st139
 		case 93:
 			goto tr95
-		case 101:
-			goto st139
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st88
@@ -3890,7 +3852,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof136
 		}
 	st_case_136:
-		if 48 <= data[p] && data[p] <= 57 {
+		if data[p] == 97 {
 			goto st137
 		}
 		goto tr88
@@ -3899,27 +3861,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof137
 		}
 	st_case_137:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 69:
-			goto st139
-		case 93:
-			goto tr95
-		case 101:
-			goto st139
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st138
-			}
-		case data[p] >= 9:
-			goto st88
+		if data[p] == 108 {
+			goto st138
 		}
 		goto tr88
 	st138:
@@ -3927,27 +3870,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof138
 		}
 	st_case_138:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 69:
+		if data[p] == 115 {
 			goto st139
-		case 93:
-			goto tr95
-		case 101:
-			goto st139
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st138
-			}
-		case data[p] >= 9:
-			goto st88
 		}
 		goto tr88
 	st139:
@@ -3955,14 +3879,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof139
 		}
 	st_case_139:
-		switch data[p] {
-		case 43:
+		if data[p] == 101 {
 			goto st140
-		case 45:
-			goto st140
-		}
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st141
 		}
 		goto tr88
 	st140:
@@ -3970,8 +3888,18 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof140
 		}
 	st_case_140:
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st141
+		switch data[p] {
+		case 13:
+			goto st88
+		case 32:
+			goto st88
+		case 44:
+			goto st89
+		case 93:
+			goto tr95
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st88
 		}
 		goto tr88
 	st141:
@@ -3979,23 +3907,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof141
 		}
 	st_case_141:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st142
-			}
-		case data[p] >= 9:
-			goto st88
+		if data[p] == 117 {
+			goto st142
 		}
 		goto tr88
 	st142:
@@ -4003,23 +3916,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof142
 		}
 	st_case_142:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st142
-			}
-		case data[p] >= 9:
-			goto st88
+		if data[p] == 108 {
+			goto st143
 		}
 		goto tr88
 	st143:
@@ -4027,29 +3925,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof143
 		}
 	st_case_143:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 46:
-			goto st136
-		case 69:
-			goto st139
-		case 93:
-			goto tr95
-		case 101:
-			goto st139
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st144
-			}
-		case data[p] >= 9:
-			goto st88
+		if data[p] == 108 {
+			goto st144
 		}
 		goto tr88
 	st144:
@@ -4064,48 +3941,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st88
 		case 44:
 			goto st89
-		case 46:
-			goto st136
-		case 69:
-			goto st139
-		case 93:
-			goto tr95
-		case 101:
-			goto st139
-		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st144
-			}
-		case data[p] >= 9:
-			goto st88
-		}
-		goto tr88
-	tr94:
-		{
-			if top+1 >= len(stack) {
-				stack = append(stack, make([]int, 1+top-len(stack))...)
-			}
-			{
-				stack[top] = 145
-				top++
-				goto st83
-			}
-		}
-		goto st145
-	st145:
-		if p++; p == pe {
-			goto _test_eof145
-		}
-	st_case_145:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
 		case 93:
 			goto tr95
 		}
@@ -4113,12 +3948,21 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st88
 		}
 		goto tr88
+	st145:
+		if p++; p == pe {
+			goto _test_eof145
+		}
+	st_case_145:
+		if data[p] == 114 {
+			goto st146
+		}
+		goto tr88
 	st146:
 		if p++; p == pe {
 			goto _test_eof146
 		}
 	st_case_146:
-		if data[p] == 97 {
+		if data[p] == 117 {
 			goto st147
 		}
 		goto tr88
@@ -4127,7 +3971,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof147
 		}
 	st_case_147:
-		if data[p] == 108 {
+		if data[p] == 101 {
 			goto st148
 		}
 		goto tr88
@@ -4136,116 +3980,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto _test_eof148
 		}
 	st_case_148:
-		if data[p] == 115 {
-			goto st149
-		}
-		goto tr88
-	st149:
-		if p++; p == pe {
-			goto _test_eof149
-		}
-	st_case_149:
-		if data[p] == 101 {
-			goto st150
-		}
-		goto tr88
-	st150:
-		if p++; p == pe {
-			goto _test_eof150
-		}
-	st_case_150:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st88
-		}
-		goto tr88
-	st151:
-		if p++; p == pe {
-			goto _test_eof151
-		}
-	st_case_151:
-		if data[p] == 117 {
-			goto st152
-		}
-		goto tr88
-	st152:
-		if p++; p == pe {
-			goto _test_eof152
-		}
-	st_case_152:
-		if data[p] == 108 {
-			goto st153
-		}
-		goto tr88
-	st153:
-		if p++; p == pe {
-			goto _test_eof153
-		}
-	st_case_153:
-		if data[p] == 108 {
-			goto st154
-		}
-		goto tr88
-	st154:
-		if p++; p == pe {
-			goto _test_eof154
-		}
-	st_case_154:
-		switch data[p] {
-		case 13:
-			goto st88
-		case 32:
-			goto st88
-		case 44:
-			goto st89
-		case 93:
-			goto tr95
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st88
-		}
-		goto tr88
-	st155:
-		if p++; p == pe {
-			goto _test_eof155
-		}
-	st_case_155:
-		if data[p] == 114 {
-			goto st156
-		}
-		goto tr88
-	st156:
-		if p++; p == pe {
-			goto _test_eof156
-		}
-	st_case_156:
-		if data[p] == 117 {
-			goto st157
-		}
-		goto tr88
-	st157:
-		if p++; p == pe {
-			goto _test_eof157
-		}
-	st_case_157:
-		if data[p] == 101 {
-			goto st158
-		}
-		goto tr88
-	st158:
-		if p++; p == pe {
-			goto _test_eof158
-		}
-	st_case_158:
 		switch data[p] {
 		case 13:
 			goto st88
@@ -4266,17 +4000,17 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
 			{
-				stack[top] = 159
+				stack[top] = 149
 				top++
-				goto st160
+				goto st150
 			}
 		}
-		goto st159
-	st159:
+		goto st149
+	st149:
 		if p++; p == pe {
-			goto _test_eof159
+			goto _test_eof149
 		}
-	st_case_159:
+	st_case_149:
 		switch data[p] {
 		case 13:
 			goto st88
@@ -4291,6 +4025,210 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st88
 		}
 		goto tr88
+	st150:
+		if p++; p == pe {
+			goto _test_eof150
+		}
+	st_case_150:
+		switch data[p] {
+		case 13:
+			goto st151
+		case 32:
+			goto st151
+		case 34:
+			goto st152
+		case 125:
+			goto tr159
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st151
+		}
+		goto tr156
+	st151:
+		if p++; p == pe {
+			goto _test_eof151
+		}
+	st_case_151:
+		switch data[p] {
+		case 13:
+			goto st151
+		case 32:
+			goto st151
+		case 34:
+			goto st152
+		case 125:
+			goto tr159
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st151
+		}
+		goto tr156
+	st152:
+		if p++; p == pe {
+			goto _test_eof152
+		}
+	st_case_152:
+		switch data[p] {
+		case 34:
+			goto st154
+		case 92:
+			goto st236
+		}
+		if data[p] <= 31 {
+			goto tr156
+		}
+		goto st153
+	st153:
+		if p++; p == pe {
+			goto _test_eof153
+		}
+	st_case_153:
+		switch data[p] {
+		case 34:
+			goto st154
+		case 92:
+			goto st236
+		}
+		if data[p] <= 31 {
+			goto tr156
+		}
+		goto st153
+	st154:
+		if p++; p == pe {
+			goto _test_eof154
+		}
+	st_case_154:
+		switch data[p] {
+		case 13:
+			goto st155
+		case 32:
+			goto st155
+		case 58:
+			goto st156
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st155
+		}
+		goto tr156
+	st155:
+		if p++; p == pe {
+			goto _test_eof155
+		}
+	st_case_155:
+		switch data[p] {
+		case 13:
+			goto st155
+		case 32:
+			goto st155
+		case 58:
+			goto st156
+		}
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st155
+		}
+		goto tr156
+	st156:
+		if p++; p == pe {
+			goto _test_eof156
+		}
+	st_case_156:
+		switch data[p] {
+		case 13:
+			goto st157
+		case 32:
+			goto st157
+		case 34:
+			goto st158
+		case 45:
+			goto st215
+		case 48:
+			goto st216
+		case 91:
+			goto tr170
+		case 102:
+			goto st222
+		case 110:
+			goto st227
+		case 116:
+			goto st231
+		case 123:
+			goto tr174
+		}
+		switch {
+		case data[p] > 10:
+			if 49 <= data[p] && data[p] <= 57 {
+				goto st219
+			}
+		case data[p] >= 9:
+			goto st157
+		}
+		goto tr156
+	st157:
+		if p++; p == pe {
+			goto _test_eof157
+		}
+	st_case_157:
+		switch data[p] {
+		case 13:
+			goto st157
+		case 32:
+			goto st157
+		case 34:
+			goto st158
+		case 45:
+			goto st215
+		case 48:
+			goto st216
+		case 91:
+			goto tr170
+		case 102:
+			goto st222
+		case 110:
+			goto st227
+		case 116:
+			goto st231
+		case 123:
+			goto tr174
+		}
+		switch {
+		case data[p] > 10:
+			if 49 <= data[p] && data[p] <= 57 {
+				goto st219
+			}
+		case data[p] >= 9:
+			goto st157
+		}
+		goto tr156
+	st158:
+		if p++; p == pe {
+			goto _test_eof158
+		}
+	st_case_158:
+		switch data[p] {
+		case 34:
+			goto st160
+		case 92:
+			goto st208
+		}
+		if data[p] <= 31 {
+			goto tr156
+		}
+		goto st159
+	st159:
+		if p++; p == pe {
+			goto _test_eof159
+		}
+	st_case_159:
+		switch data[p] {
+		case 34:
+			goto st160
+		case 92:
+			goto st208
+		}
+		if data[p] <= 31 {
+			goto tr156
+		}
+		goto st159
 	st160:
 		if p++; p == pe {
 			goto _test_eof160
@@ -4301,15 +4239,15 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st161
 		case 32:
 			goto st161
-		case 34:
+		case 44:
 			goto st162
 		case 125:
-			goto tr169
+			goto tr159
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st161
 		}
-		goto tr166
+		goto tr156
 	st161:
 		if p++; p == pe {
 			goto _test_eof161
@@ -4320,79 +4258,79 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st161
 		case 32:
 			goto st161
-		case 34:
+		case 44:
 			goto st162
 		case 125:
-			goto tr169
+			goto tr159
 		}
 		if 9 <= data[p] && data[p] <= 10 {
 			goto st161
 		}
-		goto tr166
+		goto tr156
 	st162:
 		if p++; p == pe {
 			goto _test_eof162
 		}
 	st_case_162:
 		switch data[p] {
+		case 13:
+			goto st163
+		case 32:
+			goto st163
 		case 34:
 			goto st164
-		case 92:
-			goto st256
 		}
-		if data[p] <= 31 {
-			goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st163
 		}
-		goto st163
+		goto tr156
 	st163:
 		if p++; p == pe {
 			goto _test_eof163
 		}
 	st_case_163:
 		switch data[p] {
+		case 13:
+			goto st163
+		case 32:
+			goto st163
 		case 34:
 			goto st164
-		case 92:
-			goto st256
 		}
-		if data[p] <= 31 {
-			goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st163
 		}
-		goto st163
+		goto tr156
 	st164:
 		if p++; p == pe {
 			goto _test_eof164
 		}
 	st_case_164:
 		switch data[p] {
-		case 13:
-			goto st165
-		case 32:
-			goto st165
-		case 58:
+		case 34:
 			goto st166
+		case 92:
+			goto st201
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st165
+		if data[p] <= 31 {
+			goto tr156
 		}
-		goto tr166
+		goto st165
 	st165:
 		if p++; p == pe {
 			goto _test_eof165
 		}
 	st_case_165:
 		switch data[p] {
-		case 13:
-			goto st165
-		case 32:
-			goto st165
-		case 58:
+		case 34:
 			goto st166
+		case 92:
+			goto st201
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st165
+		if data[p] <= 31 {
+			goto tr156
 		}
-		goto tr166
+		goto st165
 	st166:
 		if p++; p == pe {
 			goto _test_eof166
@@ -4403,32 +4341,13 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st167
 		case 32:
 			goto st167
-		case 34:
+		case 58:
 			goto st168
-		case 45:
-			goto st230
-		case 48:
-			goto st231
-		case 91:
-			goto tr180
-		case 102:
-			goto st242
-		case 110:
-			goto st247
-		case 116:
-			goto st251
-		case 123:
-			goto tr184
 		}
-		switch {
-		case data[p] > 10:
-			if 49 <= data[p] && data[p] <= 57 {
-				goto st239
-			}
-		case data[p] >= 9:
+		if 9 <= data[p] && data[p] <= 10 {
 			goto st167
 		}
-		goto tr166
+		goto tr156
 	st167:
 		if p++; p == pe {
 			goto _test_eof167
@@ -4439,100 +4358,115 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 			goto st167
 		case 32:
 			goto st167
-		case 34:
+		case 58:
 			goto st168
-		case 45:
-			goto st230
-		case 48:
-			goto st231
-		case 91:
-			goto tr180
-		case 102:
-			goto st242
-		case 110:
-			goto st247
-		case 116:
-			goto st251
-		case 123:
-			goto tr184
 		}
-		switch {
-		case data[p] > 10:
-			if 49 <= data[p] && data[p] <= 57 {
-				goto st239
-			}
-		case data[p] >= 9:
+		if 9 <= data[p] && data[p] <= 10 {
 			goto st167
 		}
-		goto tr166
+		goto tr156
 	st168:
 		if p++; p == pe {
 			goto _test_eof168
 		}
 	st_case_168:
 		switch data[p] {
+		case 13:
+			goto st169
+		case 32:
+			goto st169
 		case 34:
 			goto st170
-		case 92:
-			goto st223
+		case 45:
+			goto st180
+		case 48:
+			goto st181
+		case 91:
+			goto tr192
+		case 102:
+			goto st187
+		case 110:
+			goto st192
+		case 116:
+			goto st196
+		case 123:
+			goto tr196
 		}
-		if data[p] <= 31 {
-			goto tr166
+		switch {
+		case data[p] > 10:
+			if 49 <= data[p] && data[p] <= 57 {
+				goto st184
+			}
+		case data[p] >= 9:
+			goto st169
 		}
-		goto st169
+		goto tr156
 	st169:
 		if p++; p == pe {
 			goto _test_eof169
 		}
 	st_case_169:
 		switch data[p] {
+		case 13:
+			goto st169
+		case 32:
+			goto st169
 		case 34:
 			goto st170
-		case 92:
-			goto st223
+		case 45:
+			goto st180
+		case 48:
+			goto st181
+		case 91:
+			goto tr192
+		case 102:
+			goto st187
+		case 110:
+			goto st192
+		case 116:
+			goto st196
+		case 123:
+			goto tr196
 		}
-		if data[p] <= 31 {
-			goto tr166
+		switch {
+		case data[p] > 10:
+			if 49 <= data[p] && data[p] <= 57 {
+				goto st184
+			}
+		case data[p] >= 9:
+			goto st169
 		}
-		goto st169
+		goto tr156
 	st170:
 		if p++; p == pe {
 			goto _test_eof170
 		}
 	st_case_170:
 		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
+		case 34:
 			goto st172
-		case 125:
-			goto tr169
+		case 92:
+			goto st173
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
+		if data[p] <= 31 {
+			goto tr156
 		}
-		goto tr166
+		goto st171
 	st171:
 		if p++; p == pe {
 			goto _test_eof171
 		}
 	st_case_171:
 		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
+		case 34:
 			goto st172
-		case 125:
-			goto tr169
+		case 92:
+			goto st173
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
+		if data[p] <= 31 {
+			goto tr156
 		}
-		goto tr166
+		goto st171
 	st172:
 		if p++; p == pe {
 			goto _test_eof172
@@ -4540,33 +4474,57 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	st_case_172:
 		switch data[p] {
 		case 13:
-			goto st173
+			goto st161
 		case 32:
-			goto st173
-		case 34:
-			goto st174
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
 		if 9 <= data[p] && data[p] <= 10 {
-			goto st173
+			goto st161
 		}
-		goto tr166
+		goto tr156
+	tr159:
+		{
+			top--
+			cs = stack[top]
+			goto _again
+		}
+		goto st246
+	st246:
+		if p++; p == pe {
+			goto _test_eof246
+		}
+	st_case_246:
+		goto st0
 	st173:
 		if p++; p == pe {
 			goto _test_eof173
 		}
 	st_case_173:
 		switch data[p] {
-		case 13:
-			goto st173
-		case 32:
-			goto st173
 		case 34:
 			goto st174
+		case 47:
+			goto st174
+		case 92:
+			goto st174
+		case 98:
+			goto st174
+		case 102:
+			goto st174
+		case 110:
+			goto st174
+		case 114:
+			goto st174
+		case 116:
+			goto st174
+		case 117:
+			goto st175
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st173
-		}
-		goto tr166
+		goto tr156
 	st174:
 		if p++; p == pe {
 			goto _test_eof174
@@ -4574,165 +4532,141 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	st_case_174:
 		switch data[p] {
 		case 34:
-			goto st176
+			goto st172
 		case 92:
-			goto st216
+			goto st173
 		}
 		if data[p] <= 31 {
-			goto tr166
+			goto tr156
 		}
-		goto st175
+		goto st171
 	st175:
 		if p++; p == pe {
 			goto _test_eof175
 		}
 	st_case_175:
-		switch data[p] {
-		case 34:
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st176
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st176
+			}
+		default:
 			goto st176
-		case 92:
-			goto st216
 		}
-		if data[p] <= 31 {
-			goto tr166
-		}
-		goto st175
+		goto tr156
 	st176:
 		if p++; p == pe {
 			goto _test_eof176
 		}
 	st_case_176:
-		switch data[p] {
-		case 13:
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st177
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st177
+			}
+		default:
 			goto st177
-		case 32:
-			goto st177
-		case 58:
-			goto st178
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st177
-		}
-		goto tr166
+		goto tr156
 	st177:
 		if p++; p == pe {
 			goto _test_eof177
 		}
 	st_case_177:
-		switch data[p] {
-		case 13:
-			goto st177
-		case 32:
-			goto st177
-		case 58:
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st178
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st178
+			}
+		default:
 			goto st178
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st177
-		}
-		goto tr166
+		goto tr156
 	st178:
 		if p++; p == pe {
 			goto _test_eof178
 		}
 	st_case_178:
-		switch data[p] {
-		case 13:
-			goto st179
-		case 32:
-			goto st179
-		case 34:
-			goto st180
-		case 45:
-			goto st190
-		case 48:
-			goto st191
-		case 91:
-			goto tr202
-		case 102:
-			goto st202
-		case 110:
-			goto st207
-		case 116:
-			goto st211
-		case 123:
-			goto tr206
-		}
 		switch {
-		case data[p] > 10:
-			if 49 <= data[p] && data[p] <= 57 {
-				goto st199
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st179
 			}
-		case data[p] >= 9:
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st179
+			}
+		default:
 			goto st179
 		}
-		goto tr166
+		goto tr156
 	st179:
 		if p++; p == pe {
 			goto _test_eof179
 		}
 	st_case_179:
 		switch data[p] {
-		case 13:
-			goto st179
-		case 32:
-			goto st179
 		case 34:
-			goto st180
-		case 45:
-			goto st190
-		case 48:
-			goto st191
-		case 91:
-			goto tr202
-		case 102:
-			goto st202
-		case 110:
-			goto st207
-		case 116:
-			goto st211
-		case 123:
-			goto tr206
+			goto st172
+		case 92:
+			goto st173
 		}
-		switch {
-		case data[p] > 10:
-			if 49 <= data[p] && data[p] <= 57 {
-				goto st199
-			}
-		case data[p] >= 9:
-			goto st179
+		if data[p] <= 31 {
+			goto tr156
 		}
-		goto tr166
+		goto st171
 	st180:
 		if p++; p == pe {
 			goto _test_eof180
 		}
 	st_case_180:
-		switch data[p] {
-		case 34:
-			goto st182
-		case 92:
-			goto st183
+		if data[p] == 48 {
+			goto st181
 		}
-		if data[p] <= 31 {
-			goto tr166
+		if 49 <= data[p] && data[p] <= 57 {
+			goto st184
 		}
-		goto st181
+		goto tr156
 	st181:
 		if p++; p == pe {
 			goto _test_eof181
 		}
 	st_case_181:
 		switch data[p] {
-		case 34:
-			goto st182
-		case 92:
-			goto st183
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 46:
+			goto tr206
+		case 69:
+			goto tr207
+		case 101:
+			goto tr207
+		case 125:
+			goto tr159
 		}
-		if data[p] <= 31 {
-			goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
 		}
-		goto st181
+		goto tr156
+	tr206:
+		p, err = skipFloatDec(data, p+1, pe)
+		goto st182
 	st182:
 		if p++; p == pe {
 			goto _test_eof182
@@ -4740,171 +4674,167 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	st_case_182:
 		switch data[p] {
 		case 13:
-			goto st171
+			goto st161
 		case 32:
-			goto st171
+			goto st161
 		case 44:
-			goto st172
+			goto st162
 		case 125:
-			goto tr169
+			goto tr159
 		}
 		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
+			goto st161
 		}
-		goto tr166
-	tr169:
-		{
-			top--
-			cs = stack[top]
-			goto _again
-		}
-		goto st266
-	st266:
-		if p++; p == pe {
-			goto _test_eof266
-		}
-	st_case_266:
-		goto st0
+		goto tr156
+	tr207:
+		p, err = skipFloatExp(data, p+1, pe)
+		goto st183
 	st183:
 		if p++; p == pe {
 			goto _test_eof183
 		}
 	st_case_183:
 		switch data[p] {
-		case 34:
-			goto st184
-		case 47:
-			goto st184
-		case 92:
-			goto st184
-		case 98:
-			goto st184
-		case 102:
-			goto st184
-		case 110:
-			goto st184
-		case 114:
-			goto st184
-		case 116:
-			goto st184
-		case 117:
-			goto st185
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
 	st184:
 		if p++; p == pe {
 			goto _test_eof184
 		}
 	st_case_184:
 		switch data[p] {
-		case 34:
-			goto st182
-		case 92:
-			goto st183
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 46:
+			goto tr206
+		case 69:
+			goto tr207
+		case 101:
+			goto tr207
+		case 125:
+			goto tr159
 		}
-		if data[p] <= 31 {
-			goto tr166
+		switch {
+		case data[p] > 10:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st185
+			}
+		case data[p] >= 9:
+			goto st161
 		}
-		goto st181
+		goto tr156
 	st185:
 		if p++; p == pe {
 			goto _test_eof185
 		}
 	st_case_185:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st186
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st186
-			}
-		default:
-			goto st186
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 46:
+			goto tr206
+		case 69:
+			goto tr207
+		case 101:
+			goto tr207
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		switch {
+		case data[p] > 10:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st185
+			}
+		case data[p] >= 9:
+			goto st161
+		}
+		goto tr156
+	tr192:
+		{
+			if top+1 >= len(stack) {
+				stack = append(stack, make([]int, 1+top-len(stack))...)
+			}
+			{
+				stack[top] = 186
+				top++
+				goto st83
+			}
+		}
+		goto st186
 	st186:
 		if p++; p == pe {
 			goto _test_eof186
 		}
 	st_case_186:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st187
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st187
-			}
-		default:
-			goto st187
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
 	st187:
 		if p++; p == pe {
 			goto _test_eof187
 		}
 	st_case_187:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st188
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st188
-			}
-		default:
+		if data[p] == 97 {
 			goto st188
 		}
-		goto tr166
+		goto tr156
 	st188:
 		if p++; p == pe {
 			goto _test_eof188
 		}
 	st_case_188:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st189
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st189
-			}
-		default:
+		if data[p] == 108 {
 			goto st189
 		}
-		goto tr166
+		goto tr156
 	st189:
 		if p++; p == pe {
 			goto _test_eof189
 		}
 	st_case_189:
-		switch data[p] {
-		case 34:
-			goto st182
-		case 92:
-			goto st183
+		if data[p] == 115 {
+			goto st190
 		}
-		if data[p] <= 31 {
-			goto tr166
-		}
-		goto st181
+		goto tr156
 	st190:
 		if p++; p == pe {
 			goto _test_eof190
 		}
 	st_case_190:
-		if data[p] == 48 {
+		if data[p] == 101 {
 			goto st191
 		}
-		if 49 <= data[p] && data[p] <= 57 {
-			goto st199
-		}
-		goto tr166
+		goto tr156
 	st191:
 		if p++; p == pe {
 			goto _test_eof191
@@ -4912,161 +4842,91 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	st_case_191:
 		switch data[p] {
 		case 13:
-			goto st171
+			goto st161
 		case 32:
-			goto st171
+			goto st161
 		case 44:
-			goto st172
-		case 46:
-			goto st192
-		case 69:
-			goto st195
-		case 101:
-			goto st195
+			goto st162
 		case 125:
-			goto tr169
+			goto tr159
 		}
 		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
+			goto st161
 		}
-		goto tr166
+		goto tr156
 	st192:
 		if p++; p == pe {
 			goto _test_eof192
 		}
 	st_case_192:
-		if 48 <= data[p] && data[p] <= 57 {
+		if data[p] == 117 {
 			goto st193
 		}
-		goto tr166
+		goto tr156
 	st193:
 		if p++; p == pe {
 			goto _test_eof193
 		}
 	st_case_193:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 69:
-			goto st195
-		case 101:
-			goto st195
-		case 125:
-			goto tr169
+		if data[p] == 108 {
+			goto st194
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st194
-			}
-		case data[p] >= 9:
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st194:
 		if p++; p == pe {
 			goto _test_eof194
 		}
 	st_case_194:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 69:
+		if data[p] == 108 {
 			goto st195
-		case 101:
-			goto st195
-		case 125:
-			goto tr169
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st194
-			}
-		case data[p] >= 9:
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st195:
 		if p++; p == pe {
 			goto _test_eof195
 		}
 	st_case_195:
 		switch data[p] {
-		case 43:
-			goto st196
-		case 45:
-			goto st196
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st197
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
 		}
-		goto tr166
+		goto tr156
 	st196:
 		if p++; p == pe {
 			goto _test_eof196
 		}
 	st_case_196:
-		if 48 <= data[p] && data[p] <= 57 {
+		if data[p] == 114 {
 			goto st197
 		}
-		goto tr166
+		goto tr156
 	st197:
 		if p++; p == pe {
 			goto _test_eof197
 		}
 	st_case_197:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		if data[p] == 117 {
+			goto st198
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st198
-			}
-		case data[p] >= 9:
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st198:
 		if p++; p == pe {
 			goto _test_eof198
 		}
 	st_case_198:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		if data[p] == 101 {
+			goto st199
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st198
-			}
-		case data[p] >= 9:
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st199:
 		if p++; p == pe {
 			goto _test_eof199
@@ -5074,29 +4934,30 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	st_case_199:
 		switch data[p] {
 		case 13:
-			goto st171
+			goto st161
 		case 32:
-			goto st171
+			goto st161
 		case 44:
-			goto st172
-		case 46:
-			goto st192
-		case 69:
-			goto st195
-		case 101:
-			goto st195
+			goto st162
 		case 125:
-			goto tr169
+			goto tr159
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st200
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
+	tr196:
+		{
+			if top+1 >= len(stack) {
+				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
-		case data[p] >= 9:
-			goto st171
+			{
+				stack[top] = 200
+				top++
+				goto st150
+			}
 		}
-		goto tr166
+		goto st200
 	st200:
 		if p++; p == pe {
 			goto _test_eof200
@@ -5104,568 +4965,574 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	st_case_200:
 		switch data[p] {
 		case 13:
-			goto st171
+			goto st161
 		case 32:
-			goto st171
+			goto st161
 		case 44:
-			goto st172
-		case 46:
-			goto st192
-		case 69:
-			goto st195
-		case 101:
-			goto st195
+			goto st162
 		case 125:
-			goto tr169
+			goto tr159
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st200
-			}
-		case data[p] >= 9:
-			goto st171
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
 		}
-		goto tr166
-	tr202:
-		{
-			if top+1 >= len(stack) {
-				stack = append(stack, make([]int, 1+top-len(stack))...)
-			}
-			{
-				stack[top] = 201
-				top++
-				goto st83
-			}
-		}
-		goto st201
+		goto tr156
 	st201:
 		if p++; p == pe {
 			goto _test_eof201
 		}
 	st_case_201:
 		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		case 34:
+			goto st202
+		case 47:
+			goto st202
+		case 92:
+			goto st202
+		case 98:
+			goto st202
+		case 102:
+			goto st202
+		case 110:
+			goto st202
+		case 114:
+			goto st202
+		case 116:
+			goto st202
+		case 117:
+			goto st203
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st202:
 		if p++; p == pe {
 			goto _test_eof202
 		}
 	st_case_202:
-		if data[p] == 97 {
-			goto st203
+		switch data[p] {
+		case 34:
+			goto st166
+		case 92:
+			goto st201
 		}
-		goto tr166
+		if data[p] <= 31 {
+			goto tr156
+		}
+		goto st165
 	st203:
 		if p++; p == pe {
 			goto _test_eof203
 		}
 	st_case_203:
-		if data[p] == 108 {
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st204
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st204
+			}
+		default:
 			goto st204
 		}
-		goto tr166
+		goto tr156
 	st204:
 		if p++; p == pe {
 			goto _test_eof204
 		}
 	st_case_204:
-		if data[p] == 115 {
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st205
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st205
+			}
+		default:
 			goto st205
 		}
-		goto tr166
+		goto tr156
 	st205:
 		if p++; p == pe {
 			goto _test_eof205
 		}
 	st_case_205:
-		if data[p] == 101 {
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st206
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st206
+			}
+		default:
 			goto st206
 		}
-		goto tr166
+		goto tr156
 	st206:
 		if p++; p == pe {
 			goto _test_eof206
 		}
 	st_case_206:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st207
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st207
+			}
+		default:
+			goto st207
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st207:
 		if p++; p == pe {
 			goto _test_eof207
 		}
 	st_case_207:
-		if data[p] == 117 {
-			goto st208
+		switch data[p] {
+		case 34:
+			goto st166
+		case 92:
+			goto st201
 		}
-		goto tr166
+		if data[p] <= 31 {
+			goto tr156
+		}
+		goto st165
 	st208:
 		if p++; p == pe {
 			goto _test_eof208
 		}
 	st_case_208:
-		if data[p] == 108 {
+		switch data[p] {
+		case 34:
 			goto st209
+		case 47:
+			goto st209
+		case 92:
+			goto st209
+		case 98:
+			goto st209
+		case 102:
+			goto st209
+		case 110:
+			goto st209
+		case 114:
+			goto st209
+		case 116:
+			goto st209
+		case 117:
+			goto st210
 		}
-		goto tr166
+		goto tr156
 	st209:
 		if p++; p == pe {
 			goto _test_eof209
 		}
 	st_case_209:
-		if data[p] == 108 {
-			goto st210
+		switch data[p] {
+		case 34:
+			goto st160
+		case 92:
+			goto st208
 		}
-		goto tr166
+		if data[p] <= 31 {
+			goto tr156
+		}
+		goto st159
 	st210:
 		if p++; p == pe {
 			goto _test_eof210
 		}
 	st_case_210:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st211
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st211
+			}
+		default:
+			goto st211
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st211:
 		if p++; p == pe {
 			goto _test_eof211
 		}
 	st_case_211:
-		if data[p] == 114 {
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st212
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st212
+			}
+		default:
 			goto st212
 		}
-		goto tr166
+		goto tr156
 	st212:
 		if p++; p == pe {
 			goto _test_eof212
 		}
 	st_case_212:
-		if data[p] == 117 {
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st213
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st213
+			}
+		default:
 			goto st213
 		}
-		goto tr166
+		goto tr156
 	st213:
 		if p++; p == pe {
 			goto _test_eof213
 		}
 	st_case_213:
-		if data[p] == 101 {
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st214
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st214
+			}
+		default:
 			goto st214
 		}
-		goto tr166
+		goto tr156
 	st214:
 		if p++; p == pe {
 			goto _test_eof214
 		}
 	st_case_214:
 		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		case 34:
+			goto st160
+		case 92:
+			goto st208
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
+		if data[p] <= 31 {
+			goto tr156
 		}
-		goto tr166
-	tr206:
-		{
-			if top+1 >= len(stack) {
-				stack = append(stack, make([]int, 1+top-len(stack))...)
-			}
-			{
-				stack[top] = 215
-				top++
-				goto st160
-			}
-		}
-		goto st215
+		goto st159
 	st215:
 		if p++; p == pe {
 			goto _test_eof215
 		}
 	st_case_215:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		if data[p] == 48 {
+			goto st216
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
+		if 49 <= data[p] && data[p] <= 57 {
+			goto st219
 		}
-		goto tr166
+		goto tr156
 	st216:
 		if p++; p == pe {
 			goto _test_eof216
 		}
 	st_case_216:
 		switch data[p] {
-		case 34:
-			goto st217
-		case 47:
-			goto st217
-		case 92:
-			goto st217
-		case 98:
-			goto st217
-		case 102:
-			goto st217
-		case 110:
-			goto st217
-		case 114:
-			goto st217
-		case 116:
-			goto st217
-		case 117:
-			goto st218
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 46:
+			goto tr231
+		case 69:
+			goto tr232
+		case 101:
+			goto tr232
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
+	tr231:
+		p, err = skipFloatDec(data, p+1, pe)
+		goto st217
 	st217:
 		if p++; p == pe {
 			goto _test_eof217
 		}
 	st_case_217:
 		switch data[p] {
-		case 34:
-			goto st176
-		case 92:
-			goto st216
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		if data[p] <= 31 {
-			goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
 		}
-		goto st175
+		goto tr156
+	tr232:
+		p, err = skipFloatExp(data, p+1, pe)
+		goto st218
 	st218:
 		if p++; p == pe {
 			goto _test_eof218
 		}
 	st_case_218:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st219
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st219
-			}
-		default:
-			goto st219
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
 	st219:
 		if p++; p == pe {
 			goto _test_eof219
 		}
 	st_case_219:
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 46:
+			goto tr231
+		case 69:
+			goto tr232
+		case 101:
+			goto tr232
+		case 125:
+			goto tr159
+		}
 		switch {
-		case data[p] < 65:
+		case data[p] > 10:
 			if 48 <= data[p] && data[p] <= 57 {
 				goto st220
 			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st220
-			}
-		default:
-			goto st220
+		case data[p] >= 9:
+			goto st161
 		}
-		goto tr166
+		goto tr156
 	st220:
 		if p++; p == pe {
 			goto _test_eof220
 		}
 	st_case_220:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st221
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st221
-			}
-		default:
-			goto st221
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 46:
+			goto tr231
+		case 69:
+			goto tr232
+		case 101:
+			goto tr232
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		switch {
+		case data[p] > 10:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st220
+			}
+		case data[p] >= 9:
+			goto st161
+		}
+		goto tr156
+	tr170:
+		{
+			if top+1 >= len(stack) {
+				stack = append(stack, make([]int, 1+top-len(stack))...)
+			}
+			{
+				stack[top] = 221
+				top++
+				goto st83
+			}
+		}
+		goto st221
 	st221:
 		if p++; p == pe {
 			goto _test_eof221
 		}
 	st_case_221:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st222
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st222
-			}
-		default:
-			goto st222
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
 	st222:
 		if p++; p == pe {
 			goto _test_eof222
 		}
 	st_case_222:
-		switch data[p] {
-		case 34:
-			goto st176
-		case 92:
-			goto st216
+		if data[p] == 97 {
+			goto st223
 		}
-		if data[p] <= 31 {
-			goto tr166
-		}
-		goto st175
+		goto tr156
 	st223:
 		if p++; p == pe {
 			goto _test_eof223
 		}
 	st_case_223:
-		switch data[p] {
-		case 34:
+		if data[p] == 108 {
 			goto st224
-		case 47:
-			goto st224
-		case 92:
-			goto st224
-		case 98:
-			goto st224
-		case 102:
-			goto st224
-		case 110:
-			goto st224
-		case 114:
-			goto st224
-		case 116:
-			goto st224
-		case 117:
-			goto st225
 		}
-		goto tr166
+		goto tr156
 	st224:
 		if p++; p == pe {
 			goto _test_eof224
 		}
 	st_case_224:
-		switch data[p] {
-		case 34:
-			goto st170
-		case 92:
-			goto st223
+		if data[p] == 115 {
+			goto st225
 		}
-		if data[p] <= 31 {
-			goto tr166
-		}
-		goto st169
+		goto tr156
 	st225:
 		if p++; p == pe {
 			goto _test_eof225
 		}
 	st_case_225:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st226
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st226
-			}
-		default:
+		if data[p] == 101 {
 			goto st226
 		}
-		goto tr166
+		goto tr156
 	st226:
 		if p++; p == pe {
 			goto _test_eof226
 		}
 	st_case_226:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st227
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st227
-			}
-		default:
-			goto st227
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		goto tr166
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
 	st227:
 		if p++; p == pe {
 			goto _test_eof227
 		}
 	st_case_227:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st228
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st228
-			}
-		default:
+		if data[p] == 117 {
 			goto st228
 		}
-		goto tr166
+		goto tr156
 	st228:
 		if p++; p == pe {
 			goto _test_eof228
 		}
 	st_case_228:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st229
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st229
-			}
-		default:
+		if data[p] == 108 {
 			goto st229
 		}
-		goto tr166
+		goto tr156
 	st229:
 		if p++; p == pe {
 			goto _test_eof229
 		}
 	st_case_229:
-		switch data[p] {
-		case 34:
-			goto st170
-		case 92:
-			goto st223
+		if data[p] == 108 {
+			goto st230
 		}
-		if data[p] <= 31 {
-			goto tr166
-		}
-		goto st169
+		goto tr156
 	st230:
 		if p++; p == pe {
 			goto _test_eof230
 		}
 	st_case_230:
-		if data[p] == 48 {
-			goto st231
+		switch data[p] {
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		if 49 <= data[p] && data[p] <= 57 {
-			goto st239
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
 		}
-		goto tr166
+		goto tr156
 	st231:
 		if p++; p == pe {
 			goto _test_eof231
 		}
 	st_case_231:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 46:
+		if data[p] == 114 {
 			goto st232
-		case 69:
-			goto st235
-		case 101:
-			goto st235
-		case 125:
-			goto tr169
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st232:
 		if p++; p == pe {
 			goto _test_eof232
 		}
 	st_case_232:
-		if 48 <= data[p] && data[p] <= 57 {
+		if data[p] == 117 {
 			goto st233
 		}
-		goto tr166
+		goto tr156
 	st233:
 		if p++; p == pe {
 			goto _test_eof233
 		}
 	st_case_233:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 69:
-			goto st235
-		case 101:
-			goto st235
-		case 125:
-			goto tr169
+		if data[p] == 101 {
+			goto st234
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st234
-			}
-		case data[p] >= 9:
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st234:
 		if p++; p == pe {
 			goto _test_eof234
@@ -5673,496 +5540,177 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	st_case_234:
 		switch data[p] {
 		case 13:
-			goto st171
+			goto st161
 		case 32:
-			goto st171
+			goto st161
 		case 44:
-			goto st172
-		case 69:
-			goto st235
-		case 101:
-			goto st235
+			goto st162
 		case 125:
-			goto tr169
+			goto tr159
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st234
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
+		}
+		goto tr156
+	tr174:
+		{
+			if top+1 >= len(stack) {
+				stack = append(stack, make([]int, 1+top-len(stack))...)
 			}
-		case data[p] >= 9:
-			goto st171
+			{
+				stack[top] = 235
+				top++
+				goto st150
+			}
 		}
-		goto tr166
+		goto st235
 	st235:
 		if p++; p == pe {
 			goto _test_eof235
 		}
 	st_case_235:
 		switch data[p] {
-		case 43:
-			goto st236
-		case 45:
-			goto st236
+		case 13:
+			goto st161
+		case 32:
+			goto st161
+		case 44:
+			goto st162
+		case 125:
+			goto tr159
 		}
-		if 48 <= data[p] && data[p] <= 57 {
-			goto st237
+		if 9 <= data[p] && data[p] <= 10 {
+			goto st161
 		}
-		goto tr166
+		goto tr156
 	st236:
 		if p++; p == pe {
 			goto _test_eof236
 		}
 	st_case_236:
-		if 48 <= data[p] && data[p] <= 57 {
+		switch data[p] {
+		case 34:
 			goto st237
+		case 47:
+			goto st237
+		case 92:
+			goto st237
+		case 98:
+			goto st237
+		case 102:
+			goto st237
+		case 110:
+			goto st237
+		case 114:
+			goto st237
+		case 116:
+			goto st237
+		case 117:
+			goto st238
 		}
-		goto tr166
+		goto tr156
 	st237:
 		if p++; p == pe {
 			goto _test_eof237
 		}
 	st_case_237:
 		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		case 34:
+			goto st154
+		case 92:
+			goto st236
 		}
-		switch {
-		case data[p] > 10:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st238
-			}
-		case data[p] >= 9:
-			goto st171
+		if data[p] <= 31 {
+			goto tr156
 		}
-		goto tr166
+		goto st153
 	st238:
 		if p++; p == pe {
 			goto _test_eof238
 		}
 	st_case_238:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
-		}
 		switch {
-		case data[p] > 10:
+		case data[p] < 65:
 			if 48 <= data[p] && data[p] <= 57 {
-				goto st238
+				goto st239
 			}
-		case data[p] >= 9:
-			goto st171
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st239
+			}
+		default:
+			goto st239
 		}
-		goto tr166
+		goto tr156
 	st239:
 		if p++; p == pe {
 			goto _test_eof239
 		}
 	st_case_239:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 46:
-			goto st232
-		case 69:
-			goto st235
-		case 101:
-			goto st235
-		case 125:
-			goto tr169
-		}
 		switch {
-		case data[p] > 10:
+		case data[p] < 65:
 			if 48 <= data[p] && data[p] <= 57 {
 				goto st240
 			}
-		case data[p] >= 9:
-			goto st171
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st240
+			}
+		default:
+			goto st240
 		}
-		goto tr166
+		goto tr156
 	st240:
 		if p++; p == pe {
 			goto _test_eof240
 		}
 	st_case_240:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 46:
-			goto st232
-		case 69:
-			goto st235
-		case 101:
-			goto st235
-		case 125:
-			goto tr169
-		}
 		switch {
-		case data[p] > 10:
+		case data[p] < 65:
 			if 48 <= data[p] && data[p] <= 57 {
-				goto st240
+				goto st241
 			}
-		case data[p] >= 9:
-			goto st171
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st241
+			}
+		default:
+			goto st241
 		}
-		goto tr166
-	tr180:
-		{
-			if top+1 >= len(stack) {
-				stack = append(stack, make([]int, 1+top-len(stack))...)
-			}
-			{
-				stack[top] = 241
-				top++
-				goto st83
-			}
-		}
-		goto st241
+		goto tr156
 	st241:
 		if p++; p == pe {
 			goto _test_eof241
 		}
 	st_case_241:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
+		switch {
+		case data[p] < 65:
+			if 48 <= data[p] && data[p] <= 57 {
+				goto st242
+			}
+		case data[p] > 70:
+			if 97 <= data[p] && data[p] <= 102 {
+				goto st242
+			}
+		default:
+			goto st242
 		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
+		goto tr156
 	st242:
 		if p++; p == pe {
 			goto _test_eof242
 		}
 	st_case_242:
-		if data[p] == 97 {
-			goto st243
-		}
-		goto tr166
-	st243:
-		if p++; p == pe {
-			goto _test_eof243
-		}
-	st_case_243:
-		if data[p] == 108 {
-			goto st244
-		}
-		goto tr166
-	st244:
-		if p++; p == pe {
-			goto _test_eof244
-		}
-	st_case_244:
-		if data[p] == 115 {
-			goto st245
-		}
-		goto tr166
-	st245:
-		if p++; p == pe {
-			goto _test_eof245
-		}
-	st_case_245:
-		if data[p] == 101 {
-			goto st246
-		}
-		goto tr166
-	st246:
-		if p++; p == pe {
-			goto _test_eof246
-		}
-	st_case_246:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
-	st247:
-		if p++; p == pe {
-			goto _test_eof247
-		}
-	st_case_247:
-		if data[p] == 117 {
-			goto st248
-		}
-		goto tr166
-	st248:
-		if p++; p == pe {
-			goto _test_eof248
-		}
-	st_case_248:
-		if data[p] == 108 {
-			goto st249
-		}
-		goto tr166
-	st249:
-		if p++; p == pe {
-			goto _test_eof249
-		}
-	st_case_249:
-		if data[p] == 108 {
-			goto st250
-		}
-		goto tr166
-	st250:
-		if p++; p == pe {
-			goto _test_eof250
-		}
-	st_case_250:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
-	st251:
-		if p++; p == pe {
-			goto _test_eof251
-		}
-	st_case_251:
-		if data[p] == 114 {
-			goto st252
-		}
-		goto tr166
-	st252:
-		if p++; p == pe {
-			goto _test_eof252
-		}
-	st_case_252:
-		if data[p] == 117 {
-			goto st253
-		}
-		goto tr166
-	st253:
-		if p++; p == pe {
-			goto _test_eof253
-		}
-	st_case_253:
-		if data[p] == 101 {
-			goto st254
-		}
-		goto tr166
-	st254:
-		if p++; p == pe {
-			goto _test_eof254
-		}
-	st_case_254:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
-	tr184:
-		{
-			if top+1 >= len(stack) {
-				stack = append(stack, make([]int, 1+top-len(stack))...)
-			}
-			{
-				stack[top] = 255
-				top++
-				goto st160
-			}
-		}
-		goto st255
-	st255:
-		if p++; p == pe {
-			goto _test_eof255
-		}
-	st_case_255:
-		switch data[p] {
-		case 13:
-			goto st171
-		case 32:
-			goto st171
-		case 44:
-			goto st172
-		case 125:
-			goto tr169
-		}
-		if 9 <= data[p] && data[p] <= 10 {
-			goto st171
-		}
-		goto tr166
-	st256:
-		if p++; p == pe {
-			goto _test_eof256
-		}
-	st_case_256:
 		switch data[p] {
 		case 34:
-			goto st257
-		case 47:
-			goto st257
+			goto st154
 		case 92:
-			goto st257
-		case 98:
-			goto st257
-		case 102:
-			goto st257
-		case 110:
-			goto st257
-		case 114:
-			goto st257
-		case 116:
-			goto st257
-		case 117:
-			goto st258
-		}
-		goto tr166
-	st257:
-		if p++; p == pe {
-			goto _test_eof257
-		}
-	st_case_257:
-		switch data[p] {
-		case 34:
-			goto st164
-		case 92:
-			goto st256
+			goto st236
 		}
 		if data[p] <= 31 {
-			goto tr166
+			goto tr156
 		}
-		goto st163
-	st258:
-		if p++; p == pe {
-			goto _test_eof258
-		}
-	st_case_258:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st259
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st259
-			}
-		default:
-			goto st259
-		}
-		goto tr166
-	st259:
-		if p++; p == pe {
-			goto _test_eof259
-		}
-	st_case_259:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st260
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st260
-			}
-		default:
-			goto st260
-		}
-		goto tr166
-	st260:
-		if p++; p == pe {
-			goto _test_eof260
-		}
-	st_case_260:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st261
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st261
-			}
-		default:
-			goto st261
-		}
-		goto tr166
-	st261:
-		if p++; p == pe {
-			goto _test_eof261
-		}
-	st_case_261:
-		switch {
-		case data[p] < 65:
-			if 48 <= data[p] && data[p] <= 57 {
-				goto st262
-			}
-		case data[p] > 70:
-			if 97 <= data[p] && data[p] <= 102 {
-				goto st262
-			}
-		default:
-			goto st262
-		}
-		goto tr166
-	st262:
-		if p++; p == pe {
-			goto _test_eof262
-		}
-	st_case_262:
-		switch data[p] {
-		case 34:
-			goto st164
-		case 92:
-			goto st256
-		}
-		if data[p] <= 31 {
-			goto tr166
-		}
-		goto st163
+		goto st153
 	st_out:
 	_test_eof1:
 		cs = 1
@@ -6203,8 +5751,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	_test_eof13:
 		cs = 13
 		goto _test_eof
-	_test_eof263:
-		cs = 263
+	_test_eof243:
+		cs = 243
 		goto _test_eof
 	_test_eof14:
 		cs = 14
@@ -6413,8 +5961,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	_test_eof82:
 		cs = 82
 		goto _test_eof
-	_test_eof264:
-		cs = 264
+	_test_eof244:
+		cs = 244
 		goto _test_eof
 	_test_eof83:
 		cs = 83
@@ -6449,8 +5997,8 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	_test_eof93:
 		cs = 93
 		goto _test_eof
-	_test_eof265:
-		cs = 265
+	_test_eof245:
+		cs = 245
 		goto _test_eof
 	_test_eof94:
 		cs = 94
@@ -6689,6 +6237,9 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	_test_eof172:
 		cs = 172
 		goto _test_eof
+	_test_eof246:
+		cs = 246
+		goto _test_eof
 	_test_eof173:
 		cs = 173
 		goto _test_eof
@@ -6718,9 +6269,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		goto _test_eof
 	_test_eof182:
 		cs = 182
-		goto _test_eof
-	_test_eof266:
-		cs = 266
 		goto _test_eof
 	_test_eof183:
 		cs = 183
@@ -6902,66 +6450,6 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 	_test_eof242:
 		cs = 242
 		goto _test_eof
-	_test_eof243:
-		cs = 243
-		goto _test_eof
-	_test_eof244:
-		cs = 244
-		goto _test_eof
-	_test_eof245:
-		cs = 245
-		goto _test_eof
-	_test_eof246:
-		cs = 246
-		goto _test_eof
-	_test_eof247:
-		cs = 247
-		goto _test_eof
-	_test_eof248:
-		cs = 248
-		goto _test_eof
-	_test_eof249:
-		cs = 249
-		goto _test_eof
-	_test_eof250:
-		cs = 250
-		goto _test_eof
-	_test_eof251:
-		cs = 251
-		goto _test_eof
-	_test_eof252:
-		cs = 252
-		goto _test_eof
-	_test_eof253:
-		cs = 253
-		goto _test_eof
-	_test_eof254:
-		cs = 254
-		goto _test_eof
-	_test_eof255:
-		cs = 255
-		goto _test_eof
-	_test_eof256:
-		cs = 256
-		goto _test_eof
-	_test_eof257:
-		cs = 257
-		goto _test_eof
-	_test_eof258:
-		cs = 258
-		goto _test_eof
-	_test_eof259:
-		cs = 259
-		goto _test_eof
-	_test_eof260:
-		cs = 260
-		goto _test_eof
-	_test_eof261:
-		cs = 261
-		goto _test_eof
-	_test_eof262:
-		cs = 262
-		goto _test_eof
 
 	_test_eof:
 		{
@@ -6972,7 +6460,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 
 				return p, stack, errInvalidArray
 
-			case 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159:
+			case 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149:
 				err = errUnexpectedEOF
 				{
 					p++
@@ -6985,7 +6473,7 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 					cs = 0
 					goto _out
 				}
-			case 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262:
+			case 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242:
 				err = errUnexpectedEOF
 				{
 					p++

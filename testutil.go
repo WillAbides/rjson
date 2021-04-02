@@ -1,6 +1,8 @@
 package rjson
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -254,4 +256,27 @@ func ifaceCompare(want, got interface{}, path []string) error {
 	default:
 		return newPathErr(path, "unhandled type %T", wantVal)
 	}
+}
+
+func skipValueEquiv(data []byte) (p int, err error) {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	tkn, err := decoder.Token()
+	if err != nil {
+		return int(decoder.InputOffset()), err
+	}
+	delim, ok := tkn.(json.Delim)
+	if !ok {
+		return int(decoder.InputOffset()), nil
+	}
+	switch delim {
+	case '[', '{':
+	default:
+		return int(decoder.InputOffset()), fmt.Errorf("invalid json")
+	}
+	decoder = json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	var val interface{}
+	err = decoder.Decode(&val)
+	return int(decoder.InputOffset()), err
 }

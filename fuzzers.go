@@ -35,18 +35,15 @@ func fuzzValid(data []byte) (int, error) {
 
 func fuzzSkip(data []byte) (int, error) {
 	var buf Buffer
-	skippedBytes, err := SkipValue(data, &buf)
-	gotValid := err == nil
-	skippedData := data
-	if skippedBytes < len(skippedData) {
-		skippedData = skippedData[:skippedBytes]
+	got, gotErr := SkipValue(data, &buf)
+	want, wantErr := skipValueEquiv(data)
+	err := checkFuzzErrors(wantErr, gotErr)
+	if err != nil {
+		return 0, err
 	}
-	wantValid := json.Valid(skippedData)
-	if wantValid && !gotValid {
-		return 0, fmt.Errorf("failed to skip valid json. error: %v", err)
-	}
-	if !wantValid && gotValid {
-		return 0, fmt.Errorf("failed to detect invalid json")
+	wantValid := wantErr == nil
+	if wantValid && want != got {
+		return 0, fmt.Errorf("json skipped %d bytes but rjson skipped %d", want, got)
 	}
 	return 0, nil
 }
@@ -97,9 +94,9 @@ func fuzzHandleObjectValues(data []byte) (int, error) {
 				handler: handlerFunc,
 				n:       i,
 			}
-			hh = ObjectValueHandlerFunc(func(_, data []byte) (p int, err error) {
+			hh = func(_, data []byte) (p int, err error) {
 				return h.HandleArrayValue(data)
-			})
+			}
 			_, err := HandleObjectValues(data, hh, nil)
 			_ = err //nolint:errcheck // just checking for panic
 		}

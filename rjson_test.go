@@ -39,16 +39,6 @@ var jsonTestFiles = []string{
 	"sample.json",
 }
 
-func Test_skipFloat(t *testing.T) {
-	got, err := skipFloat([]byte(`1`))
-	require.NoError(t, err)
-	require.Equal(t, 1, got)
-
-	got, err = skipFloat([]byte(`12`))
-	require.NoError(t, err)
-	require.Equal(t, 2, got)
-}
-
 func corpusFiles(t *testing.T) []string {
 	t.Helper()
 	var result []string
@@ -171,10 +161,13 @@ func TestSkipValue(t *testing.T) {
 		t.Run(s, func(t *testing.T) {
 			data := getTestdataJSONGz(t, s)
 			skippedBytes, err := SkipValue(data, nil)
-			gotValid := err == nil
-			skippedData := bytes.TrimLeft(data[:skippedBytes], " \t\n\r")
-			wantValid := json.Valid(skippedData)
-			require.Equal(t, wantValid, gotValid)
+			wantSkippedBytes, wantErr := skipValueEquiv(data)
+			if wantErr != nil {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Equal(t, wantSkippedBytes, skippedBytes, "not equal for %q", s)
 		})
 	}
 
@@ -182,10 +175,13 @@ func TestSkipValue(t *testing.T) {
 		for _, s := range invalidJSON {
 			data := []byte(s)
 			skippedBytes, err := SkipValue(data, nil)
-			gotValid := err == nil
-			skippedData := bytes.TrimLeft(data[:skippedBytes], " \t\n\r")
-			wantValid := json.Valid(skippedData)
-			assert.Equalf(t, wantValid, gotValid, "not equal for %q", s)
+			wantSkippedBytes, wantErr := skipValueEquiv(data)
+			if wantErr != nil {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Equal(t, wantSkippedBytes, skippedBytes, "not equal for %q", s)
 		}
 	})
 }

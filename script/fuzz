@@ -12,4 +12,4 @@ go get github.com/dvyukov/go-fuzz@6a8e9d1f241
 trap "go mod tidy" EXIT
 go-fuzz-build -o tmp/fuzz-rjson.zip
 
-go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 1 -workdir testdata/fuzz
+go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 4 -workdir testdata/fuzz

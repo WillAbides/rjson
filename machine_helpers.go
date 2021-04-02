@@ -67,12 +67,12 @@ func unescapeUnicodeChar(s, data []byte) (result []byte, bytesHandled int, ok bo
 //
 // getu4 decodes \uXXXX from the beginning of s, returning the hex value,
 // or it returns -1.
-func getu4(s []byte) rune {
-	if len(s) < 6 || s[0] != '\\' || s[1] != 'u' {
+func getu4(data []byte) rune {
+	if len(data) < 6 || data[0] != '\\' || data[1] != 'u' {
 		return -1
 	}
 	var r rune
-	for _, c := range s[2:6] {
+	for _, c := range data[2:6] {
 		switch {
 		case c >= '0' && c <= '9':
 			c -= '0'
@@ -86,4 +86,143 @@ func getu4(s []byte) rune {
 		r = r*16 + rune(c)
 	}
 	return r
+}
+
+// skipFloatExp skips the part of a float after the e
+func skipFloatExp(data []byte) (p int, err error) {
+	pe := len(data)
+	if p == pe {
+		return p, errInvalidNumber
+	}
+	sawDigit := false
+	switch data[p] {
+	case '+', '-':
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		sawDigit = true
+	default:
+		return p, errInvalidNumber
+	}
+	p++
+	if p == pe {
+		if sawDigit {
+			return p, nil
+		}
+		return p, errInvalidNumber
+	}
+	switch data[p] {
+	case '.', 'e', 'E':
+		return p, errInvalidNumber
+	case '0':
+		if !sawDigit {
+			return p, errInvalidNumber
+		}
+		sawDigit = true
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		sawDigit = true
+	default:
+		if sawDigit {
+			return p, nil
+		}
+		return p, errInvalidNumber
+	}
+	p++
+	for ; p < pe; p++ {
+		switch data[p] {
+		case '.', 'e', 'E':
+			return p, errInvalidNumber
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		default:
+			return p, nil
+		}
+	}
+	return p, nil
+}
+
+// skipFloatDec skips the part of a float after the decimal place
+func skipFloatDec(data []byte) (p int, err error) {
+	pe := len(data)
+	if p == pe {
+		return p, errInvalidNumber
+	}
+	switch data[p] {
+	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+	default:
+		return p, errInvalidNumber
+	}
+	p++
+	for ; p < pe; p++ {
+		switch data[p] {
+		case 'e', 'E':
+			p++
+			var pp int
+			pp, err = skipFloatExp(data[p:])
+			return p + pp, err
+		case '.':
+			return p, errInvalidNumber
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		default:
+			return p, nil
+		}
+	}
+	return p, nil
+}
+
+func skipFloat(data []byte) (p int, err error) {
+	pe := len(data)
+	if p == pe {
+		return p, errInvalidNumber
+	}
+	if data[p] == '-' {
+		p++
+		if p == pe {
+			return p, errInvalidNumber
+		}
+	}
+	switch data[p] {
+	case '0':
+		p++
+		var pp int
+		pp, err = skipFloatLeadingZero(data[p:])
+		return p + pp, err
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+	default:
+		return p, errInvalidNumber
+	}
+	p++
+	for ; p < pe; p++ {
+		switch data[p] {
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		case '.':
+			p++
+			var pp int
+			pp, err = skipFloatDec(data[p:])
+			return p + pp, err
+		case 'e', 'E':
+			p++
+			var pp int
+			pp, err = skipFloatLeadingZero(data[p:])
+			return p + pp, err
+		default:
+			return p, nil
+		}
+	}
+	return p, nil
+}
+
+func skipFloatLeadingZero(data []byte) (p int, err error) {
+	pe := len(data)
+	if p == pe {
+		return p, nil
+	}
+	switch data[p] {
+	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'e', 'E':
+		return p, errInvalidNumber
+	case '.':
+		var pp int
+		p++
+		pp, err = skipFloatDec(data[p:])
+		return p + pp, err
+	default:
+		return p, nil
+	}
 }

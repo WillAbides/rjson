@@ -69,75 +69,106 @@ func ParseJSONFloatPrefix(data []byte) (f float64, n int, err error) {
 // is valid (ok).
 //
 //nolint:gocyclo // yep...it's complex
-func readFloat(data []byte) (mantissa uint64, exp int, neg, trunc bool, i int, ok bool) {
-	if len(data) == 0 {
-		return 0, 0, false, false, 0, false
+func readFloat(data []byte) (mantissa uint64, exp int, neg, trunc bool, p int, ok bool) {
+	pe := len(data)
+	if pe == 0 {
+		return 0, 0, false, false, p, false
 	}
 
 	// optional sign
 	if data[0] == '-' {
 		neg = true
-		i++
+		p++
+	}
+
+	if p == pe {
+		return 0, 0, false, false, p, false
 	}
 
 	const maxMantDigits = 19 // 10^19 fits in uint64
 	sawdot := false
 	sawdigits := false
-	sawNonZero := false
 	nd := 0
 	ndMant := 0
 	dp := 0
-	startI := i
-loop:
-	for ; i < len(data); i++ {
-		switch data[i] {
-		case '.':
-			if sawdot || !sawdigits {
-				break loop
-			}
-			sawdot = true
-			sawNonZero = true
-			dp = nd
-			continue
-		case '0':
-			// if it starts with 00 or -00, stop after the first 0 to comply with json's no leading zero rule
-			// and match the behavior of json.Decoder's Token() method.
-			if !sawNonZero && i > startI {
-				break loop
-			}
 
-			sawdigits = true
+	// first digit
 
-			// This prevents leading zeros
-			if nd == 0 &&
-				len(data) > i+1 &&
-				data[i+1] >= '0' && data[i+1] <= '9' {
-				i++
-				break loop
-			}
-			nd++
-			if ndMant < maxMantDigits {
-				mantissa *= 10
-				ndMant++
-			}
-			continue
-		case '1', '2', '3', '4', '5', '6', '7', '8', '9':
-			sawdigits = true
-			sawNonZero = true
+	switch data[p] {
+	case '.':
+		return mantissa, 0, neg, trunc, p, false
+	case '0':
+		sawdigits = true
+		nd++
+		ndMant++
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		sawdigits = true
+		mantissa += uint64(data[p] - '0')
+		nd++
+		ndMant++
+	default:
+		goto finishUp
+	}
+	p++
+
+	if p == pe {
+		goto finishUp
+	}
+
+	// second digit
+
+	switch data[p] {
+	case '.':
+		sawdot = true
+		dp = nd
+	case '0':
+		if mantissa == 0 {
+			goto finishUp
+		}
+		sawdigits = true
+		nd++
+		ndMant++
+		mantissa *= 10
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		if mantissa == 0 {
+			goto finishUp
+		}
+		sawdigits = true
+		nd++
+		ndMant++
+		mantissa *= 10
+		mantissa += uint64(data[p] - '0')
+	default:
+		goto finishUp
+	}
+	p++
+
+	for ; p < len(data); p++ {
+		if digits[data[p]] {
 			nd++
 			if ndMant >= maxMantDigits {
 				trunc = true
 				continue
 			}
 			mantissa *= 10
-			mantissa += uint64(data[i] - '0')
+			mantissa += uint64(data[p] - '0')
 			ndMant++
+			continue
+		}
+		if data[p] == '.' {
+			if sawdot {
+				goto finishUp
+			}
+			sawdot = true
+			dp = nd
 			continue
 		}
 		break
 	}
+
+finishUp:
 	if !sawdigits {
-		return mantissa, 0, neg, trunc, i, false
+		return mantissa, 0, neg, trunc, p, false
 	}
 	if !sawdot {
 		dp = nd
@@ -148,29 +179,29 @@ loop:
 	// just be sure to move the decimal point by
 	// a lot (say, 100000).  it doesn't matter if it's
 	// not the exact number.
-	if i < len(data) && (data[i] == 'e' || data[i] == 'E') {
-		if data[i-1] == '.' {
-			i = 0
-			return mantissa, 0, neg, trunc, i, false
+	if p < len(data) && (data[p] == 'e' || data[p] == 'E') {
+		if data[p-1] == '.' {
+			p = 0
+			return mantissa, 0, neg, trunc, p, false
 		}
-		i++
-		if i >= len(data) {
-			return mantissa, 0, neg, trunc, i, false
+		p++
+		if p >= len(data) {
+			return mantissa, 0, neg, trunc, p, false
 		}
 		esign := 1
-		if data[i] == '+' {
-			i++
-		} else if data[i] == '-' {
-			i++
+		if data[p] == '+' {
+			p++
+		} else if data[p] == '-' {
+			p++
 			esign = -1
 		}
-		if i >= len(data) || data[i] < '0' || data[i] > '9' {
-			return mantissa, 0, neg, trunc, i, false
+		if p >= len(data) || data[p] < '0' || data[p] > '9' {
+			return mantissa, 0, neg, trunc, p, false
 		}
 		e := 0
-		for ; i < len(data) && (data[i] >= '0' && data[i] <= '9'); i++ {
+		for ; p < len(data) && (data[p] >= '0' && data[p] <= '9'); p++ {
 			if e < 10000 {
-				e = e*10 + int(data[i]) - '0'
+				e = e*10 + int(data[p]) - '0'
 			}
 		}
 		dp += e * esign
@@ -180,7 +211,20 @@ loop:
 		exp = dp - ndMant
 	}
 
-	return mantissa, exp, neg, trunc, i, true
+	return mantissa, exp, neg, trunc, p, true
+}
+
+var digits = [256]bool{
+	'0': true,
+	'1': true,
+	'2': true,
+	'3': true,
+	'4': true,
+	'5': true,
+	'6': true,
+	'7': true,
+	'8': true,
+	'9': true,
 }
 
 func (a *decimal) set(data []byte) (ok bool) {

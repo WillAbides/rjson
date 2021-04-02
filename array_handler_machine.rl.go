@@ -3235,7 +3235,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr88
 	tr124:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 103
+				goto _out
+			}
+		}
+
 		goto st103
 	st103:
 		if p++; p == pe {
@@ -3257,7 +3266,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr88
 	tr125:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 104
+				goto _out
+			}
+		}
+
 		goto st104
 	st104:
 		if p++; p == pe {
@@ -3713,7 +3731,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr88
 	tr143:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 131
+				goto _out
+			}
+		}
+
 		goto st131
 	st131:
 		if p++; p == pe {
@@ -3735,7 +3762,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr88
 	tr144:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 132
+				goto _out
+			}
+		}
+
 		goto st132
 	st132:
 		if p++; p == pe {
@@ -4665,7 +4701,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr156
 	tr206:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 182
+				goto _out
+			}
+		}
+
 		goto st182
 	st182:
 		if p++; p == pe {
@@ -4687,7 +4732,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr156
 	tr207:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 183
+				goto _out
+			}
+		}
+
 		goto st183
 	st183:
 		if p++; p == pe {
@@ -5271,7 +5325,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr156
 	tr231:
+
 		p, err = skipFloatDec(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 217
+				goto _out
+			}
+		}
+
 		goto st217
 	st217:
 		if p++; p == pe {
@@ -5293,7 +5356,16 @@ func handleArrayValues(data []byte, handler ArrayValueHandler, stack []int) (int
 		}
 		goto tr156
 	tr232:
+
 		p, err = skipFloatExp(data, p+1, pe)
+		if err != nil {
+			{
+				p++
+				cs = 218
+				goto _out
+			}
+		}
+
 		goto st218
 	st218:
 		if p++; p == pe {

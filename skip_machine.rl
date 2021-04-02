@@ -7,9 +7,19 @@ include common "common.rl";
 
 skip_json_number = json_int
   (
-    '.' @{ p, err = skipFloatDec(data, p+1, pe) }
+    '.' @{
+        p, err = skipFloatDec(data, p+1, pe)
+        if err != nil {
+          fbreak;
+        }
+      }
     |
-    [eE] @{ p, err = skipFloatExp(data, p+1, pe)}
+    [eE] @{
+        p, err = skipFloatExp(data, p+1, pe)
+        if err != nil {
+          fbreak;
+        }
+      }
   )?
 ;
 

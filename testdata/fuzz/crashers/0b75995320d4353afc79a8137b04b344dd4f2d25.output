@@ -1,0 +1,11 @@
+panic: fuzzSkip
+we got no error but json got: invalid character ']' in exponent of numeric literal
+
+goroutine 1 [running]:
+github.com/willabides/rjson.Fuzz(0x7f378edfc000, 0xa, 0xa, 0x3)
+	/home/runner/work/rjson/rjson/fuzz.go:18 +0x33f
+go-fuzz-dep.Main(0xc000045f70, 0x1, 0x1)
+	go-fuzz-dep/main.go:36 +0x1b8
+main.main()
+	github.com/willabides/rjson/go.fuzz.main/main.go:15 +0x52
+exit status 2

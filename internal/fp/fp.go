@@ -12,17 +12,17 @@ var (
 
 // ParseJSONFloatPrefix is a bit like strconv.ParseFloat but it deals in byte slices instead of strings and
 // has everything not needed for json stripped out.
-func ParseJSONFloatPrefix(s []byte) (f float64, n int, err error) {
+func ParseJSONFloatPrefix(data []byte) (f float64, n int, err error) {
 	var mantissa uint64
 	var exp int
 	var neg, trunc, ok bool
-	mantissa, exp, neg, trunc, n, ok = readFloat(s)
+	mantissa, exp, neg, trunc, n, ok = readFloat(data)
 	if !ok {
 		return 0, n, errSyntax
 	}
 
 	// to match json behavior: a '.' at the end of the parsed data is an error.
-	if n > 0 && s[n-1] == '.' {
+	if n > 0 && data[n-1] == '.' {
 		return 0, 0, errSyntax
 	}
 
@@ -49,7 +49,7 @@ func ParseJSONFloatPrefix(s []byte) (f float64, n int, err error) {
 
 	// Slow fallback.
 	var d decimal
-	if !d.set(s[:n]) {
+	if !d.set(data[:n]) {
 		return 0, n, errSyntax
 	}
 	b, ovf := d.floatBits()
@@ -183,8 +183,8 @@ loop:
 	return mantissa, exp, neg, trunc, i, true
 }
 
-func (a *decimal) set(s []byte) (ok bool) {
-	if len(s) == 0 {
+func (a *decimal) set(data []byte) (ok bool) {
+	if len(data) == 0 {
 		return false
 	}
 	a.neg = false
@@ -192,7 +192,7 @@ func (a *decimal) set(s []byte) (ok bool) {
 
 	i := 0
 	// optional sign
-	if s[0] == '-' {
+	if data[0] == '-' {
 		a.neg = true
 		i = 1
 	}
@@ -200,9 +200,9 @@ func (a *decimal) set(s []byte) (ok bool) {
 	// digits
 	sawdot := false
 	sawdigits := false
-	for ; i < len(s); i++ {
+	for ; i < len(data); i++ {
 		switch {
-		case s[i] == '.':
+		case data[i] == '.':
 			if sawdot {
 				return false
 			}
@@ -210,16 +210,16 @@ func (a *decimal) set(s []byte) (ok bool) {
 			a.dp = a.nd
 			continue
 
-		case s[i] >= '0' && s[i] <= '9':
+		case data[i] >= '0' && data[i] <= '9':
 			sawdigits = true
-			if s[i] == '0' && a.nd == 0 { // ignore leading zeros
+			if data[i] == '0' && a.nd == 0 { // ignore leading zeros
 				a.dp--
 				continue
 			}
 			if a.nd < len(a.d) {
-				a.d[a.nd] = s[i]
+				a.d[a.nd] = data[i]
 				a.nd++
-			} else if s[i] != '0' {
+			} else if data[i] != '0' {
 				a.trunc = true
 			}
 			continue
@@ -238,34 +238,34 @@ func (a *decimal) set(s []byte) (ok bool) {
 	// just be sure to move the decimal point by
 	// a lot (say, 100000).  it doesn't matter if it's
 	// not the exact number.
-	if i < len(s) && (s[i] == 'e' || s[i] == 'E') {
+	if i < len(data) && (data[i] == 'e' || data[i] == 'E') {
 		i++
-		if i >= len(s) {
+		if i >= len(data) {
 			return false
 		}
 		esign := 1
-		if s[i] == '+' {
+		if data[i] == '+' {
 			i++
-		} else if s[i] == '-' {
+		} else if data[i] == '-' {
 			i++
 			esign = -1
 		}
-		if i >= len(s) || s[i] < '0' || s[i] > '9' {
+		if i >= len(data) || data[i] < '0' || data[i] > '9' {
 			return false
 		}
 		e := 0
-		for ; i < len(s); i++ {
-			if s[i] < '0' || s[i] > '9' {
+		for ; i < len(data); i++ {
+			if data[i] < '0' || data[i] > '9' {
 				break
 			}
 			if e < 10000 {
-				e = e*10 + int(s[i]) - '0'
+				e = e*10 + int(data[i]) - '0'
 			}
 		}
 		a.dp += e * esign
 	}
 
-	if i != len(s) {
+	if i != len(data) {
 		return false
 	}
 

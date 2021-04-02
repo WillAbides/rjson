@@ -39,6 +39,16 @@ var jsonTestFiles = []string{
 	"sample.json",
 }
 
+func Test_skipFloat(t *testing.T) {
+	got, err := skipFloat([]byte(`1`))
+	require.NoError(t, err)
+	require.Equal(t, 1, got)
+
+	got, err = skipFloat([]byte(`12`))
+	require.NoError(t, err)
+	require.Equal(t, 2, got)
+}
+
 func corpusFiles(t *testing.T) []string {
 	t.Helper()
 	var result []string

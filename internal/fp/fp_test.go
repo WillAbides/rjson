@@ -56,7 +56,27 @@ func testAgainstJSON(t *testing.T, input string) {
 	assert.Equal(t, want, got)
 }
 
-func Test_parseFloatPrefix(t *testing.T) {
+func Benchmark_readFloat(b *testing.B) {
+	data := []byte(`11111.001111111789`)
+	var ok bool
+	b.SetBytes(int64(len(data)))
+	for i := 0; i < b.N; i++ {
+		_, _, _, _, _, ok = readFloat(data)
+	}
+	assert.True(b, ok)
+}
+
+func BenchmarkParseJSONFloatPrefix(b *testing.B) {
+	data := []byte(`11111.001111111789`)
+	b.SetBytes(int64(len(data)))
+	var err error
+	for i := 0; i < b.N; i++ {
+		_, _, err = ParseJSONFloatPrefix(data)
+	}
+	assert.NoError(b, err)
+}
+
+func TestParseJSONFloatPrefix(t *testing.T) {
 	for _, s := range []string{
 		`"foo"`,
 		`"foo`,
@@ -68,6 +88,8 @@ func Test_parseFloatPrefix(t *testing.T) {
 		"0132311002552003023566733115",
 		"-0132311002552003023566733115",
 		"1.",
+		".",
+		"1.1.1",
 		"1.e2",
 		"0.0001",
 		".0001",

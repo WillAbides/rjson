@@ -73,7 +73,7 @@ func BenchmarkReadInt64_small(b *testing.B) {
 }
 
 func BenchmarkReadInt64_big_negative(b *testing.B) {
-	runBenchReadInt64(b, []byte(`9223372036854775807`))
+	runBenchReadInt64(b, []byte(`-9223372036854775807`))
 }
 
 var int64Result int64

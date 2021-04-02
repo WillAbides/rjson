@@ -20,6 +20,4 @@ json_number = json_int ('.'[0-9]+)? ([eE][+\-]?[0-9]+)?;
 json_string = double_quote ( not_double_quote_or_escape | escaped_char )* double_quote;
 json_bool = json_true | json_false;
 
-json_simple_value = json_bool | json_null | json_string | json_number;
-
 }%%

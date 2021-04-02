@@ -5,7 +5,15 @@ machine skipper;
 
 include common "common.rl";
 
-skip_json_value = (json_simple_value
+skip_json_number = json_int
+  (
+    '.' @{ p, err = skipFloatDec(data, p+1, pe) }
+    |
+    [eE] @{ p, err = skipFloatExp(data, p+1, pe)}
+  )?
+;
+
+skip_json_value = (json_bool |  json_null | json_string | skip_json_number
   | '['@{fcall skip_array;}
   | '{'@{fcall skip_object;}
   );

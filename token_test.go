@@ -38,6 +38,7 @@ func TestNextToken(t *testing.T) {
 }
 
 func TestNextTokenType(t *testing.T) {
+	t.Parallel()
 	for _, td := range []struct {
 		data string
 		tkn  TokenType

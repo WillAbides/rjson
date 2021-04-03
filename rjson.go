@@ -1,7 +1,8 @@
 package rjson
 
 import (
-	"io"
+	"bytes"
+	"encoding/json"
 	"unicode/utf8"
 )
 
@@ -9,51 +10,6 @@ import (
 //go:generate script/generate-ragel-file skip_machine.rl
 //go:generate script/generate-ragel-file array_handler_machine.rl
 //go:generate script/generate-ragel-file object_handler_machine.rl
-
-// NextToken finds the first json token in data. token is the token itself, p is the position in data where
-// the token was found. NextToken errors if it finds anything besides json whitespace before the first valid
-// token. It returns io.EOF if data is empty or contains only whitespace.
-func NextToken(data []byte) (token byte, p int, err error) {
-	if len(data) == 0 {
-		return 0, 0, io.EOF
-	}
-	if tokenTypes[data[0]] != InvalidType {
-		return data[0], 1, nil
-	}
-	if !whitespace[data[0]] {
-		return data[0], 1, errNoValidToken
-	}
-	p = countWhitespace(data)
-	if p >= len(data) {
-		return 0, p, io.EOF
-	}
-	b := data[p]
-	if tokenTypes[b] == InvalidType {
-		return b, p + 1, errNoValidToken
-	}
-	return b, p + 1, nil
-}
-
-// NextTokenType finds the first json token in data and returns its TokenType. p is the position in data where
-// the token was found. NextToken errors if it finds anything besides json whitespace before the first valid
-// token. It returns io.EOF if data is empty or contains only whitespace.
-func NextTokenType(data []byte) (TokenType, int, error) {
-	if len(data) == 0 {
-		return 0, 0, io.EOF
-	}
-	tp := tokenTypes[data[0]]
-	if tp != InvalidType {
-		return tp, 1, nil
-	}
-	if !whitespace[data[0]] {
-		return tp, 1, nil
-	}
-	p := countWhitespace(data)
-	if p >= len(data) {
-		return 0, p, io.EOF
-	}
-	return tokenTypes[data[p]], p + 1, nil
-}
 
 // ObjectValueHandler is a handler for json objects.
 type ObjectValueHandler interface {
@@ -122,6 +78,24 @@ func SkipValue(data []byte, buffer *Buffer) (p int, err error) {
 	}
 	p, buffer.stackBuf, err = skipValue(data, buffer.stackBuf)
 	return p, err
+}
+
+func skipValueCompat(data []byte) (p int, err error) {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	tkn, err := decoder.Token()
+	if err != nil {
+		return int(decoder.InputOffset()), err
+	}
+	_, ok := tkn.(json.Delim)
+	if !ok {
+		return int(decoder.InputOffset()), nil
+	}
+	decoder = json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	var val interface{}
+	err = decoder.Decode(&val)
+	return int(decoder.InputOffset()), err
 }
 
 // SkipValueFast is like SkipValue but it speeds things up by skipping validation on objects and arrays.

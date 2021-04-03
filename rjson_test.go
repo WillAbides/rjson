@@ -1,15 +1,12 @@
 package rjson
 
 import (
-	"bytes"
 	"compress/gzip"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -51,28 +48,126 @@ func corpusFiles(t *testing.T) []string {
 	return result
 }
 
-func Test_fuzzers(t *testing.T) {
-	for _, td := range fuzzers {
-		td := td
-		t.Run(td.name, func(t *testing.T) {
-			t.Parallel()
-
-			for _, filename := range corpusFiles(t) {
-				data, err := ioutil.ReadFile(filename)
-				require.NoError(t, err)
-				_, err = td.fn(data)
-				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filename, string(data))
-
-			}
-
-			for _, name := range jsontestsuiteFiles(t) {
-				data, err := ioutil.ReadFile(name)
-				require.NoError(t, err)
-				_, err = td.fn(data)
-				assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", name, string(data))
-			}
-		})
+func testFuzzerFunc(t *testing.T, fn func([]byte) (int, error)) {
+	t.Helper()
+	require.NotNil(t, fn)
+	for _, filename := range corpusFiles(t) {
+		data, err := ioutil.ReadFile(filename)
+		require.NoError(t, err)
+		_, err = fn(data)
+		assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filename, string(data))
 	}
+}
+
+//nolint:unused,deadcode // this is a convenience method for ad-hoc testing
+func testFuzzerWithInput(t *testing.T, fuzzer func([]byte) (int, error), inputs ...string) {
+	t.Helper()
+
+	for _, input := range inputs {
+		data := []byte(input)
+		_, err := fuzzer(data)
+		assert.NoError(t, err, "error on input: %s", input)
+	}
+}
+
+func Test_fuzzReadFloat64(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadFloat64)
+}
+
+func Test_fuzzReadUint64(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadUint64)
+}
+
+func Test_fuzzReadUint32(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadUint32)
+}
+
+func Test_fuzzReadUint(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadUint)
+}
+
+func Test_fuzzReadInt64(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadInt64)
+}
+
+func Test_fuzzReadInt32(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadInt32)
+}
+
+func Test_fuzzReadInt(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadInt)
+}
+
+func Test_fuzzReadString(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadString)
+}
+
+func Test_fuzzReadStringBytes(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadStringBytes)
+}
+
+func Test_fuzzReadBool(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadBool)
+}
+
+func Test_fuzzReadNull(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadNull)
+}
+
+func Test_fuzzSkipValue(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzSkipValue)
+}
+
+func Test_fuzzValid(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzValid)
+}
+
+func Test_fuzzNextToken(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzNextToken)
+}
+
+func Test_fuzzNextTokenType(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzNextTokenType)
+}
+
+func Test_fuzzHandleArrayValues(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzHandleArrayValues)
+}
+
+func Test_fuzzHandleObjectValues(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzHandleObjectValues)
+}
+
+func Test_fuzzReadArray(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadArray)
+}
+
+func Test_fuzzReadObject(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadObject)
+}
+
+func Test_fuzzReadValue(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzReadValue)
 }
 
 // various values that fuzz has crashed on in the past
@@ -163,36 +258,6 @@ func TestValid(t *testing.T) {
 	}
 }
 
-func TestSkipValue(t *testing.T) {
-	for _, s := range jsonTestFiles {
-		t.Run(s, func(t *testing.T) {
-			data := getTestdataJSONGz(t, s)
-			skippedBytes, err := SkipValue(data, nil)
-			wantSkippedBytes, wantErr := skipValueEquiv(data)
-			if wantErr != nil {
-				assert.Error(t, err)
-				return
-			}
-			assert.NoError(t, err)
-			assert.Equal(t, wantSkippedBytes, skippedBytes, "not equal for %q", s)
-		})
-	}
-
-	t.Run("invalid json", func(t *testing.T) {
-		for _, s := range invalidJSON {
-			data := []byte(s)
-			skippedBytes, err := SkipValue(data, nil)
-			wantSkippedBytes, wantErr := skipValueEquiv(data)
-			if wantErr != nil {
-				assert.Error(t, err)
-				return
-			}
-			assert.NoError(t, err)
-			assert.Equal(t, wantSkippedBytes, skippedBytes, "not equal for %q", s)
-		}
-	})
-}
-
 func gunzipTestJSON(t testing.TB, filename string) string {
 	t.Helper()
 	targetDir := filepath.Join("testdata", "tmp")
@@ -233,219 +298,6 @@ func fileExists(t testing.TB, filename string) bool {
 	}
 	require.NoError(t, err)
 	return true
-}
-
-func getUnmarshalResult(data []byte, v interface{}) (offset int, null bool, err error) {
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	var token json.Token
-	token, err = decoder.Token()
-
-	switch token {
-	case json.Delim('['), json.Delim('{'):
-		decoder = json.NewDecoder(bytes.NewReader(data))
-		err = decoder.Decode(&v)
-		return int(decoder.InputOffset()), false, err
-	}
-	offset = int(decoder.InputOffset())
-	if err != nil {
-		return offset, false, err
-	}
-	if token == nil {
-		return offset, true, nil
-	}
-	err = json.Unmarshal(data[:offset], v)
-	return offset, false, err
-}
-
-func assertMatchesUnmarshal(t *testing.T, data []byte, got interface{}, gotP int, gotErr error) int {
-	t.Helper()
-	if got == nil {
-		return assertNilMatchesUnmarshal(t, data, gotP, gotErr)
-	}
-	umVal := reflect.New(reflect.TypeOf(got)).Interface()
-	gotAnError := gotErr != nil
-	umOffset, umNull, umErr := getUnmarshalResult(data, &umVal)
-	wantErr := umNull || umErr != nil
-
-	pp := gotP
-	if umOffset > pp {
-		pp = umOffset
-	}
-	msgData := "raw json: " + string(data[:pp])
-
-	assert.Equal(t, wantErr, gotAnError, msgData)
-	wantVal := reflect.Indirect(reflect.ValueOf(umVal)).Interface()
-	assert.EqualValues(t, wantVal, got, msgData)
-	if !wantErr {
-		assert.Equal(t, umOffset, gotP, msgData)
-	}
-	if gotAnError {
-		return 0
-	}
-	return gotP
-}
-
-func assertNilMatchesUnmarshal(t *testing.T, data []byte, gotP int, gotErr error) int {
-	t.Helper()
-	var umVal interface{}
-	umOffset, _, umErr := getUnmarshalResult(data, &umVal)
-	pp := gotP
-	if umOffset > pp {
-		pp = umOffset
-	}
-	if umVal == nil {
-		if umErr == nil {
-			assert.NoError(t, gotErr)
-			assert.Equal(t, umOffset, gotP)
-			return pp
-		}
-		assert.Error(t, gotErr)
-		return 0
-	}
-	if umErr != nil {
-		assert.Error(t, gotErr)
-		return 0
-	}
-	assert.Failf(t, "wrong val", "expected %v but got nil", umVal)
-	return pp
-}
-
-func TestNextToken(t *testing.T) {
-	t.Parallel()
-	for _, td := range []struct {
-		data string
-		tkn  byte
-		p    int
-		err  string
-	}{
-		{data: `"foo"`, tkn: '"', p: 1},
-		{data: `"`, tkn: '"', p: 1},
-		{data: "\n\ntrue", tkn: 't', p: 3},
-		{data: ``, err: "EOF"},
-		{data: ` `, p: 1, err: "EOF"},
-		{data: ` asdf `, tkn: 'a', p: 2, err: "no valid json token found"},
-		{data: `asdf `, tkn: 'a', p: 1, err: "no valid json token found"},
-	} {
-		t.Run(td.data, func(t *testing.T) {
-			tkn, p, err := NextToken([]byte(td.data))
-			if td.err != "" {
-				require.EqualError(t, err, td.err)
-			} else {
-				require.NoError(t, err)
-			}
-			require.Equal(t, string(td.tkn), string(tkn))
-			require.Equal(t, td.p, p)
-		})
-	}
-}
-
-func TestNextTokenType(t *testing.T) {
-	for _, td := range []struct {
-		data string
-		tkn  TokenType
-		p    int
-		err  string
-	}{
-		{data: `"`, tkn: StringType, p: 1},
-		{data: "true", tkn: TrueType, p: 1},
-		{data: "false", tkn: FalseType, p: 1},
-		{data: "null", tkn: NullType, p: 1},
-		{data: "{", tkn: ObjectStartType, p: 1},
-		{data: "}", tkn: ObjectEndType, p: 1},
-		{data: "[", tkn: ArrayStartType, p: 1},
-		{data: "]", tkn: ArrayEndType, p: 1},
-		{data: ",", tkn: CommaType, p: 1},
-		{data: ":", tkn: ColonType, p: 1},
-		{data: "0", tkn: NumberType, p: 1},
-		{data: ``, err: "EOF"},
-		{data: ` `, p: 1, err: "EOF"},
-		{data: ` asdf `, p: 2},
-		{data: `asdf `, p: 1},
-	} {
-		t.Run(td.data, func(t *testing.T) {
-			tkn, p, err := NextTokenType([]byte(td.data))
-			if td.err != "" {
-				require.EqualError(t, err, td.err)
-			} else {
-				require.NoError(t, err)
-			}
-			require.Equal(t, string(td.tkn), string(tkn))
-			require.Equal(t, td.p, p)
-		})
-	}
-
-	fileCounts := map[string]int{
-		"canada.json":       334373,
-		"citm_catalog.json": 135990,
-		"twitter.json":      55263,
-		"code.json":         396293,
-		"example.json":      1297,
-	}
-	for filename, wantCount := range fileCounts {
-		t.Run(filename, func(t *testing.T) {
-			assert.Equal(t, wantCount, countTokens(getTestdataJSONGz(t, filename)))
-		})
-	}
-}
-
-func countTokens(data []byte) int {
-	var count int
-	buf := new(Buffer)
-	for {
-		tp, p, err := NextTokenType(data)
-		if err != nil {
-			break
-		}
-		count++
-		data = data[p-1:]
-		switch tp {
-		case NullType, StringType, TrueType, FalseType, NumberType:
-			p, err = SkipValueFast(data, buf)
-			if err != nil {
-				return count
-			}
-			data = data[p:]
-		case InvalidType:
-			fmt.Println(data[0])
-			count--
-			if len(data) > 0 {
-				data = data[1:]
-			}
-		default:
-			if len(data) > 0 {
-				data = data[1:]
-			}
-		}
-	}
-	return count
-}
-
-type simpleValueHandler struct {
-	buffer             Buffer
-	simpleValueHandler ArrayValueHandler
-}
-
-func (h *simpleValueHandler) HandleObjectValue(fieldname, data []byte) (int, error) {
-	return h.HandleArrayValue(data)
-}
-
-func (h *simpleValueHandler) HandleArrayValue(data []byte) (int, error) {
-	tknType, p, err := NextTokenType(data)
-	if err != nil {
-		return p, err
-	}
-	p--
-	data = data[p:]
-	var pp int
-	switch tknType {
-	case ObjectStartType:
-		pp, err = HandleObjectValues(data, h, &h.buffer)
-	case ArrayStartType:
-		pp, err = HandleArrayValues(data, h, &h.buffer)
-	default:
-		pp, err = h.simpleValueHandler.HandleArrayValue(data)
-	}
-	return pp, err
 }
 
 // examples taken from github.com/pkg/json

@@ -2,6 +2,7 @@ package rjson
 
 import (
 	"io"
+	"unicode/utf8"
 )
 
 //go:generate script/generate-ragel-file misc_machines.rl
@@ -174,4 +175,68 @@ func countWhitespace(data []byte) int {
 		}
 	}
 	return len(data)
+}
+
+// StdLibCompatibleString replaces invalid utf8 with utf8.RuneError to match the standard library's behavior.
+func StdLibCompatibleString(rjsonString string) string {
+	runes := make([]rune, 0, len(rjsonString))
+	var i int
+	for i < len(rjsonString) {
+		r, w := utf8.DecodeRuneInString(rjsonString[i:])
+		i += w
+		runes = append(runes, r)
+	}
+	return string(runes)
+}
+
+// StdLibCompatibleStringBytes replaces invalid utf8 with utf8.RuneError to match the standard library's behavior.
+func StdLibCompatibleStringBytes(rjsonString, buf []byte) []byte {
+	var i int
+	for i < len(rjsonString) {
+		r, w := utf8.DecodeRune(rjsonString[i:])
+		if cap(buf)-len(buf) < w {
+			buf = growBytesSliceCapacity(buf, w+(len(rjsonString)-i)*utf8.UTFMax)
+		}
+		i += w
+		buf = append(buf, string(r)...)
+	}
+	return buf
+}
+
+// StdLibCompatibleSlice returns a copy of rjsonSlice with StdLibCompatibleString applied to all string values recursively.
+func StdLibCompatibleSlice(rjsonSlice []interface{}) []interface{} {
+	out := make([]interface{}, len(rjsonSlice))
+	for i, val := range rjsonSlice {
+		switch v := val.(type) {
+		case string:
+			out[i] = StdLibCompatibleString(v)
+		case []interface{}:
+			out[i] = StdLibCompatibleSlice(v)
+		case map[string]interface{}:
+			out[i] = StdLibCompatibleMap(v)
+		default:
+			out[i] = v
+		}
+	}
+	return out
+}
+
+// StdLibCompatibleMap returns a copy of rjsonMap with StdLibCompatibleString applied to all map keys and
+// string values recursively.
+func StdLibCompatibleMap(rjsonMap map[string]interface{}) map[string]interface{} {
+	out := make(map[string]interface{}, len(rjsonMap))
+	for key, val := range rjsonMap {
+		k := StdLibCompatibleString(key)
+		switch v := val.(type) {
+		case string:
+			out[k] = StdLibCompatibleString(v)
+		case []interface{}:
+			out[k] = StdLibCompatibleSlice(v)
+		case map[string]interface{}:
+			out[k] = StdLibCompatibleMap(v)
+		default:
+			out[k] = v
+		}
+	}
+	return out
 }

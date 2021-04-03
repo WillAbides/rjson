@@ -42,8 +42,25 @@ func (h *nCallArrayValueHandler) HandleArrayValue(data []byte) (p int, err error
 	return 0, nil
 }
 
+func stdLibCompatibleValue(rjsonVal interface{}) interface{} {
+	switch v := rjsonVal.(type) {
+	case []byte:
+		return StdLibCompatibleString(string(v))
+	case string:
+		return StdLibCompatibleString(v)
+	case map[string]interface{}:
+		return StdLibCompatibleMap(v)
+	case []interface{}:
+		return StdLibCompatibleSlice(v)
+	default:
+		return v
+	}
+}
+
 // removeJSONRuneError because encoding/json incorrectly unmarshals some characters to RuneError
 // when we see that rjson differs from encoding/json change both values to ""  before comparing
+//
+//nolint:unused // making this easier to revert if stdLibCompatibleValue doesn't work out
 func removeJSONRuneError(rjsonVal, jsonVal interface{}) (rvRes, jvRes interface{}) {
 	var rvMap, jvMap map[string]interface{}
 	var ok bool
@@ -156,6 +173,7 @@ func fuzzCompare(want, got interface{}) error {
 	return nil
 }
 
+//nolint:gocyclo // oh the complexity
 func ifaceCompare(want, got interface{}, path []string) error {
 	var err error
 	switch wantVal := want.(type) {
@@ -202,6 +220,9 @@ func ifaceCompare(want, got interface{}, path []string) error {
 			gv, ok = gotVal[k]
 			if !ok {
 				multiErr = append(multiErr, newPathErr(append(path, k), "missing map key"))
+				continue
+			}
+			if strings.ContainsRune(k, utf8.RuneError) {
 				continue
 			}
 			err = ifaceCompare(wv, gv, append(path, k))

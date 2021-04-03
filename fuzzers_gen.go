@@ -35,8 +35,8 @@ func fuzzReadUint64Gen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -52,8 +52,8 @@ func fuzzReadUint32Gen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -69,8 +69,8 @@ func fuzzReadInt64Gen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -86,8 +86,8 @@ func fuzzReadInt32Gen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -103,8 +103,8 @@ func fuzzReadIntGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -120,8 +120,8 @@ func fuzzReadUintGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -137,8 +137,8 @@ func fuzzReadFloat64Gen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -154,8 +154,8 @@ func fuzzReadStringBytesGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(string(got), want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -171,8 +171,8 @@ func fuzzReadStringGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -188,8 +188,8 @@ func fuzzReadBoolGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -205,8 +205,8 @@ func fuzzReadValueGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -222,8 +222,8 @@ func fuzzReadObjectGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 
@@ -239,7 +239,7 @@ func fuzzReadArrayGen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError(got, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }

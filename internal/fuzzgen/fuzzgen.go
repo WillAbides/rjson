@@ -76,8 +76,8 @@ func fuzz{{ .FuncName }}Gen(data []byte) (int, error) {
 	if err != nil || wantErr != nil {
 		return 0, err
 	}
-	gotVal, wantVal := removeJSONRuneError({{ .GotValCheck }}, want)
-	err = fuzzCompare(wantVal, gotVal)
+	gotVal := stdLibCompatibleValue(got)
+	err = fuzzCompare(want, gotVal)
 	return 0, err
 }
 `))

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 var arrayHandlers = map[string]ArrayValueHandlerFunc{
@@ -41,19 +42,73 @@ func (h *nCallArrayValueHandler) HandleArrayValue(data []byte) (p int, err error
 	return 0, nil
 }
 
-func stdLibCompatibleValue(rjsonVal interface{}) interface{} {
-	switch v:= rjsonVal.(type) {
-	case []byte:
-		return StdLibCompatibleString(string(v))
-	case string:
-		return StdLibCompatibleString(v)
-	case map[string]interface{}:
-		return StdLibCompatibleMap(v)
-	case []interface{}:
-		return StdLibCompatibleSlice(v)
-	default:
-		return v
+// removeJSONRuneError because encoding/json incorrectly unmarshals some characters to RuneError
+// when we see that rjson differs from encoding/json change both values to ""  before comparing
+func removeJSONRuneError(rjsonVal, jsonVal interface{}) (rvRes, jvRes interface{}) {
+	var rvMap, jvMap map[string]interface{}
+	var ok bool
+	rvMap, ok = rjsonVal.(map[string]interface{})
+	if ok {
+		jvMap, ok = jsonVal.(map[string]interface{})
+		if !ok {
+			return rjsonVal, jsonVal
+		}
+		var jvv interface{}
+		for k, rvv := range rvMap {
+			if strings.ContainsRune(k, utf8.RuneError) {
+				delete(rvMap, k)
+				continue
+			}
+			jvv, ok = jvMap[k]
+			if !ok {
+				delete(rvMap, k)
+				continue
+			}
+			rvMap[k], jvMap[k] = removeJSONRuneError(rvv, jvv)
+		}
+		for k := range jvMap {
+			if !strings.ContainsRune(k, utf8.RuneError) {
+				continue
+			}
+			_, ok = rvMap[k]
+			if !ok {
+				delete(jvMap, k)
+			}
+		}
+		return rvMap, jvMap
 	}
+
+	var rvSlice, jvSlice []interface{}
+	rvSlice, ok = rjsonVal.([]interface{})
+	if ok {
+		jvSlice, ok = jsonVal.([]interface{})
+		if !ok {
+			return rjsonVal, jsonVal
+		}
+		for i := range rvSlice {
+			if i >= len(jvSlice) {
+				break
+			}
+			rvSlice[i], jvSlice[i] = removeJSONRuneError(rvSlice[i], jvSlice[i])
+		}
+		return rvSlice, jvSlice
+	}
+
+	var rvStr, jvStr string
+	rvStr, ok = rjsonVal.(string)
+	if ok {
+		jvStr, ok = jsonVal.(string)
+		if !ok {
+			return rjsonVal, jsonVal
+		}
+		if strings.ContainsRune(jvStr, utf8.RuneError) {
+			jvStr = ""
+			rvStr = ""
+		}
+		return jvStr, rvStr
+	}
+
+	return rjsonVal, jsonVal
 }
 
 type multiPathErr []*pathErr

@@ -11,8 +11,10 @@ type jsonparserBencher struct {
 }
 
 func (x *jsonparserBencher) init() {
-	x.readRepoDataHandler = &jsonparserReadRepoDataHandler{
-		doneErr: fmt.Errorf("done"),
+	*x = jsonparserBencher{
+		readRepoDataHandler: &jsonparserReadRepoDataHandler{
+			doneErr: fmt.Errorf("done"),
+		},
 	}
 }
 

@@ -9,7 +9,9 @@ type fastjsonBencher struct {
 }
 
 func (x *fastjsonBencher) init() {
-	x.parser = &fastjson.Parser{}
+	*x = fastjsonBencher{
+		parser: &fastjson.Parser{},
+	}
 }
 
 func (x *fastjsonBencher) name() string {

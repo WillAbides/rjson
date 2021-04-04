@@ -14,8 +14,10 @@ type rjsonBencher struct {
 }
 
 func (x *rjsonBencher) init() {
-	x.readRepoDataHandler = &rjsonReadRepoDataHandler{
-		doneErr: fmt.Errorf("done"),
+	*x = rjsonBencher{
+		readRepoDataHandler: &rjsonReadRepoDataHandler{
+			doneErr: fmt.Errorf("done"),
+		},
 	}
 }
 

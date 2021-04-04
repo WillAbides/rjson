@@ -16,7 +16,9 @@ func (x *jsoniterBencher) name() string {
 }
 
 func (x *jsoniterBencher) init() {
-	x.iter = jsoniter.NewIterator(jsoniter.ConfigCompatibleWithStandardLibrary)
+	*x = jsoniterBencher{
+		iter: jsoniter.NewIterator(jsoniter.ConfigCompatibleWithStandardLibrary),
+	}
 }
 
 func (x *jsoniterBencher) resetIter(data []byte) {

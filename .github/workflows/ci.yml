@@ -20,3 +20,28 @@ jobs:
       - run: script/generate --check
       - run: script/test
       - run: script/lint
+  benchdiff:
+    name: benchdiff
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: WillAbides/setup-go-faster@v1
+        id: setup-go
+        with:
+          go-version: '1.15.x'
+      - uses: WillAbides/benchdiff-action@v0.3.3
+        id: benchdiff
+        with:
+          benchdiff_version: 0.5.6
+          benchdiff_args: |
+            --base-ref=$default_base_ref --benchstat-output markdown --debug --tolerance 50 --benchtime 10ms --warmup-count 1
+          github_token: ${{ secrets.github_token }}
+          status_name: benchdiff-result
+      - name: outputs
+        run: |
+          echo 'head_sha           ${{ steps.benchdiff.outputs.head_sha }}'
+          echo 'base_sha           ${{ steps.benchdiff.outputs.base_sha }}'
+          echo 'bench_command:     ${{ steps.benchdiff.outputs.bench_command }}'
+          echo 'degraded_result    ${{ steps.benchdiff.outputs.degraded_result }}'

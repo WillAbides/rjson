@@ -115,8 +115,12 @@ func nextTokenCompat(data []byte) (token byte, p int, err error) {
 				break
 			}
 		}
-		if err != nil {
+		switch err {
+		case nil:
+		case io.EOF:
 			return 0, p, err
+		default:
+			return data[p], p, err
 		}
 	}
 	switch tt := tkn.(type) {

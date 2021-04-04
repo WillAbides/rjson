@@ -42,3 +42,7 @@ BENCHSTAT_REV := 40a54f11e90963acb1c431127af77c095654c32d
 bin/benchstat:
 	GOBIN=${CURDIR}/bin \
 	go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_REV)
+
+bin/goreadme:
+	GOBIN=${CURDIR}/bin \
+	go install github.com/posener/goreadme/cmd/goreadme@v1.3.4

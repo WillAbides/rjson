@@ -140,6 +140,11 @@ func Test_fuzzNextToken(t *testing.T) {
 	testFuzzerFunc(t, fuzzNextToken)
 }
 
+func Test_adhoc(t *testing.T) {
+	testFuzzerWithInput(t, fuzzNextToken, `	
+			`)
+}
+
 func Test_fuzzNextTokenType(t *testing.T) {
 	t.Parallel()
 	testFuzzerFunc(t, fuzzNextTokenType)

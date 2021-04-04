@@ -263,14 +263,14 @@ func fuzzReadValue(data []byte) (int, error) {
 
 func checkFuzzResults(want, got interface{}, wantP, gotP int, wantErr, gotErr error) error {
 	err := checkFuzzErrors(wantErr, gotErr)
-	if err != nil || wantErr != nil {
+	if err != nil {
 		return err
 	}
 	err = fuzzCompare(want, got)
 	if err != nil {
 		return err
 	}
-	if gotP != wantP {
+	if wantErr == nil && gotP != wantP {
 		return fmt.Errorf("expected p=%d, but got p=%d", wantP, gotP)
 	}
 	return nil

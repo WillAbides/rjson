@@ -8,8 +8,12 @@ PATH="$(pwd)/bin:$PATH"
 
 mkdir -p tmp
 
+# make a list of all dependencies outside of this repo so they won't be instrumented by go-fuzz
+preservers="$(go list -f '{{ join .Deps "\n" }}' | grep -v rjson |  tr '\n' ',')"
+
 go get github.com/dvyukov/go-fuzz@6a8e9d1f241
 trap "go mod tidy" EXIT
-go-fuzz-build -o tmp/fuzz-rjson.zip
+
+go-fuzz-build -o tmp/fuzz-rjson.zip -preserve "$preservers"
 
 go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 4 -workdir testdata/fuzz

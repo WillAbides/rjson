@@ -9,16 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_readFloat(t *testing.T) {
-	mantissa, exp, neg, trunc, i, ok := readFloat([]byte(`12.345e-9999999`))
-	fmt.Println("mantissa", mantissa)
-	fmt.Println("exp", exp)
-	fmt.Println("neg", neg)
-	fmt.Println("trunc", trunc)
-	fmt.Println("i", i)
-	fmt.Println("ok", ok)
-}
-
 func jsonEquiv(data []byte) (val float64, p int, err error) {
 	if len(data) == 0 {
 		return 0, 0, fmt.Errorf("empty")
@@ -78,6 +68,8 @@ func BenchmarkParseJSONFloatPrefix(b *testing.B) {
 
 func TestParseJSONFloatPrefix(t *testing.T) {
 	for _, s := range []string{
+		`-`,
+		`900e`,
 		`"foo"`,
 		`"foo`,
 		" 1",

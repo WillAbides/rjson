@@ -18,7 +18,7 @@ func ParseJSONFloatPrefix(data []byte) (f float64, n int, err error) {
 	var neg, trunc, ok bool
 	mantissa, exp, neg, trunc, n, ok = readFloat(data)
 	if !ok {
-		return 0, n, errSyntax
+		return 0, 0, errSyntax
 	}
 
 	// to match json behavior: a '.' at the end of the parsed data is an error.

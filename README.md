@@ -79,12 +79,12 @@ BenchmarkReadObject_twitter/jsoniter-8               226	 5091349 ns/op	124.04 M
 This tests getting three values of different types from github_repo.json.
 
 ```
-BenchmarkGetRepoValues/encoding_json-8         	   30466	     39900 ns/op	     248 B/op	       7 allocs/op
-BenchmarkGetRepoValues/rjson-8                 	  576297	      2076 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGetRepoValues/gjson-8                 	  436257	      2339 ns/op	     200 B/op	       4 allocs/op
-BenchmarkGetRepoValues/jsoniter-8              	  486663	      2520 ns/op	     360 B/op	      25 allocs/op
-BenchmarkGetRepoValues/jsonparser-8            	  488737	      2462 ns/op	      16 B/op	       1 allocs/op
-BenchmarkGetRepoValues/fastjson-8              	  235377	      5089 ns/op	      16 B/op	       1 allocs/op
+BenchmarkGetRepoValues/encoding_json-8    30466     39900 ns/op     248 B/op     7 allocs/op
+BenchmarkGetRepoValues/rjson-8           576297      2076 ns/op      16 B/op     1 allocs/op
+BenchmarkGetRepoValues/gjson-8           436257      2339 ns/op     200 B/op     4 allocs/op
+BenchmarkGetRepoValues/jsoniter-8        486663      2520 ns/op     360 B/op    25 allocs/op
+BenchmarkGetRepoValues/jsonparser-8      488737      2462 ns/op      16 B/op     1 allocs/op
+BenchmarkGetRepoValues/fastjson-8        235377      5089 ns/op      16 B/op     1 allocs/op
 ```
 
 ### Validating JSON
@@ -92,27 +92,27 @@ BenchmarkGetRepoValues/fastjson-8              	  235377	      5089 ns/op	      
 This benchmark is for each package's equivalent of running `encoding_json.Valid()`.
 
 ```
-BenchmarkValid_canada/encoding_json-8          	     172	   7093858 ns/op	 317.32 MB/s	       7 B/op	       0 allocs/op
-BenchmarkValid_canada/rjson-8                  	     505	   2311145 ns/op	 974.00 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_canada/gjson-8                  	     482	   2468825 ns/op	 911.79 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_canada/jsoniter-8               	     232	   5058736 ns/op	 444.98 MB/s	      69 B/op	       8 allocs/op
-BenchmarkValid_canada/fastjson-8               	     351	   3387308 ns/op	 664.55 MB/s	       0 B/op	       0 allocs/op
+BenchmarkValid_canada/encoding_json-8           172	   7093858 ns/op    317.32 MB/s         7 B/op        0 allocs/op
+BenchmarkValid_canada/rjson-8                   505	   2311145 ns/op    974.00 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_canada/gjson-8                   482	   2468825 ns/op    911.79 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_canada/jsoniter-8                232	   5058736 ns/op    444.98 MB/s        69 B/op        8 allocs/op
+BenchmarkValid_canada/fastjson-8                351	   3387308 ns/op    664.55 MB/s         0 B/op        0 allocs/op
 
-BenchmarkValid_citm_catalog/encoding_json-8    	     225	   5380901 ns/op	 320.99 MB/s	       5 B/op	       0 allocs/op
-BenchmarkValid_citm_catalog/rjson-8            	     727	   1673708 ns/op	1031.96 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_citm_catalog/gjson-8            	     696	   1680964 ns/op	1027.51 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_citm_catalog/jsoniter-8         	     418	   2970893 ns/op	 581.38 MB/s	  240578 B/op	   25874 allocs/op
-BenchmarkValid_citm_catalog/fastjson-8         	     681	   1681480 ns/op	1027.19 MB/s	       0 B/op	       0 allocs/op
+BenchmarkValid_citm_catalog/encoding_json-8     225	   5380901 ns/op    320.99 MB/s         5 B/op        0 allocs/op
+BenchmarkValid_citm_catalog/rjson-8             727	   1673708 ns/op   1031.96 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_citm_catalog/gjson-8             696	   1680964 ns/op   1027.51 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_citm_catalog/jsoniter-8          418	   2970893 ns/op    581.38 MB/s    240578 B/op    25874 allocs/op
+BenchmarkValid_citm_catalog/fastjson-8          681	   1681480 ns/op   1027.19 MB/s         0 B/op        0 allocs/op
 
-BenchmarkValid_github_repo/encoding_json-8     	   55089	     21353 ns/op	 287.31 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_github_repo/rjson-8             	  218859	      5576 ns/op	1100.27 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_github_repo/gjson-8             	  142514	      8264 ns/op	 742.33 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_github_repo/jsoniter-8          	  101544	     11596 ns/op	 529.05 MB/s	    1576 B/op	     122 allocs/op
-BenchmarkValid_github_repo/fastjson-8          	  162109	      7378 ns/op	 831.54 MB/s	       0 B/op	       0 allocs/op
+BenchmarkValid_github_repo/encoding_json-8    55089	     21353 ns/op    287.31 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_github_repo/rjson-8           218859	      5576 ns/op   1100.27 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_github_repo/gjson-8           142514	      8264 ns/op    742.33 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_github_repo/jsoniter-8        101544	     11596 ns/op    529.05 MB/s      1576 B/op      122 allocs/op
+BenchmarkValid_github_repo/fastjson-8        162109	      7378 ns/op    831.54 MB/s         0 B/op        0 allocs/op
 
-BenchmarkValid_twitter/encoding_json-8               517	   2273221 ns/op	 277.81 MB/s	       2 B/op	       0 allocs/op
-BenchmarkValid_twitter/rjson-8                      1868	    622671 ns/op	1014.20 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_twitter/gjson-8                      1460	    803977 ns/op	 785.49 MB/s	       0 B/op	       0 allocs/op
-BenchmarkValid_twitter/jsoniter-8                    709	   1656385 ns/op	 381.26 MB/s	  375920 B/op	   15274 allocs/op
-BenchmarkValid_twitter/fastjson-8                   1358	    853157 ns/op	 740.21 MB/s	       0 B/op	       0 allocs/op
+BenchmarkValid_twitter/encoding_json-8          517	   2273221 ns/op    277.81 MB/s         2 B/op        0 allocs/op
+BenchmarkValid_twitter/rjson-8                 1868	    622671 ns/op   1014.20 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_twitter/gjson-8                 1460	    803977 ns/op    785.49 MB/s         0 B/op        0 allocs/op
+BenchmarkValid_twitter/jsoniter-8               709	   1656385 ns/op    381.26 MB/s    375920 B/op    15274 allocs/op
+BenchmarkValid_twitter/fastjson-8              1358	    853157 ns/op    740.21 MB/s         0 B/op        0 allocs/op
 ```

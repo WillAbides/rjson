@@ -96,6 +96,7 @@ jsoniter "github.com/json-iterator/go"
 gjson "github.com/tidwall/gjson"
 fastjson "github.com/valyala/fastjson"
 rjson "github.com/willabides/rjson"
+goccyjson "github.com/goccy/go-json"
 )
 ```
 

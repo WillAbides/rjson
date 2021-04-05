@@ -312,6 +312,9 @@ func Test_validRunners(t *testing.T) {
 			if runnerName == "jsoniter" {
 				t.Skip(`This is a reported issue. Remove this skip when https://github.com/json-iterator/go/issues/540 is addressed`)
 			}
+			if runnerName == "goccyjson" {
+				t.Skip(`This one has a lot of false positives.'`)
+			}
 			for _, fileInfo := range dir {
 				name := fileInfo.Name()
 				if fileInfo.IsDir() || !strings.HasSuffix(name, ".json") || name == "" {

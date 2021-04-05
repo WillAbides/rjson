@@ -1,5 +1,9 @@
 package benchmarks
 
+import (
+	"os"
+)
+
 var benchers = []bencher{
 	&jsonBencher{},
 	&rjsonBencher{},
@@ -7,6 +11,21 @@ var benchers = []bencher{
 	&jsoniterBencher{},
 	&jsonparserBencher{},
 	&fastjsonBencher{},
+}
+
+func getBenchers(filter func(bencher) bool) []bencher {
+	var bb []bencher
+	bn := os.Getenv("BENCHER")
+	for _, b := range benchers {
+		if bn != "" && b.name() != bn {
+			continue
+		}
+		if !filter(b) {
+			continue
+		}
+		bb = append(bb, b)
+	}
+	return bb
 }
 
 func initBencher(b interface{}) {

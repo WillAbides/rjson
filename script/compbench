@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
+repo_root="$(pwd)"
+
+PATH="$repo_root/bin:$PATH"
+
+benchtime="100ms"
+
+make -s bin/benchstat >/dev/null
+(
+  cd benchmarks
+  go build -o ../bin/benchstatter ./cmd/benchstatter
+)
+
+benchers=(rjson encoding_json fastjson gjson jsoniter jsonparser)
+
+mkdir -p tmp/compbench
+
+(
+  for b in "${benchers[@]}"; do
+    rm -f tmp/compbench/"$b"
+  done
+  cd benchmarks
+  for _ in {1..10}; do
+    for b in "${benchers[@]}"; do
+      BENCHER="$b" go test -bench . -run '^$' -benchtime "$benchtime" -cpu 1 | tee -a ../tmp/compbench/"$b"
+    done
+  done
+)
+
+cd tmp/compbench
+
+benchstatter "${benchers[@]}" | tee benchstats.md

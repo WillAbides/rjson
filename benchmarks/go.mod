@@ -10,5 +10,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/gjson v1.7.4
 	github.com/valyala/fastjson v1.6.3
+	github.com/willabides/benchdiff v0.6.2
 	github.com/willabides/rjson v0.0.0
+	golang.org/x/perf v0.0.0-20201207232921-bdcc6220ee90
 )

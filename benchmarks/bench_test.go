@@ -2,6 +2,7 @@ package benchmarks
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -10,130 +11,21 @@ import (
 )
 
 func BenchmarkGetRepoValues(b *testing.B) {
-	for _, bb := range benchers {
-		initBencher(bb)
-		runner, ok := bb.(repoDataReader)
-		if !ok {
-			continue
-		}
+	runBenchers(b, func(x bencher) bool {
+		_, ok := x.(repoDataReader)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(repoDataReader)
 		data := getTestdata(b, "benchmark_data/github_repo.json")
 		var result repoData
 		var err error
-		b.Run(bb.name(), func(b *testing.B) {
-			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
-				result = repoData{}
-				err = runner.readRepoData(data, &result)
-			}
-			assert.NoError(b, err)
-		})
-	}
-}
-
-func BenchmarkReadFloat_zero(b *testing.B) {
-	runBenchFloat64(b, []byte(`0`))
-}
-
-func BenchmarkReadFloat64_smallInt(b *testing.B) {
-	runBenchFloat64(b, []byte(`42`))
-}
-
-func BenchmarkReadFloat64_negExp(b *testing.B) {
-	runBenchFloat64(b, []byte(`-42.123e5`))
-}
-
-var float64Result float64
-
-func runBenchFloat64(b *testing.B, data []byte) {
-	for _, bb := range benchers {
-		initBencher(bb)
-		runner, ok := bb.(float64Reader)
-		if !ok {
-			continue
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			result = repoData{}
+			err = runner.readRepoData(data, &result)
 		}
-		var err error
-		b.Run(bb.name(), func(b *testing.B) {
-			b.ReportAllocs()
-			b.SetBytes(int64(len(data)))
-			for i := 0; i < b.N; i++ {
-				float64Result, err = runner.readFloat64(data)
-			}
-			require.NoError(b, err)
-			_ = float64Result
-		})
-	}
-}
-
-func BenchmarkReadInt64_zero(b *testing.B) {
-	runBenchReadInt64(b, []byte(`0`))
-}
-
-func BenchmarkReadInt64_small(b *testing.B) {
-	runBenchReadInt64(b, []byte(`42`))
-}
-
-func BenchmarkReadInt64_big_negative(b *testing.B) {
-	runBenchReadInt64(b, []byte(`-9223372036854775807`))
-}
-
-var int64Result int64
-
-func runBenchReadInt64(b *testing.B, data []byte) {
-	for _, bb := range benchers {
-		initBencher(bb)
-		runner, ok := bb.(int64Reader)
-		if !ok {
-			continue
-		}
-		var err error
-		b.Run(bb.name(), func(b *testing.B) {
-			b.ReportAllocs()
-			b.SetBytes(int64(len(data)))
-			for i := 0; i < b.N; i++ {
-				int64Result, err = runner.readInt64(data)
-			}
-			require.NoError(b, err)
-			_ = int64Result
-		})
-	}
-}
-
-func BenchmarkReadObject_canada(b *testing.B) {
-	runBenchReadObject(b, getTestdata(b, "benchmark_data/canada.json"))
-}
-
-func BenchmarkReadObject_citm_catalog(b *testing.B) {
-	runBenchReadObject(b, getTestdata(b, "benchmark_data/citm_catalog.json"))
-}
-
-func BenchmarkReadObject_github_repo(b *testing.B) {
-	runBenchReadObject(b, getTestdata(b, "benchmark_data/github_repo.json"))
-}
-
-func BenchmarkReadObject_twitter(b *testing.B) {
-	runBenchReadObject(b, getTestdata(b, "benchmark_data/twitter.json"))
-}
-
-var mapResult map[string]interface{}
-
-func runBenchReadObject(b *testing.B, data []byte) {
-	for _, bb := range benchers {
-		initBencher(bb)
-		runner, ok := bb.(objectReader)
-		if !ok {
-			continue
-		}
-		var err error
-		b.Run(bb.name(), func(b *testing.B) {
-			b.ReportAllocs()
-			b.SetBytes(int64(len(data)))
-			for i := 0; i < b.N; i++ {
-				mapResult, err = runner.readObject(data)
-			}
-			require.NoError(b, err)
-			_ = mapResult
-		})
-	}
+		assert.NoError(b, err)
+	})
 }
 
 func BenchmarkValid_canada(b *testing.B) {
@@ -155,21 +47,121 @@ func BenchmarkValid_twitter(b *testing.B) {
 var boolResult bool
 
 func benchValid(b *testing.B, data []byte) {
-	for _, bb := range benchers {
-		initBencher(bb)
-		runner, ok := bb.(validator)
-		if !ok {
-			continue
+	runBenchers(b, func(x bencher) bool {
+		_, ok := x.(validator)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(validator)
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			boolResult = runner.valid(data)
 		}
-		b.Run(bb.name(), func(b *testing.B) {
-			b.ReportAllocs()
-			b.SetBytes(int64(len(data)))
-			for i := 0; i < b.N; i++ {
-				boolResult = runner.valid(data)
-			}
-			require.True(b, boolResult)
-		})
-	}
+		require.True(b, boolResult)
+	})
+}
+
+func BenchmarkReadObject_canada(b *testing.B) {
+	runBenchReadObject(b, getTestdata(b, "benchmark_data/canada.json"))
+}
+
+func BenchmarkReadObject_citm_catalog(b *testing.B) {
+	runBenchReadObject(b, getTestdata(b, "benchmark_data/citm_catalog.json"))
+}
+
+func BenchmarkReadObject_github_repo(b *testing.B) {
+	runBenchReadObject(b, getTestdata(b, "benchmark_data/github_repo.json"))
+}
+
+func BenchmarkReadObject_twitter(b *testing.B) {
+	runBenchReadObject(b, getTestdata(b, "benchmark_data/twitter.json"))
+}
+
+var mapResult map[string]interface{}
+
+func runBenchReadObject(b *testing.B, data []byte) {
+	runBenchers(b, func(x bencher) bool {
+		_, ok := x.(objectReader)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(objectReader)
+		var err error
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			mapResult, err = runner.readObject(data)
+		}
+		require.NoError(b, err)
+		_ = mapResult
+	})
+}
+
+func BenchmarkReadFloat64_zero(b *testing.B) {
+	runBenchFloat64(b, []byte(`0`))
+}
+
+func BenchmarkReadFloat64_smallInt(b *testing.B) {
+	runBenchFloat64(b, []byte(`42`))
+}
+
+func BenchmarkReadFloat64_negExp(b *testing.B) {
+	runBenchFloat64(b, []byte(`-42.123e5`))
+}
+
+var float64Result float64
+
+func runBenchFloat64(b *testing.B, data []byte) {
+	runBenchers(b, func(x bencher) bool {
+		if x.name() == "encoding_json" {
+			return false
+		}
+		_, ok := x.(float64Reader)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(float64Reader)
+		var err error
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			float64Result, err = runner.readFloat64(data)
+		}
+		require.NoError(b, err)
+		_ = float64Result
+	})
+}
+
+func BenchmarkReadInt64_zero(b *testing.B) {
+	runBenchReadInt64(b, []byte(`0`))
+}
+
+func BenchmarkReadInt64_small(b *testing.B) {
+	runBenchReadInt64(b, []byte(`42`))
+}
+
+func BenchmarkReadInt64_big_negative(b *testing.B) {
+	runBenchReadInt64(b, []byte(`-9223372036854775807`))
+}
+
+var int64Result int64
+
+func runBenchReadInt64(b *testing.B, data []byte) {
+	runBenchers(b, func(x bencher) bool {
+		if x.name() == "encoding_json" {
+			return false
+		}
+		_, ok := x.(int64Reader)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(int64Reader)
+		var err error
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			int64Result, err = runner.readInt64(data)
+		}
+		require.NoError(b, err)
+		_ = int64Result
+	})
 }
 
 func BenchmarkReadString_short_ascii(b *testing.B) {
@@ -187,42 +179,63 @@ func BenchmarkReadString_medium(b *testing.B) {
 var stringResult string
 
 func benchReadString(b *testing.B, data []byte) {
-	for _, bb := range benchers {
-		initBencher(bb)
-		runner, ok := bb.(stringReader)
-		if !ok {
-			continue
+	runBenchers(b, func(x bencher) bool {
+		if x.name() == "encoding_json" {
+			return false
 		}
+		_, ok := x.(stringReader)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(stringReader)
 		var err error
-		b.Run(bb.name(), func(b *testing.B) {
-			b.ReportAllocs()
-			b.SetBytes(int64(len(data)))
-			for i := 0; i < b.N; i++ {
-				stringResult, err = runner.readString(data)
-			}
-			require.NoError(b, err)
-			_ = stringResult
-		})
-	}
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			stringResult, err = runner.readString(data)
+		}
+		require.NoError(b, err)
+		_ = stringResult
+	})
 }
 
 func BenchmarkReadBool(b *testing.B) {
-	for _, bb := range benchers {
-		data := []byte(`true`)
-		initBencher(bb)
-		runner, ok := bb.(boolReader)
-		if !ok {
-			continue
+	data := []byte(`true`)
+	runBenchers(b, func(x bencher) bool {
+		if x.name() == "encoding_json" {
+			return false
 		}
+		_, ok := x.(boolReader)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(boolReader)
 		var err error
-		b.Run(bb.name(), func(b *testing.B) {
-			b.ReportAllocs()
-			b.SetBytes(int64(len(data)))
-			for i := 0; i < b.N; i++ {
-				boolResult, err = runner.readBool(data)
-			}
-			require.NoError(b, err)
-			_ = boolResult
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			boolResult, err = runner.readBool(data)
+		}
+		require.NoError(b, err)
+		_ = boolResult
+	})
+}
+
+func runBenchers(b *testing.B, filter func(bencher) bool, fn func(b *testing.B, bnchr bencher)) {
+	b.Helper()
+	bnchrs := getBenchers(filter)
+	if len(bnchrs) == 0 {
+		b.SkipNow()
+		return
+	}
+	if len(bnchrs) == 1 && os.Getenv("BENCHER") != "" {
+		initBencher(bnchrs[0])
+		fn(b, bnchrs[0])
+		return
+	}
+
+	for i := range bnchrs {
+		b.Run(bnchrs[i].name(), func(bb *testing.B) {
+			initBencher(bnchrs[i])
+			fn(bb, bnchrs[i])
 		})
 	}
 }

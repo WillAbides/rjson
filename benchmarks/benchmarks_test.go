@@ -294,12 +294,6 @@ func Test_validRunners(t *testing.T) {
 	dir, err := ioutil.ReadDir(testdir)
 	require.NoError(t, err)
 
-	// these two tests cause fastjson to hang
-	fastjsonSkips := map[string]bool{
-		`n_structure_100000_opening_arrays.json`: true,
-		`n_structure_open_array_object.json`:     true,
-	}
-
 	for _, bb := range benchers {
 		runner, ok := bb.(validator)
 		if !ok {
@@ -318,9 +312,6 @@ func Test_validRunners(t *testing.T) {
 			for _, fileInfo := range dir {
 				name := fileInfo.Name()
 				if fileInfo.IsDir() || !strings.HasSuffix(name, ".json") || name == "" {
-					continue
-				}
-				if runnerName == `fastjson` && fastjsonSkips[name] {
 					continue
 				}
 				var want bool

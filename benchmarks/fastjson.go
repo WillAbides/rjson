@@ -34,11 +34,6 @@ func (x *fastjsonBencher) readInt64(data []byte) (val int64, err error) {
 	return parsed.Int64()
 }
 
-func (x *fastjsonBencher) valid(data []byte) bool {
-	err := fastjson.ValidateBytes(data)
-	return err == nil
-}
-
 func (x *fastjsonBencher) readRepoData(data []byte, result *repoData) error {
 	parser := x.parser
 	val, err := parser.ParseBytes(data)

@@ -20,10 +20,6 @@ func (x *goccyjsonBencher) readObject(data []byte) (val map[string]interface{}, 
 	return val, nil
 }
 
-func (x *goccyjsonBencher) valid(data []byte) bool {
-	return goccyjson.Valid(data)
-}
-
 func (x *goccyjsonBencher) readRepoData(data []byte, val *repoData) error {
 	return json.Unmarshal(data, &val)
 }

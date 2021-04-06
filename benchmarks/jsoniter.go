@@ -53,10 +53,6 @@ func (x *jsoniterBencher) readObject(data []byte) (val map[string]interface{}, e
 	return val, x.iter.Error
 }
 
-func (x *jsoniterBencher) valid(data []byte) bool {
-	return jsoniter.Valid(data)
-}
-
 func (x *jsoniterBencher) readRepoData(data []byte, result *repoData) error {
 	x.resetIter(data)
 	iter := x.iter

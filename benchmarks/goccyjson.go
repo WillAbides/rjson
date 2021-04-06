@@ -1,8 +1,6 @@
 package benchmarks
 
 import (
-	"encoding/json"
-
 	goccyjson "github.com/goccy/go-json"
 )
 
@@ -21,5 +19,5 @@ func (x *goccyjsonBencher) readObject(data []byte) (val map[string]interface{}, 
 }
 
 func (x *goccyjsonBencher) readRepoData(data []byte, val *repoData) error {
-	return json.Unmarshal(data, &val)
+	return goccyjson.Unmarshal(data, &val)
 }

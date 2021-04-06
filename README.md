@@ -370,16 +370,16 @@ them yourself by running `script/compbench`.
 
 |          name           | goccyjson (ns/op) | rjson (ns/op) |  delta  |
 |-------------------------|-------------:|-------------:|---------|
-| GetRepoValues           |      35891.5 |       1942.2 | -94.59% |
-| ReadObject_canada       |     29399600 |     26239100 | -10.75% |
-| ReadObject_citm_catalog |     12563200 |     10616400 | -15.50% |
-| ReadObject_github_repo  |      48363.8 |      31263.4 | -35.36% |
-| ReadObject_twitter      |     13011500 |      4069240 | -68.73% |
+| GetRepoValues           |       7065.8 |       2091.2 | -70.40% |
+| ReadObject_canada       |     33955200 |     26905300 | -20.76% |
+| ReadObject_citm_catalog |     14460700 |     11648900 | -19.44% |
+| ReadObject_github_repo  |      50587.9 |      34774.8 | -31.26% |
+| ReadObject_twitter      |     13967800 |      4424930 | -68.32% |
 
 |          name           | goccyjson (B/op) | rjson (B/op) |  delta  |
 |-------------------------|------------:|------------:|---------|
-| GetRepoValues           |         250 |          16 | -93.60% |
-| ReadObject_canada       |     7803840 |     8390470 | +7.52%  |
-| ReadObject_citm_catalog |     7128370 |     5114570 | -28.25% |
-| ReadObject_github_repo  |     26595.8 |     17038.1 | -35.94% |
-| ReadObject_twitter      |     2796740 |     2689880 | -3.82%  |
+| GetRepoValues           |        6152 |          16 | -99.74% |
+| ReadObject_canada       |     7907660 |     8433900 | +6.65%  |
+| ReadObject_citm_catalog |     7146520 |     5125260 | -28.28% |
+| ReadObject_github_repo  |     26592.2 |     17035.7 | -35.94% |
+| ReadObject_twitter      |     2801530 |     2689750 | -3.99%  |

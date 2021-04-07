@@ -41,7 +41,7 @@ func Test_objectReaders(t *testing.T) {
 					got, err := runner.readObject(data)
 					if wantErr == nil {
 						assert.NoError(t, err)
-						assert.Equal(t, want, got)
+						assert.Equal(t, want, floatMyValue(got))
 					} else {
 						assert.Error(t, err)
 					}
@@ -53,7 +53,7 @@ func Test_objectReaders(t *testing.T) {
 					got, err = runner.readObject(data)
 					if wantErr == nil {
 						assert.NoError(t, err)
-						assert.Equal(t, want, got)
+						assert.Equal(t, want, floatMyValue(got))
 					} else {
 						assert.Error(t, err)
 					}
@@ -61,6 +61,27 @@ func Test_objectReaders(t *testing.T) {
 				})
 			}
 		})
+	}
+}
+
+// simdjson decodes some numbers to int64 instead of float64. This function turns them back to
+// floats so I can validate it's the same as encoding/json
+func floatMyValue(val interface{}) interface{} {
+	switch vv := val.(type) {
+	case map[string]interface{}:
+		for k, v := range vv {
+			vv[k] = floatMyValue(v)
+		}
+		return vv
+	case []interface{}:
+		for i := range vv {
+			vv[i] = floatMyValue(vv[i])
+		}
+		return vv
+	case int64:
+		return float64(vv)
+	default:
+		return vv
 	}
 }
 

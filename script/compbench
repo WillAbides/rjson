@@ -15,7 +15,7 @@ make -s bin/benchstat >/dev/null
   go build -o ../bin/benchstatter ./cmd/benchstatter
 )
 
-benchers=(rjson encoding_json fastjson gjson jsoniter jsonparser goccyjson)
+benchers=(rjson encoding_json fastjson gjson jsoniter jsonparser goccyjson simdjson)
 
 mkdir -p tmp/compbench
 
@@ -24,8 +24,9 @@ mkdir -p tmp/compbench
     rm -f tmp/compbench/"$b"
   done
   cd benchmarks
-  for _ in {1..10}; do
+  for i in {1..10}; do
     for b in "${benchers[@]}"; do
+      echo "$i $b"
       BENCHER="$b" go test -bench . -run '^$' -benchtime "$benchtime" -cpu 1 | tee -a ../tmp/compbench/"$b"
     done
   done

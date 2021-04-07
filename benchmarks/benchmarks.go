@@ -12,6 +12,7 @@ var benchers = []bencher{
 	&jsonparserBencher{},
 	&fastjsonBencher{},
 	&goccyjsonBencher{},
+	&simdjsonBencher{},
 }
 
 func getBenchers(filter func(bencher) bool) []bencher {

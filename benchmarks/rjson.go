@@ -18,15 +18,15 @@ func (x *rjsonBencher) init() {
 		val: &rjson.JSONValue{
 			DoneErr:       fmt.Errorf("done"),
 			RawFieldNames: true,
+			Fields: map[string]rjson.JSONParser{
+				"full_name": &rjson.JSONValue{},
+				"archived":  &rjson.JSONValue{},
+				"forks": &rjson.JSONValue{
+					ParsedNumberType: rjson.JSONValueInt,
+				},
+			},
 		},
 	}
-	x.val.AddObjectFieldValues(map[string]*rjson.JSONValue{
-		"full_name": {},
-		"archived":  {},
-		"forks": {
-			ParsedNumberType: rjson.JSONValueInt,
-		},
-	})
 }
 
 func (x *rjsonBencher) name() string {
@@ -53,7 +53,7 @@ func (x *rjsonBencher) valid(data []byte) bool {
 }
 
 func (x *rjsonBencher) readRepoData(data []byte, val *repoData) (err error) {
-	_, err = x.val.ParseJSON(data)
+	_, err = x.val.ParseJSON(data, nil)
 	if err == x.val.DoneErr {
 		err = nil
 	}
@@ -61,8 +61,7 @@ func (x *rjsonBencher) readRepoData(data []byte, val *repoData) (err error) {
 		return err
 	}
 
-	fields := x.val.Fields()
-	fieldVal := fields["full_name"]
+	fieldVal := x.val.FieldValue("full_name")
 	if fieldVal.Exists() {
 		switch fieldVal.TokenType() {
 		case rjson.StringType:
@@ -73,7 +72,7 @@ func (x *rjsonBencher) readRepoData(data []byte, val *repoData) (err error) {
 		}
 	}
 
-	fieldVal = fields["archived"]
+	fieldVal = x.val.FieldValue("archived")
 	if fieldVal.Exists() {
 		switch fieldVal.TokenType() {
 		case rjson.TrueType:
@@ -86,7 +85,7 @@ func (x *rjsonBencher) readRepoData(data []byte, val *repoData) (err error) {
 		}
 	}
 
-	fieldVal = fields["forks"]
+	fieldVal = x.val.FieldValue("forks")
 	if fieldVal.Exists() {
 		switch fieldVal.TokenType() {
 		case rjson.NumberType:

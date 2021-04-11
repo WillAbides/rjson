@@ -17,16 +17,32 @@ const (
 	JSONValueRaw
 )
 
+// JSONParser parses json
+type JSONParser interface {
+	ParseJSON(data []byte, doneErr error) (p int, err error)
+}
+
+// JSONParserFunc is a JSONParser in function form
+type JSONParserFunc func(data []byte, doneErr error) (p int, err error)
+
+// ParseJSON implements JSONParser
+func (fn JSONParserFunc) ParseJSON(data []byte, doneErr error) (p int, err error) {
+	return fn(data, doneErr)
+}
+
 // JSONValue is a parsed json value
 type JSONValue struct {
-	// DoneErr is the error HandleObjectValue should return after having seen all expected fields.
+	// DoneErr is the error HandleObjectValue should return after having seen all expected Fields.
 	// Set DoneErr to non-nil to make ParseJSON stop on done instead of reading the entire document
 	// to the end. ParseJSON will return this error when returned by the handler.
 	DoneErr error
 
 	// ArrayValues are values from a json array. Make this the length of the array you expect to parse.
 	// Array indexes with nil values in ArrayValues will not be parsed. See also AppendArrayValues.
-	ArrayValues []*JSONValue
+	ArrayValues []JSONParser
+
+	// Fields are object fields
+	Fields map[string]JSONParser
 
 	// AppendArrayValues tells the handler to append ArrayValues when there are more values in an array
 	// than values in ArrayValues. See also DefaultValue.
@@ -57,11 +73,11 @@ type JSONValue struct {
 	// This is ignored if RawStrings == true
 	StdLibCompatibleStrings bool
 
-	fields          map[string]*JSONValue
 	buf             Buffer
 	foundFieldCount int
 	avIndex         int
 
+	foundFields map[string]bool
 	found       bool
 	depth       int
 	tokenType   TokenType
@@ -77,7 +93,9 @@ type JSONValue struct {
 }
 
 func (jv *JSONValue) parse(data []byte, depth int, doneErr error) (p int, err error) {
-	jv.reset()
+	if depth == 0 {
+		jv.reset()
+	}
 	jv.depth = depth
 	jv.tokenType, p, err = NextTokenType(data)
 	if err != nil {
@@ -146,32 +164,51 @@ func (jv *JSONValue) parse(data []byte, depth int, doneErr error) (p int, err er
 }
 
 // ParseJSON parses data and sets JSONValue accordingly
-func (jv *JSONValue) ParseJSON(data []byte) (p int, err error) {
-	return jv.parse(data, 0, nil)
+func (jv *JSONValue) ParseJSON(data []byte, doneErr error) (p int, err error) {
+	return jv.parse(data, 0, doneErr)
 }
 
-// Fields are object fields.
-func (jv *JSONValue) Fields() map[string]*JSONValue {
-	return jv.fields
+// FieldValue returns the JSONValue of a field. If the field is not a *JSONValue, it returns nil.
+func (jv *JSONValue) FieldValue(name string) *JSONValue {
+	v, ok := jv.Fields[name].(*JSONValue)
+	if ok {
+		return v
+	}
+	return nil
 }
 
-// AddObjectFieldValues adds object fields to be parsed.
-func (jv *JSONValue) AddObjectFieldValues(fields map[string]*JSONValue) {
-	if jv.fields == nil {
-		jv.fields = make(map[string]*JSONValue, len(fields))
+// GetFields returns object Fields.
+func (jv *JSONValue) GetFields() map[string]JSONParser {
+	return jv.Fields
+}
+
+// AddObjectFieldValues adds object Fields to be parsed.
+func (jv *JSONValue) AddObjectFieldValues(fields map[string]JSONParser) {
+	if jv.Fields == nil {
+		jv.Fields = make(map[string]JSONParser, len(fields))
 	}
 	for k, v := range fields {
-		jv.fields[k] = v
+		jv.Fields[k] = v
 	}
 }
 
 // reset prepares *JSONValue to be parsed.
 func (jv *JSONValue) reset() {
 	for _, v := range jv.ArrayValues {
-		v.reset()
+		if vjv, ok := v.(*JSONValue); ok {
+			vjv.reset()
+		}
 	}
-	for _, v := range jv.fields {
-		v.reset()
+	for _, v := range jv.Fields {
+		if vjv, ok := v.(*JSONValue); ok {
+			vjv.reset()
+		}
+	}
+	if jv.Fields != nil && jv.foundFields == nil {
+		jv.foundFields = make(map[string]bool, len(jv.Fields))
+	}
+	for k := range jv.foundFields {
+		jv.foundFields[k] = false
 	}
 	jv.avIndex = 0
 	jv.foundFieldCount = 0
@@ -203,29 +240,36 @@ func (jv *JSONValue) HandleObjectValue(fieldname, data []byte) (p int, err error
 			return 0, err
 		}
 	}
-	v := jv.fields[string(fieldname)]
+	v := jv.Fields[string(fieldname)]
 	if v == nil {
-		if jv.fields == nil {
-			jv.fields = make(map[string]*JSONValue)
+		if jv.Fields == nil {
+			jv.Fields = make(map[string]JSONParser)
 		}
 		if !jv.AddUnknownFields {
 			return 0, nil
 		}
 		v = jv.getDefaultValue()
-		jv.fields[string(fieldname)] = v
+		jv.Fields[string(fieldname)] = v
 	}
-	if !v.found {
+	if !jv.foundFields[string(fieldname)] {
 		jv.foundFieldCount++
 	}
-	if v.found {
-		v.reset()
-	}
+
 	var doneErr error
-	if !jv.AddUnknownFields && jv.foundFieldCount == len(jv.fields) {
+	if !jv.AddUnknownFields && jv.foundFieldCount == len(jv.Fields) {
 		doneErr = jv.DoneErr
 	}
-	p, err = v.parse(data, jv.depth+1, doneErr)
-	if err == nil && !jv.AddUnknownFields && jv.foundFieldCount == len(jv.fields) {
+	switch vv := v.(type) {
+	case *JSONValue:
+		if vv.found {
+			vv.reset()
+		}
+		p, err = vv.parse(data, jv.depth+1, doneErr)
+	default:
+		p, err = v.ParseJSON(data, doneErr)
+	}
+
+	if err == nil && !jv.AddUnknownFields && jv.foundFieldCount == len(jv.Fields) {
 		err = jv.DoneErr
 	}
 	return p, err
@@ -237,10 +281,14 @@ func (jv *JSONValue) clone() *JSONValue {
 	}
 	clone := *jv
 	for i := range clone.ArrayValues {
-		clone.ArrayValues[i] = clone.ArrayValues[i].clone()
+		if vjv, ok := clone.ArrayValues[i].(*JSONValue); ok {
+			clone.ArrayValues[i] = vjv.clone()
+		}
 	}
-	for k := range clone.fields {
-		clone.fields[k] = clone.fields[k].clone()
+	for k := range clone.Fields {
+		if vjv, ok := clone.Fields[k].(*JSONValue); ok {
+			clone.Fields[k] = vjv.clone()
+		}
 	}
 	return &clone
 }
@@ -284,7 +332,12 @@ func (jv *JSONValue) HandleArrayValue(data []byte) (p int, err error) {
 	if idx == -1 {
 		return 0, jv.DoneErr
 	}
-	return jv.ArrayValues[idx].parse(data, jv.depth+1, doneErr)
+	switch v := jv.ArrayValues[idx].(type) {
+	case *JSONValue:
+		return v.parse(data, jv.depth+1, doneErr)
+	default:
+		return v.ParseJSON(data, doneErr)
+	}
 }
 
 // TokenType returns the TokenType associated with the parsed value.
@@ -374,18 +427,22 @@ func (jv *JSONValue) toInterface() interface{} {
 	case FalseType:
 		return false
 	case ObjectStartType:
-		mp := make(map[string]interface{}, len(jv.fields))
-		for k, value := range jv.fields {
-			if !value.found {
-				continue
+		mp := make(map[string]interface{}, len(jv.Fields))
+		for k, value := range jv.Fields {
+			if vjv, ok := value.(*JSONValue); ok {
+				if !vjv.found {
+					continue
+				}
+				mp[k] = vjv.toInterface()
 			}
-			mp[k] = value.toInterface()
 		}
 		return mp
 	case ArrayStartType:
 		sl := make([]interface{}, len(jv.ArrayValues))
 		for i := 0; i < len(jv.ArrayValues); i++ {
-			sl[i] = jv.ArrayValues[i].toInterface()
+			if vjv, ok := jv.ArrayValues[i].(*JSONValue); ok {
+				sl[i] = vjv.toInterface()
+			}
 		}
 		return sl
 	}

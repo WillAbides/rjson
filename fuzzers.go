@@ -51,7 +51,7 @@ func fuzzJSONValueParseJSON(data []byte) (int, error) {
 		StdLibCompatibleStrings:      true,
 		StdLibCompatibleObjectFields: true,
 	}
-	gotP, gotErr := jv.ParseJSON(data)
+	gotP, gotErr := jv.ParseJSON(data, nil)
 	var got interface{}
 	if gotErr == nil {
 		got = jv.toInterface()

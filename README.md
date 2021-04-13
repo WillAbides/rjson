@@ -6,6 +6,20 @@
 rjson is a json parser that relies on [Ragel-generated](http://www.colm.net/open-source/ragel/) state machines for most
 parsing. rjson's api is minimal and focussed on efficient parsing.
 
+## Why you shouldn't use rjson most of the time
+
+While rjson is much faster than "encoding/json", it is faster at the cost of being more difficult to use. If you use 
+rjson, your code will be more verbose and less readable than if you used the standard library. In most cases, this 
+will cost more in developer time than you will make up for in time saved parsing json.
+
+To make rjson worthwhile, one of these should apply:
+
+- You have a very high volume of json to parse.
+- You need very low latency but are stuck using json serialization.
+
+rjson is originally written for a project where we have to process thousands of json documents per second. This is 
+the sort of project that should be using rjson.
+
 ## Ragel state machines
 
 This whole thing is built around a few Ragel-generated state machines. They are defined in .rl files, and the generated
@@ -50,10 +64,11 @@ of `rjson`. These are used to ensure compatibility.
 #### The RuneError compatibility exception
 
 When decoding strings, `encoding/json` will replace bytes with values over 127 that aren't part of a valid utf8 rune
-with `utf8.RuneError`. I don't think this is correct behavior, and I have not found any other go json parser that does
-this, so rjson keeps those bytes as-is when decoding strings.
+with `utf8.RuneError`. ~~I don't think this is correct behavior~~ This is probably correct behavior for the standard 
+library, but rjson keeps those bytes as-is when decoding strings.
 
-If you need those RuneErrors, you can use `StdLibCompatibleString`, `StdLibCompatibleSlice`, and `StdLibCompatibleMap`.
+If you need standard library compatibility here, you can use `StdLibCompatibleString`, `StdLibCompatibleSlice`, and 
+`StdLibCompatibleMap`.
 
 ## Differential Fuzz Testing
 

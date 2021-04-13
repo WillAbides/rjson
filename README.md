@@ -6,20 +6,6 @@
 rjson is a json parser that relies on [Ragel-generated](http://www.colm.net/open-source/ragel/) state machines for most
 parsing. rjson's api is minimal and focussed on efficient parsing.
 
-## Why you shouldn't use rjson most of the time
-
-While rjson is much faster than "encoding/json", it is faster at the cost of being more difficult to use. If you use 
-rjson, your code will be more verbose and less readable than if you used the standard library. In most cases, this 
-will cost more in developer time than you will make up for in time saved parsing json.
-
-To make rjson worthwhile, one of these should apply:
-
-- You have a very high volume of json to parse.
-- You need very low latency but are stuck using json serialization.
-
-rjson is originally written for a project where we have to process thousands of json documents per second. This is 
-the sort of project that should be using rjson.
-
 ## Ragel state machines
 
 This whole thing is built around a few Ragel-generated state machines. They are defined in .rl files, and the generated
@@ -92,6 +78,20 @@ fuzz functions and [testdata/fuzz/corpus](./testdata/fuzz/corpus) for the increa
 
 - **keep a global resource pool** - Some json packages have handy `Borrow` and `Return` functions that let you borrow
   resources and avoid new allocations. rjson leaves it up to the user to decide how to do resource pooling.
+
+## Why you should still use the standard library most of the time
+
+While rjson is much faster than "encoding/json", it is faster at the cost of being more difficult to use. If you use
+rjson, your code will be more verbose and less readable than if you used the standard library. In most cases, this
+will cost more in developer time than you will make up for in time saved parsing json.
+
+To make rjson worthwhile, one of these should apply:
+
+- You have a very high volume of json to parse.
+- You need very low latency but are stuck using json serialization.
+
+rjson is originally written for a project where we have to process thousands of json documents per second. This is
+the sort of project that should be using rjson.
 
 ## Performance principles and tricks
 

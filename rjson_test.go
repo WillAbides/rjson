@@ -140,11 +140,6 @@ func Test_fuzzNextToken(t *testing.T) {
 	testFuzzerFunc(t, fuzzNextToken)
 }
 
-func Test_adhoc(t *testing.T) {
-	testFuzzerWithInput(t, fuzzNextToken, `	
-			`)
-}
-
 func Test_fuzzNextTokenType(t *testing.T) {
 	t.Parallel()
 	testFuzzerFunc(t, fuzzNextTokenType)
@@ -173,6 +168,51 @@ func Test_fuzzReadObject(t *testing.T) {
 func Test_fuzzReadValue(t *testing.T) {
 	t.Parallel()
 	testFuzzerFunc(t, fuzzReadValue)
+}
+
+func Test_fuzzDecodeFloat64(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeFloat64)
+}
+
+func Test_fuzzDecodeUint64(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeUint64)
+}
+
+func Test_fuzzDecodeUint32(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeUint32)
+}
+
+func Test_fuzzDecodeUint(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeUint)
+}
+
+func Test_fuzzDecodeInt64(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeInt64)
+}
+
+func Test_fuzzDecodeInt32(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeInt32)
+}
+
+func Test_fuzzDecodeInt(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeInt)
+}
+
+func Test_fuzzDecodeString(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeString)
+}
+
+func Test_fuzzDecodeBool(t *testing.T) {
+	t.Parallel()
+	testFuzzerFunc(t, fuzzDecodeBool)
 }
 
 // various values that fuzz has crashed on in the past

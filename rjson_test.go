@@ -70,11 +70,6 @@ func testFuzzerWithInput(t *testing.T, fuzzer func([]byte) (int, error), inputs 
 	}
 }
 
-func Test_fuzzJSONValueParseJSON(t *testing.T) {
-	t.Parallel()
-	testFuzzerFunc(t, fuzzJSONValueParseJSON)
-}
-
 func Test_fuzzReadFloat64(t *testing.T) {
 	t.Parallel()
 	testFuzzerFunc(t, fuzzReadFloat64)

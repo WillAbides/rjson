@@ -7,26 +7,18 @@ import (
 )
 
 type rjsonBencher struct {
-	valueReader  rjson.ValueReader
-	buffer       rjson.Buffer
-	stringBuffer []byte
-	val          *rjson.JSONValue
+	valueReader         rjson.ValueReader
+	buffer              rjson.Buffer
+	readRepoDataHandler *rjsonReadRepoDataHandler
+	stringBuffer        []byte
 }
 
 func (x *rjsonBencher) init() {
 	*x = rjsonBencher{
-		val: &rjson.JSONValue{
-			DoneErr:       fmt.Errorf("done"),
-			RawFieldNames: true,
+		readRepoDataHandler: &rjsonReadRepoDataHandler{
+			doneErr: fmt.Errorf("done"),
 		},
 	}
-	x.val.AddObjectFieldValues(map[string]*rjson.JSONValue{
-		"full_name": {},
-		"archived":  {},
-		"forks": {
-			ParsedNumberType: rjson.JSONValueInt,
-		},
-	})
 }
 
 func (x *rjsonBencher) name() string {
@@ -52,52 +44,64 @@ func (x *rjsonBencher) valid(data []byte) bool {
 	return rjson.Valid(data, &x.buffer)
 }
 
-func (x *rjsonBencher) readRepoData(data []byte, val *repoData) (err error) {
-	_, err = x.val.ParseJSON(data)
-	if err == x.val.DoneErr {
+func (x *rjsonBencher) readRepoData(data []byte, val *repoData) error {
+	h := x.readRepoDataHandler
+	h.seenFullName, h.seenForks, h.seenArchived = false, false, false
+	h.res = val
+	_, err := rjson.HandleObjectValues(data, h, &h.buffer)
+	if err == h.doneErr {
 		err = nil
 	}
+	return err
+}
+
+type rjsonReadRepoDataHandler struct {
+	res          *repoData
+	buffer       rjson.Buffer
+	seenArchived bool
+	seenForks    bool
+	seenFullName bool
+	doneErr      error
+	stringBuf    []byte
+}
+
+func (h *rjsonReadRepoDataHandler) HandleObjectValue(fieldname, data []byte) (p int, err error) {
+	var tknType rjson.TokenType
+	tknType, _, err = rjson.NextTokenType(data)
+	isNull := tknType == rjson.NullType
 	if err != nil {
-		return err
+		return 0, err
 	}
-
-	fields := x.val.Fields()
-	fieldVal := fields["full_name"]
-	if fieldVal.Exists() {
-		switch fieldVal.TokenType() {
-		case rjson.StringType:
-			val.FullName = fieldVal.StringValue()
-		case rjson.NullType:
-		default:
-			return fmt.Errorf("unexpected type")
+	switch string(fieldname) {
+	case `archived`:
+		h.seenArchived = true
+		if isNull {
+			p, err = rjson.ReadNull(data)
+			break
 		}
-	}
-
-	fieldVal = fields["archived"]
-	if fieldVal.Exists() {
-		switch fieldVal.TokenType() {
-		case rjson.TrueType:
-			val.Archived = true
-		case rjson.FalseType:
-			val.Archived = false
-		case rjson.NullType:
-		default:
-			return fmt.Errorf("unexpected type")
+		h.res.Archived, p, err = rjson.ReadBool(data)
+	case `forks`:
+		h.seenForks = true
+		if isNull {
+			p, err = rjson.ReadNull(data)
+			break
 		}
-	}
-
-	fieldVal = fields["forks"]
-	if fieldVal.Exists() {
-		switch fieldVal.TokenType() {
-		case rjson.NumberType:
-			val.Forks = fieldVal.IntValue()
-		case rjson.NullType:
-		default:
-			return fmt.Errorf("unexpected type")
+		h.res.Forks, p, err = rjson.ReadInt64(data)
+	case `full_name`:
+		h.seenFullName = true
+		if isNull {
+			p, err = rjson.ReadNull(data)
+			break
 		}
+		h.stringBuf, p, err = rjson.ReadStringBytes(data, h.stringBuf[:0])
+		h.res.FullName = string(h.stringBuf)
+	default:
+		p, err = rjson.SkipValue(data, &h.buffer)
 	}
-
-	return nil
+	if err == nil && h.seenFullName && h.seenForks && h.seenArchived {
+		return p, h.doneErr
+	}
+	return p, err
 }
 
 func (x *rjsonBencher) readString(data []byte) (string, error) {

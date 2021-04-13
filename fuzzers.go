@@ -1,7 +1,6 @@
 package rjson
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -32,32 +31,6 @@ var fuzzers = []fuzzer{
 
 	{name: "fuzzHandleArrayValues", fn: fuzzHandleArrayValues},
 	{name: "fuzzHandleObjectValues", fn: fuzzHandleObjectValues},
-
-	{name: "fuzzJSONValueParseJSON", fn: fuzzJSONValueParseJSON},
-}
-
-func fuzzJSONValueParseJSON(data []byte) (int, error) {
-	var want interface{}
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	wantErr := decoder.Decode(&want)
-	if wantErr != nil {
-		want = nil
-	}
-	wantP := int(decoder.InputOffset())
-
-	jv := &JSONValue{
-		AddUnknownFields:             true,
-		AppendArrayValues:            true,
-		StdLibCompatibleStrings:      true,
-		StdLibCompatibleObjectFields: true,
-	}
-	gotP, gotErr := jv.ParseJSON(data)
-	var got interface{}
-	if gotErr == nil {
-		got = jv.toInterface()
-	}
-	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
-	return 0, err
 }
 
 func fuzzHandleArrayValues(data []byte) (int, error) {

@@ -35,6 +35,11 @@ func (x *rjsonBencher) readInt64(data []byte) (val int64, err error) {
 	return val, err
 }
 
+func (x *rjsonBencher) decodeInt64(data []byte, v *int64) error {
+	_, err := rjson.DecodeInt64(data, v)
+	return err
+}
+
 func (x *rjsonBencher) readObject(data []byte) (val map[string]interface{}, err error) {
 	val, _, err = x.valueReader.ReadObject(data)
 	return val, err

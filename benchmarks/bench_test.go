@@ -97,20 +97,20 @@ func runBenchReadObject(b *testing.B, data []byte) {
 }
 
 func BenchmarkReadFloat64_zero(b *testing.B) {
-	runBenchFloat64(b, []byte(`0`))
+	runBenchReadFloat64(b, []byte(`0`))
 }
 
 func BenchmarkReadFloat64_smallInt(b *testing.B) {
-	runBenchFloat64(b, []byte(`42`))
+	runBenchReadFloat64(b, []byte(`42`))
 }
 
 func BenchmarkReadFloat64_negExp(b *testing.B) {
-	runBenchFloat64(b, []byte(`-42.123e5`))
+	runBenchReadFloat64(b, []byte(`-42.123e5`))
 }
 
 var float64Result float64
 
-func runBenchFloat64(b *testing.B, data []byte) {
+func runBenchReadFloat64(b *testing.B, data []byte) {
 	runBenchers(b, func(x bencher) bool {
 		if x.name() == "encoding_json" {
 			return false
@@ -158,6 +158,35 @@ func runBenchReadInt64(b *testing.B, data []byte) {
 		b.SetBytes(int64(len(data)))
 		for i := 0; i < b.N; i++ {
 			int64Result, err = runner.readInt64(data)
+		}
+		require.NoError(b, err)
+		_ = int64Result
+	})
+}
+
+func BenchmarkDecodeInt64_zero(b *testing.B) {
+	runBenchDecodeInt64(b, []byte(`0`))
+}
+
+func BenchmarkDecodeInt64_small(b *testing.B) {
+	runBenchDecodeInt64(b, []byte(`42`))
+}
+
+func BenchmarkDecodeInt64_big_negative(b *testing.B) {
+	runBenchDecodeInt64(b, []byte(`-9223372036854775807`))
+}
+
+func runBenchDecodeInt64(b *testing.B, data []byte) {
+	runBenchers(b, func(x bencher) bool {
+		_, ok := x.(int64Decoder)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(int64Decoder)
+		var err error
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			err = runner.decodeInt64(data, &int64Result)
 		}
 		require.NoError(b, err)
 		_ = int64Result

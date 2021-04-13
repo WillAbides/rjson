@@ -53,6 +53,10 @@ type int64Reader interface {
 	readInt64(data []byte) (int64, error)
 }
 
+type int64Decoder interface {
+	decodeInt64(data []byte, v *int64) error
+}
+
 type objectReader interface {
 	readObject(data []byte) (val map[string]interface{}, err error)
 }

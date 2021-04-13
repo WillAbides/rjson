@@ -47,6 +47,10 @@ func (x *jsoniterBencher) readInt64(data []byte) (val int64, err error) {
 	return val, err
 }
 
+func (x *jsoniterBencher) decodeInt64(data []byte, v *int64) error {
+	return jsoniter.Unmarshal(data, v)
+}
+
 func (x *jsoniterBencher) readObject(data []byte) (val map[string]interface{}, err error) {
 	x.resetIter(data)
 	x.iter.ReadVal(&val)

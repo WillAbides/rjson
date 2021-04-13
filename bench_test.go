@@ -210,7 +210,6 @@ benchLoop:
 	}
 }
 
-
 func BenchmarkReadString(b *testing.B) {
 	data := []byte(`"hello this is a string of somewhat normal length"`)
 	var err error
@@ -227,7 +226,7 @@ func BenchmarkDecodeString(b *testing.B) {
 	var err error
 	b.ReportAllocs()
 	b.SetBytes(int64(len(data)))
-	stringBuf := make([]byte, len(data) * 4)
+	stringBuf := make([]byte, len(data)*4)
 	for i := 0; i < b.N; i++ {
 		benchInt, err = DecodeString(data, &benchString, stringBuf)
 	}

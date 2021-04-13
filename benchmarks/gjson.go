@@ -36,6 +36,21 @@ func (x *gjsonBencher) readInt64(data []byte) (val int64, err error) {
 	return 0, fmt.Errorf("not an int")
 }
 
+func (x *gjsonBencher) decodeInt64(data []byte, v *int64) error {
+	result := gjson.ParseBytes(data)
+	switch result.Type {
+	case gjson.Null:
+		return nil
+	case gjson.Number:
+		val := result.Int()
+		if float64(val) == result.Num {
+			*v = val
+			return nil
+		}
+	}
+	return fmt.Errorf("not an int")
+}
+
 func (x *gjsonBencher) readObject(data []byte) (val map[string]interface{}, err error) {
 	result := gjson.ParseBytes(data)
 	mp, ok := result.Value().(map[string]interface{})

@@ -149,6 +149,29 @@ benchLoop:
 	_ = benchFloat
 }
 
+func BenchmarkDecodeFloat64(b *testing.B) {
+	datas := [][]byte{
+		[]byte(`null`),
+		[]byte(`-123456789`),
+		[]byte(`123`),
+		[]byte(`123e45`),
+		[]byte(`12.123456789012345`),
+	}
+	var err error
+	b.ReportAllocs()
+benchLoop:
+	for i := 0; i < b.N; i++ {
+		for _, data := range datas {
+			benchInt, err = DecodeFloat64(data, &benchFloat)
+			if err != nil {
+				break benchLoop
+			}
+		}
+	}
+	require.NoError(b, err)
+	_ = benchFloat
+}
+
 func BenchmarkReadInt64(b *testing.B) {
 	datas := [][]byte{
 		[]byte(`-123456789`),
@@ -168,6 +191,25 @@ benchLoop:
 	}
 }
 
+func BenchmarkDecodeInt64(b *testing.B) {
+	datas := [][]byte{
+		[]byte(`-123456789`),
+		[]byte(`123`),
+		[]byte(`1234512345123451234`),
+	}
+	var err error
+	b.ReportAllocs()
+benchLoop:
+	for i := 0; i < b.N; i++ {
+		for _, data := range datas {
+			benchInt, err = DecodeInt64(data, &benchInt64)
+			if err != nil {
+				break benchLoop
+			}
+		}
+	}
+}
+
 func BenchmarkReadString(b *testing.B) {
 	data := []byte(`"hello this is a string of somewhat normal length"`)
 	var err error
@@ -175,6 +217,18 @@ func BenchmarkReadString(b *testing.B) {
 	b.SetBytes(int64(len(data)))
 	for i := 0; i < b.N; i++ {
 		benchString, benchInt, err = ReadString(data, nil)
+	}
+	require.NoError(b, err)
+}
+
+func BenchmarkDecodeString(b *testing.B) {
+	data := []byte(`"@aym0566x \n\n名前:前田あゆみ\n第一印象:なんか怖っ！\n今の印象:とりあえずキモい。噛み合わない\n好きなところ:ぶすでキモいとこ😋✨✨\n思い出:んーーー、ありすぎ😊❤️\nLINE交換できる？:あぁ……ごめん✋\nトプ画をみて:照れますがな😘✨\n一言:お前は一生もんのダチ💖"`)
+	var err error
+	b.ReportAllocs()
+	b.SetBytes(int64(len(data)))
+	stringBuf := make([]byte, len(data)*4)
+	for i := 0; i < b.N; i++ {
+		benchInt, err = DecodeString(data, &benchString, stringBuf)
 	}
 	require.NoError(b, err)
 }

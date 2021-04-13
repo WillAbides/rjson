@@ -154,6 +154,46 @@ func Test_getRepoValuesRunners(t *testing.T) {
 	}
 }
 
+func TestDecodeInt64(t *testing.T) {
+	readTests := []struct {
+		data    string
+		want    int64
+		wantErr bool
+	}{
+		{data: `null`, wantErr: false},
+		{data: `42 `, want: 42},
+		{data: ` 42`, want: 42},
+		{data: `42.1`, wantErr: true},
+		{data: `9223372036854775807`, want: 9223372036854775807},
+		{data: `92233720368547758070`, wantErr: true},
+		{data: `9223372036854775808`, wantErr: true},
+		{data: `-9223372036854775808`, want: -9223372036854775808},
+		{data: `-9223372036854775809`, wantErr: true},
+	}
+
+	for _, bb := range benchers {
+		initBencher(bb)
+		runner, ok := bb.(int64Decoder)
+		if !ok {
+			continue
+		}
+		t.Run(bb.name(), func(t *testing.T) {
+			for _, td := range readTests {
+				t.Run(td.data, func(t *testing.T) {
+					var got int64
+					err := runner.decodeInt64([]byte(td.data), &got)
+					if td.wantErr {
+						assert.Error(t, err)
+						return
+					}
+					assert.NoError(t, err)
+					assert.Equal(t, td.want, got)
+				})
+			}
+		})
+	}
+}
+
 func TestReadInt64(t *testing.T) {
 	readTests := []struct {
 		data    string

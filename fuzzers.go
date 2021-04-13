@@ -29,6 +29,16 @@ var fuzzers = []fuzzer{
 	{name: "fuzzReadObject", fn: fuzzReadObject},
 	{name: "fuzzReadValue", fn: fuzzReadValue},
 
+	{name: "fuzzDecodeFloat64", fn: fuzzDecodeFloat64},
+	{name: "fuzzDecodeUint64", fn: fuzzDecodeUint64},
+	{name: "fuzzDecodeUint32", fn: fuzzDecodeUint32},
+	{name: "fuzzDecodeUint", fn: fuzzDecodeUint},
+	{name: "fuzzDecodeInt64", fn: fuzzDecodeInt64},
+	{name: "fuzzDecodeInt32", fn: fuzzDecodeInt32},
+	{name: "fuzzDecodeInt", fn: fuzzDecodeInt},
+	{name: "fuzzDecodeString", fn: fuzzDecodeString},
+	{name: "fuzzDecodeBool", fn: fuzzDecodeBool},
+
 	{name: "fuzzHandleArrayValues", fn: fuzzHandleArrayValues},
 	{name: "fuzzHandleObjectValues", fn: fuzzHandleObjectValues},
 }
@@ -96,6 +106,14 @@ func fuzzReadUint64(data []byte) (int, error) {
 	return 0, err
 }
 
+func fuzzDecodeUint64(data []byte) (int, error) {
+	var want, got uint64
+	wantP, wantErr := decodeUint64Compat(data, &want)
+	gotP, gotErr := DecodeUint64(data, &got)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
 func fuzzReadUint32(data []byte) (int, error) {
 	want, wantP, wantErr := readUint32Compat(data)
 	got, gotP, gotErr := ReadUint32(data)
@@ -103,16 +121,10 @@ func fuzzReadUint32(data []byte) (int, error) {
 	return 0, err
 }
 
-func fuzzReadInt64(data []byte) (int, error) {
-	want, wantP, wantErr := readInt64Compat(data)
-	got, gotP, gotErr := ReadInt64(data)
-	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
-	return 0, err
-}
-
-func fuzzReadInt32(data []byte) (int, error) {
-	want, wantP, wantErr := readInt32Compat(data)
-	got, gotP, gotErr := ReadInt32(data)
+func fuzzDecodeUint32(data []byte) (int, error) {
+	var want, got uint32
+	wantP, wantErr := decodeUint32Compat(data, &want)
+	gotP, gotErr := DecodeUint32(data, &got)
 	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
 	return 0, err
 }
@@ -124,9 +136,55 @@ func fuzzReadUint(data []byte) (int, error) {
 	return 0, err
 }
 
+func fuzzDecodeUint(data []byte) (int, error) {
+	var want, got uint
+	wantP, wantErr := decodeUintCompat(data, &want)
+	gotP, gotErr := DecodeUint(data, &got)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
+func fuzzReadInt64(data []byte) (int, error) {
+	want, wantP, wantErr := readInt64Compat(data)
+	got, gotP, gotErr := ReadInt64(data)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
+func fuzzDecodeInt64(data []byte) (int, error) {
+	var want, got int64
+	wantP, wantErr := decodeInt64Compat(data, &want)
+	gotP, gotErr := DecodeInt64(data, &got)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
+func fuzzReadInt32(data []byte) (int, error) {
+	want, wantP, wantErr := readInt32Compat(data)
+	got, gotP, gotErr := ReadInt32(data)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
+func fuzzDecodeInt32(data []byte) (int, error) {
+	var want, got int32
+	wantP, wantErr := decodeInt32Compat(data, &want)
+	gotP, gotErr := DecodeInt32(data, &got)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
 func fuzzReadInt(data []byte) (int, error) {
 	want, wantP, wantErr := readIntCompat(data)
 	got, gotP, gotErr := ReadInt(data)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
+func fuzzDecodeInt(data []byte) (int, error) {
+	var want, got int
+	wantP, wantErr := decodeIntCompat(data, &want)
+	gotP, gotErr := DecodeInt(data, &got)
 	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
 	return 0, err
 }
@@ -138,14 +196,28 @@ func fuzzReadFloat64(data []byte) (int, error) {
 	return 0, err
 }
 
+func fuzzDecodeFloat64(data []byte) (int, error) {
+	var want, got float64
+	wantP, wantErr := decodeFloat64Compat(data, &want)
+	gotP, gotErr := DecodeFloat64(data, &got)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
 func fuzzReadString(data []byte) (int, error) {
 	want, wantP, wantErr := readStringCompat(data)
 	got, gotP, gotErr := ReadString(data, nil)
 	got = StdLibCompatibleString(got)
 	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
-	if err != nil {
-		return 0, err
-	}
+	return 0, err
+}
+
+func fuzzDecodeString(data []byte) (int, error) {
+	var want, got string
+	wantP, wantErr := decodeStringCompat(data, &want)
+	gotP, gotErr := DecodeString(data, &got, nil)
+	got = StdLibCompatibleString(got)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
 	return 0, err
 }
 
@@ -154,15 +226,20 @@ func fuzzReadStringBytes(data []byte) (int, error) {
 	gotBytes, gotP, gotErr := ReadStringBytes(data, nil)
 	got := StdLibCompatibleString(string(gotBytes))
 	err := checkFuzzResults(string(want), got, wantP, gotP, wantErr, gotErr)
-	if err != nil {
-		return 0, err
-	}
 	return 0, err
 }
 
 func fuzzReadBool(data []byte) (int, error) {
 	want, wantP, wantErr := readBoolCompat(data)
 	got, gotP, gotErr := ReadBool(data)
+	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	return 0, err
+}
+
+func fuzzDecodeBool(data []byte) (int, error) {
+	var want, got bool
+	wantP, wantErr := decodeBoolCompat(data, &want)
+	gotP, gotErr := DecodeBool(data, &got)
 	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
 	return 0, err
 }

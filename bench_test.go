@@ -230,7 +230,7 @@ func BenchmarkReadString(b *testing.B) {
 			b.ReportAllocs()
 			b.SetBytes(int64(len(simpleString)))
 			for i := 0; i < b.N; i++ {
-				benchString, benchInt, err = ReadString(simpleString, buf)
+				benchString, benchInt, err = ReadString(simpleString, &buf)
 			}
 			require.NoError(b, err)
 		})
@@ -251,12 +251,11 @@ func BenchmarkReadString(b *testing.B) {
 			b.ReportAllocs()
 			b.SetBytes(int64(len(complexString)))
 			for i := 0; i < b.N; i++ {
-				benchString, benchInt, err = ReadString(complexString, buf)
+				benchString, benchInt, err = ReadString(complexString, &buf)
 			}
 			require.NoError(b, err)
 		})
 	})
-
 }
 
 func BenchmarkDecodeString(b *testing.B) {
@@ -264,9 +263,9 @@ func BenchmarkDecodeString(b *testing.B) {
 	var err error
 	b.ReportAllocs()
 	b.SetBytes(int64(len(data)))
-	stringBuf := make([]byte, len(data)*4)
+	var stringBuf []byte
 	for i := 0; i < b.N; i++ {
-		benchInt, err = DecodeString(data, &benchString, stringBuf)
+		benchInt, err = DecodeString(data, &benchString, &stringBuf)
 	}
 	require.NoError(b, err)
 }

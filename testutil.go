@@ -203,3 +203,8 @@ func ifaceCompare(want, got interface{}, path []string) error {
 		return newPathErr(path, "unhandled type %T", wantVal)
 	}
 }
+
+func dirtyStringBuffer() *[]byte {
+	buf := []byte(`this is a dirty buffer`)
+	return &buf
+}

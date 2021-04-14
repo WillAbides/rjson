@@ -127,7 +127,7 @@ func decodeUintCompat(data []byte, v *uint) (p int, err error) {
 
 // DecodeString reads a string value at the beginning of data. If data begins with null, v is untouched.
 // If buf is not nil, it will be used as a working for building the string value.
-func DecodeString(data []byte, v *string, buf []byte) (p int, err error) {
+func DecodeString(data []byte, v *string, buf *[]byte) (p int, err error) {
 	var val string
 	val, p, err = ReadString(data, buf)
 	if err != nil {

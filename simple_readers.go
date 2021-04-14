@@ -330,34 +330,42 @@ func readStringBytesCompat(data []byte) (val []byte, p int, err error) {
 }
 
 // ReadString reads a string value at the beginning of data. p is the first position in data after the value. If buf
-// is not nil, it will be used as a working for building the string value.
+// is not nil, it will be used as a working buffer for building the string value.
 //
 // If you are concerned about memory allocation, try using ReadStringBytes instead.
-func ReadString(data, buf []byte) (val string, p int, err error) {
-	buf = buf[:0]
+func ReadString(data []byte, buf *[]byte) (val string, p int, err error) {
 	p = countWhitespace(data)
 	if p == len(data) || data[p] != '"' {
 		return "", p, fmt.Errorf("not a string")
 	}
 	p++
 	start := p
-
+	var bBuf []byte
+	if buf != nil {
+		bBuf = (*buf)[:0]
+	}
 	for ; p < len(data); p++ {
 		var pp int
 		var err error
 		if data[p] <= 0x1f {
-			buf, pp, err = appendRemainderOfString(data[p:], buf)
+			bBuf, pp, err = appendRemainderOfString(data[p:], bBuf)
 			p += pp
-			return string(buf), p, err
+			if buf != nil {
+				*buf = bBuf
+			}
+			return string(bBuf), p, err
 		}
 		switch data[p] {
 		case '"':
 			return string(data[start:p]), p + 1, nil
 		case '\\':
-			buf = append(buf, data[start:p]...)
-			buf, pp, err = appendRemainderOfString(data[p:], buf)
+			bBuf = append(bBuf, data[start:p]...)
+			bBuf, pp, err = appendRemainderOfString(data[p:], bBuf)
 			p += pp
-			return string(buf), p, err
+			if buf != nil {
+				*buf = bBuf
+			}
+			return string(bBuf), p, err
 		}
 	}
 	return "", p, fmt.Errorf("not a string")

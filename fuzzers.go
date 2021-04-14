@@ -209,6 +209,13 @@ func fuzzReadString(data []byte) (int, error) {
 	got, gotP, gotErr := ReadString(data, nil)
 	got = StdLibCompatibleString(got)
 	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	if err != nil {
+		return 0, err
+	}
+	// try again with a dirty buffer
+	got, gotP, gotErr = ReadString(data, dirtyStringBuffer())
+	got = StdLibCompatibleString(got)
+	err = checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
 	return 0, err
 }
 
@@ -218,6 +225,13 @@ func fuzzDecodeString(data []byte) (int, error) {
 	gotP, gotErr := DecodeString(data, &got, nil)
 	got = StdLibCompatibleString(got)
 	err := checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
+	if err != nil {
+		return 0, err
+	}
+	// try again with a dirty buffer
+	gotP, gotErr = DecodeString(data, &got, dirtyStringBuffer())
+	got = StdLibCompatibleString(got)
+	err = checkFuzzResults(want, got, wantP, gotP, wantErr, gotErr)
 	return 0, err
 }
 

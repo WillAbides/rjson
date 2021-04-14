@@ -211,14 +211,52 @@ benchLoop:
 }
 
 func BenchmarkReadString(b *testing.B) {
-	data := []byte(`"hello this is a string of somewhat normal length"`)
+	simpleString := []byte(`"hello this is a string of somewhat normal length"`)
+	complexString := []byte(`"@aym0566x \n\n名前:前田あゆみ\n第一印象:なんか怖っ！\n今の印象:とりあえずキモい。噛み合わない\n好きなところ:ぶすでキモいとこ😋✨✨\n思い出:んーーー、ありすぎ😊❤️\nLINE交換できる？:あぁ……ごめん✋\nトプ画をみて:照れますがな😘✨\n一言:お前は一生もんのダチ💖"`)
 	var err error
-	b.ReportAllocs()
-	b.SetBytes(int64(len(data)))
-	for i := 0; i < b.N; i++ {
-		benchString, benchInt, err = ReadString(data, nil)
-	}
-	require.NoError(b, err)
+
+	b.Run("simple string", func(b *testing.B) {
+		b.Run("nil buf", func(b *testing.B) {
+			b.ReportAllocs()
+			b.SetBytes(int64(len(simpleString)))
+			for i := 0; i < b.N; i++ {
+				benchString, benchInt, err = ReadString(simpleString, nil)
+			}
+			require.NoError(b, err)
+		})
+
+		b.Run("with buf", func(b *testing.B) {
+			var buf []byte
+			b.ReportAllocs()
+			b.SetBytes(int64(len(simpleString)))
+			for i := 0; i < b.N; i++ {
+				benchString, benchInt, err = ReadString(simpleString, buf)
+			}
+			require.NoError(b, err)
+		})
+	})
+
+	b.Run("complex string", func(b *testing.B) {
+		b.Run("nil buf", func(b *testing.B) {
+			b.ReportAllocs()
+			b.SetBytes(int64(len(complexString)))
+			for i := 0; i < b.N; i++ {
+				benchString, benchInt, err = ReadString(complexString, nil)
+			}
+			require.NoError(b, err)
+		})
+
+		b.Run("with buf", func(b *testing.B) {
+			var buf []byte
+			b.ReportAllocs()
+			b.SetBytes(int64(len(complexString)))
+			for i := 0; i < b.N; i++ {
+				benchString, benchInt, err = ReadString(complexString, buf)
+			}
+			require.NoError(b, err)
+		})
+	})
+
 }
 
 func BenchmarkDecodeString(b *testing.B) {

@@ -84,3 +84,20 @@ func (x *jsonparserBencher) readString(data []byte) (string, error) {
 func (x *jsonparserBencher) readBool(data []byte) (bool, error) {
 	return jsonparser.GetBoolean(data)
 }
+
+func (x *jsonparserBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, error) {
+	_, err := jsonparser.ArrayEach(data, func(value []byte, dataType jsonparser.ValueType, _ int, err error) {
+		if err != nil {
+			return
+		}
+		val, err := jsonparser.GetInt(value, "user", "id")
+		if err != nil {
+			return
+		}
+		dest = append(dest, val)
+	}, "statuses")
+	if err != nil {
+		return nil, err
+	}
+	return dest, nil
+}

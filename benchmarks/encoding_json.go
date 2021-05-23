@@ -6,7 +6,9 @@ import (
 	"fmt"
 )
 
-type jsonBencher struct{}
+type jsonBencher struct {
+	twitterDoc twitterDoc
+}
 
 func (x *jsonBencher) name() string {
 	return "encoding_json"
@@ -81,4 +83,28 @@ func (x *jsonBencher) readBool(data []byte) (bool, error) {
 		return b, nil
 	}
 	return false, fmt.Errorf("not a bool")
+}
+
+type twitterUser struct {
+	ID int64 `json:"id"`
+}
+
+type twitterStatus struct {
+	User twitterUser `json:"user"`
+}
+
+type twitterDoc struct {
+	Statuses []twitterStatus `json:"statuses"`
+}
+
+func (x *jsonBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, error) {
+	err := json.Unmarshal(data, &x.twitterDoc)
+	if err != nil {
+		return nil, err
+	}
+	result := dest[:0]
+	for _, status := range x.twitterDoc.Statuses {
+		result = append(result, status.User.ID)
+	}
+	return result, nil
 }

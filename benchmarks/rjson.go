@@ -7,10 +7,11 @@ import (
 )
 
 type rjsonBencher struct {
-	valueReader         rjson.ValueReader
-	buffer              rjson.Buffer
-	readRepoDataHandler *rjsonReadRepoDataHandler
-	stringBuffer        []byte
+	valueReader            rjson.ValueReader
+	buffer                 rjson.Buffer
+	readRepoDataHandler    *rjsonReadRepoDataHandler
+	stringBuffer           []byte
+	distinctUserIDsHandler *rjsonDistinctUserIDsUserHandler
 }
 
 func (x *rjsonBencher) init() {
@@ -18,6 +19,7 @@ func (x *rjsonBencher) init() {
 		readRepoDataHandler: &rjsonReadRepoDataHandler{
 			doneErr: fmt.Errorf("done"),
 		},
+		distinctUserIDsHandler: &rjsonDistinctUserIDsUserHandler{},
 	}
 }
 
@@ -58,6 +60,55 @@ func (x *rjsonBencher) readRepoData(data []byte, val *repoData) error {
 		err = nil
 	}
 	return err
+}
+
+func (x *rjsonBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, error) {
+	x.distinctUserIDsHandler.userIDs = dest
+	_, err := rjson.HandleObjectValues(data, x.distinctUserIDsHandler, &x.buffer)
+	if err != nil {
+		return nil, err
+	}
+	return x.distinctUserIDsHandler.userIDs, nil
+}
+
+type rjsonDistinctUserIDsUserHandler struct {
+	statusesBuf rjson.Buffer
+	arrBuf      rjson.Buffer
+	userBuf     rjson.Buffer
+	inUser      bool
+	inStatus    bool
+	userIDs     []int64
+}
+
+func (h *rjsonDistinctUserIDsUserHandler) HandleArrayValue(data []byte) (p int, err error) {
+	h.inStatus = true
+	p, err = rjson.HandleObjectValues(data, h, &h.arrBuf)
+	h.inStatus = false
+	return p, err
+}
+
+func (h *rjsonDistinctUserIDsUserHandler) HandleObjectValue(fieldname, data []byte) (p int, err error) {
+	switch string(fieldname) {
+	case "statuses":
+		return rjson.HandleArrayValues(data, h, &h.statusesBuf)
+	case "user":
+		if h.inUser || !h.inStatus {
+			return 0, nil
+		}
+		h.inUser = true
+		p, err = rjson.HandleObjectValues(data, h, &h.userBuf)
+		h.inUser = false
+		return p, err
+	case "id":
+		if !h.inUser {
+			return 0, nil
+		}
+		var v int64
+		v, p, err = rjson.ReadInt64(data)
+		h.userIDs = append(h.userIDs, v)
+		return p, err
+	}
+	return 0, nil
 }
 
 type rjsonReadRepoDataHandler struct {

@@ -6,7 +6,15 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type gjsonBencher struct{}
+type gjsonBencher struct {
+	idMap map[int64]struct{}
+}
+
+func (x *gjsonBencher) init() {
+	*x = gjsonBencher{
+		idMap: map[int64]struct{}{},
+	}
+}
 
 func (x *gjsonBencher) name() string {
 	return "gjson"
@@ -115,4 +123,12 @@ func (x *gjsonBencher) readBool(data []byte) (bool, error) {
 		return false, fmt.Errorf("not a bool")
 	}
 	return val, nil
+}
+
+func (x *gjsonBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, error) {
+	result := gjson.GetBytes(data, "statuses.#.user.id")
+	for _, r := range result.Array() {
+		dest = append(dest, r.Int())
+	}
+	return dest, nil
 }

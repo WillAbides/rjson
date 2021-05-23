@@ -186,6 +186,10 @@ FullName string `json:"full_name"`
 
 Valid runs checks whether json data is valid. It's the equivalent of `json.Valid(data)`
 
+#### DistinctUserIDs
+
+DistinctUserIDs returns a slice of user ids from `twitter.json`.
+
 #### ReadObject
 
 ReadObject decodes json data to a `map[string]interface{}`.
@@ -215,32 +219,32 @@ them yourself by running `script/compbench`.
 
 |           name           | encoding_json (ns/op) | rjson (ns/op) |  delta  |
 |--------------------------|-------------:|-------------:|---------|
-| GetRepoValues            |      39600.6 |      2116.56 | -94.66% |
-| Valid_canada             |      6914530 |      2315600 | -66.51% |
-| Valid_citm_catalog       |      5323730 |      1642440 | -69.15% |
-| Valid_github_repo        |      20250.3 |       5650.5 | -72.10% |
-| Valid_twitter            |      2130420 |       611216 | -71.31% |
-| DistinctUserIDs          |      4262360 |       753133 | -82.33% |
-| ReadObject_canada        |     49794600 |     26946800 | -45.88% |
-| ReadObject_citm_catalog  |     19002400 |     11645500 | -38.72% |
-| ReadObject_github_repo   |      96357.3 |      33139.8 | -65.61% |
-| ReadObject_twitter       |      7914700 |      4379160 | -44.67% |
-| DecodeInt64_zero         |       282.14 |       13.195 | -95.32% |
-| DecodeInt64_small        |       313.32 |       14.597 | -95.34% |
-| DecodeInt64_big_negative |       483.95 |      29.2789 | -93.95% |
+| GetRepoValues            |      39772.3 |       2156.9 | -94.58% |
+| Valid_canada             |      6981750 |      2413060 | -65.44% |
+| Valid_citm_catalog       |      5380290 |      1645390 | -69.42% |
+| Valid_github_repo        |        19912 |       5485.7 | -72.45% |
+| Valid_twitter            |      2141580 |       611203 | -71.46% |
+| DistinctUserIDs          |      4227210 |       743022 | -82.42% |
+| ReadObject_canada        |     52882000 |     32002000 | -39.48% |
+| ReadObject_citm_catalog  |     22354300 |     11808100 | -47.18% |
+| ReadObject_github_repo   |      92965.4 |      30023.4 | -67.70% |
+| ReadObject_twitter       |      9228560 |      4593510 | -50.23% |
+| DecodeInt64_zero         |      328.378 |       13.328 | -95.94% |
+| DecodeInt64_small        |      360.122 |       14.794 | -95.89% |
+| DecodeInt64_big_negative |        563.4 |       29.224 | -94.81% |
 
 |           name           | encoding_json (B/op) | rjson (B/op) |  delta   |
 |--------------------------|------------:|------------:|----------|
 | GetRepoValues            |         250 |          16 | -93.60%  |
-| Valid_canada             |      143654 |       45994 | -67.98%  |
-| Valid_citm_catalog       |     86129.9 |       25665 | -70.20%  |
+| Valid_canada             |      145800 |       47619 | -67.34%  |
+| Valid_citm_catalog       |     86129.9 |       24020 | -72.11%  |
 | Valid_github_repo        |           1 |           0 | -100.00% |
-| Valid_twitter            |     12564.5 |     3354.89 | -73.30%  |
-| DistinctUserIDs          |       26794 |      4134.9 | -84.57%  |
-| ReadObject_canada        |    11845200 |     8433930 | -28.80%  |
-| ReadObject_citm_catalog  |     5411290 |     5136060 | -5.09%   |
-| ReadObject_github_repo   |     25701.6 |     17039.4 | -33.70%  |
-| ReadObject_twitter       |     2193330 |     2697120 | +22.97%  |
+| Valid_twitter            |     12613.7 |      3345.5 | -73.48%  |
+| DistinctUserIDs          |       26794 |     4072.67 | -84.80%  |
+| ReadObject_canada        |    12070600 |     8434380 | -30.12%  |
+| ReadObject_citm_catalog  |     5468880 |     5229700 | -4.37%   |
+| ReadObject_github_repo   |     25704.1 |     17036.9 | -33.72%  |
+| ReadObject_twitter       |     2190850 |     2717220 | +24.03%  |
 | DecodeInt64_zero         |         184 |           0 | -100.00% |
 | DecodeInt64_small        |         186 |           0 | -100.00% |
 | DecodeInt64_big_negative |         208 |           0 | -100.00% |
@@ -249,17 +253,17 @@ them yourself by running `script/compbench`.
 
 |          name           | fastjson (ns/op) | rjson (ns/op) |  delta   |
 |-------------------------|-------------:|-------------:|----------|
-| GetRepoValues           |      4950.12 |      2116.56 | -57.24%  |
-| ReadFloat64_zero        |       29.411 |      14.1838 | -51.77%  |
-| ReadFloat64_smallInt    |       30.413 |      17.4567 | -42.60%  |
-| ReadFloat64_negExp      |       43.728 |      27.2667 | -37.64%  |
-| ReadInt64_zero          |       28.463 |       12.009 | -57.81%  |
-| ReadInt64_small         |       29.327 |       13.496 | -53.98%  |
-| ReadInt64_big_negative  |       88.903 |        29.12 | -67.25%  |
-| ReadString_short_ascii  |        60.77 |       33.613 | -44.69%  |
-| ReadString_medium_ascii |       659.16 |       1802.7 | +173.48% |
-| ReadString_medium       |       324.88 |       789.83 | +143.11% |
-| ReadBool                |      19.3422 |      8.09111 | -58.17%  |
+| GetRepoValues           |      4919.22 |       2156.9 | -56.15%  |
+| ReadFloat64_zero        |      28.9222 |       14.504 | -49.85%  |
+| ReadFloat64_smallInt    |       30.047 |       17.713 | -41.05%  |
+| ReadFloat64_negExp      |        43.04 |      27.6944 | -35.65%  |
+| ReadInt64_zero          |       28.564 |       12.406 | -56.57%  |
+| ReadInt64_small         |       29.473 |       13.144 | -55.40%  |
+| ReadInt64_big_negative  |       89.229 |       27.828 | -68.81%  |
+| ReadString_short_ascii  |        62.68 |        39.98 | -36.22%  |
+| ReadString_medium_ascii |      574.967 |       1872.8 | +225.72% |
+| ReadString_medium       |        301.4 |       817.07 | +171.09% |
+| ReadBool                |        19.39 |       9.0604 | -53.27%  |
 
 |          name           | fastjson (B/op) | rjson (B/op) |  delta  |
 |-------------------------|------------:|------------:|---------|
@@ -279,42 +283,42 @@ them yourself by running `script/compbench`.
 
 |           name           | gjson (ns/op) | rjson (ns/op) |  delta  |
 |--------------------------|-------------:|-------------:|---------|
-| GetRepoValues            |         2461 |      2116.56 | -14.00% |
-| Valid_canada             |      2549620 |      2315600 | -9.18%  |
-| Valid_citm_catalog       |      1690280 |      1642440 | -2.83%  |
-| Valid_github_repo        |      7949.11 |       5650.5 | -28.92% |
-| Valid_twitter            |       825232 |       611216 | -25.93% |
-| DistinctUserIDs          |      1477430 |       753133 | -49.02% |
-| ReadObject_canada        |     59939000 |     26946800 | -55.04% |
-| ReadObject_citm_catalog  |     17424900 |     11645500 | -33.17% |
-| ReadObject_github_repo   |      37761.7 |      33139.8 | -12.24% |
-| ReadObject_twitter       |      7186710 |      4379160 | -39.07% |
-| ReadFloat64_zero         |       45.976 |      14.1838 | -69.15% |
-| ReadFloat64_smallInt     |       53.784 |      17.4567 | -67.54% |
-| ReadFloat64_negExp       |      83.5444 |      27.2667 | -67.36% |
-| ReadInt64_zero           |       51.312 |       12.009 | -76.60% |
-| ReadInt64_small          |      59.3838 |       13.496 | -77.27% |
-| ReadInt64_big_negative   |       150.39 |        29.12 | -80.64% |
-| DecodeInt64_zero         |       51.401 |       13.195 | -74.33% |
-| DecodeInt64_small        |        58.84 |       14.597 | -75.19% |
-| DecodeInt64_big_negative |       152.05 |      29.2789 | -80.74% |
-| ReadString_short_ascii   |       96.432 |       33.613 | -65.14% |
-| ReadString_medium_ascii  |       3891.7 |       1802.7 | -53.68% |
-| ReadString_medium        |      1586.17 |       789.83 | -50.21% |
-| ReadBool                 |       46.949 |      8.09111 | -82.77% |
+| GetRepoValues            |      2408.33 |       2156.9 | -10.44% |
+| Valid_canada             |      2531630 |      2413060 | -4.68%  |
+| Valid_citm_catalog       |      1665450 |      1645390 | ~       |
+| Valid_github_repo        |       7892.7 |       5485.7 | -30.50% |
+| Valid_twitter            |       806403 |       611203 | -24.21% |
+| DistinctUserIDs          |      1471150 |       743022 | -49.49% |
+| ReadObject_canada        |     64774800 |     32002000 | -50.59% |
+| ReadObject_citm_catalog  |     16946300 |     11808100 | -30.32% |
+| ReadObject_github_repo   |      31775.6 |      30023.4 | -5.51%  |
+| ReadObject_twitter       |      7668040 |      4593510 | -40.10% |
+| ReadFloat64_zero         |      45.7111 |       14.504 | -68.27% |
+| ReadFloat64_smallInt     |       55.236 |       17.713 | -67.93% |
+| ReadFloat64_negExp       |       89.102 |      27.6944 | -68.92% |
+| ReadInt64_zero           |       51.251 |       12.406 | -75.79% |
+| ReadInt64_small          |       62.192 |       13.144 | -78.87% |
+| ReadInt64_big_negative   |       156.53 |       27.828 | -82.22% |
+| DecodeInt64_zero         |       52.371 |       13.328 | -74.55% |
+| DecodeInt64_small        |       60.197 |       14.794 | -75.42% |
+| DecodeInt64_big_negative |      155.967 |       29.224 | -81.26% |
+| ReadString_short_ascii   |       106.93 |        39.98 | -62.61% |
+| ReadString_medium_ascii  |      3896.33 |       1872.8 | -51.93% |
+| ReadString_medium        |       1669.1 |       817.07 | -51.05% |
+| ReadBool                 |       44.706 |       9.0604 | -79.73% |
 
 |           name           | gjson (B/op) | rjson (B/op) |  delta   |
 |--------------------------|------------:|------------:|----------|
 | GetRepoValues            |         200 |          16 | -92.00%  |
-| Valid_canada             |       50073 |       45994 | -8.15%   |
-| Valid_citm_catalog       |     26336.1 |       25665 | ~        |
+| Valid_canada             |     49880.1 |       47619 | -4.53%   |
+| Valid_citm_catalog       |     24880.3 |       24020 | -3.46%   |
 | Valid_github_repo        |           0 |           0 | ~        |
-| Valid_twitter            |        4420 |     3354.89 | -24.10%  |
-| DistinctUserIDs          |     32273.6 |      4134.9 | -87.19%  |
-| ReadObject_canada        |    11677900 |     8433930 | -27.78%  |
-| ReadObject_citm_catalog  |     6680960 |     5136060 | -23.12%  |
-| ReadObject_github_repo   |     22679.2 |     17039.4 | -24.87%  |
-| ReadObject_twitter       |     2429560 |     2697120 | +11.01%  |
+| Valid_twitter            |     4417.56 |      3345.5 | -24.27%  |
+| DistinctUserIDs          |     32438.1 |     4072.67 | -87.44%  |
+| ReadObject_canada        |    11677900 |     8434380 | -27.78%  |
+| ReadObject_citm_catalog  |     6697300 |     5229700 | -21.91%  |
+| ReadObject_github_repo   |     22679.1 |     17036.9 | -24.88%  |
+| ReadObject_twitter       |     2431030 |     2717220 | +11.77%  |
 | ReadFloat64_zero         |           0 |           0 | ~        |
 | ReadFloat64_smallInt     |           2 |           0 | -100.00% |
 | ReadFloat64_negExp       |          16 |           0 | -100.00% |
@@ -333,34 +337,34 @@ them yourself by running `script/compbench`.
 
 |           name           | jsoniter (ns/op) | rjson (ns/op) |  delta  |
 |--------------------------|-------------:|-------------:|---------|
-| GetRepoValues            |       2603.2 |      2116.56 | -18.69% |
-| DistinctUserIDs          |      1650610 |       753133 | -54.37% |
-| ReadObject_canada        |     66331100 |     26946800 | -59.38% |
-| ReadObject_citm_catalog  |     12828400 |     11645500 | -9.22%  |
-| ReadObject_github_repo   |      52348.7 |      33139.8 | -36.69% |
-| ReadObject_twitter       |      5978090 |      4379160 | -26.75% |
-| ReadFloat64_zero         |      87.2467 |      14.1838 | -83.74% |
-| ReadFloat64_smallInt     |       104.14 |      17.4567 | -83.24% |
-| ReadFloat64_negExp       |      133.956 |      27.2667 | -79.64% |
-| ReadInt64_zero           |       14.199 |       12.009 | -15.42% |
-| ReadInt64_small          |      21.3222 |       13.496 | -36.70% |
-| ReadInt64_big_negative   |       46.717 |        29.12 | -37.67% |
-| DecodeInt64_zero         |       95.202 |       13.195 | -86.14% |
-| DecodeInt64_small        |      102.132 |       14.597 | -85.71% |
-| DecodeInt64_big_negative |       131.64 |      29.2789 | -77.76% |
-| ReadString_short_ascii   |       40.793 |       33.613 | -17.60% |
-| ReadString_medium_ascii  |       4592.7 |       1802.7 | -60.75% |
-| ReadString_medium        |      2057.75 |       789.83 | -61.62% |
-| ReadBool                 |       25.318 |      8.09111 | -68.04% |
+| GetRepoValues            |      2565.33 |       2156.9 | -15.92% |
+| DistinctUserIDs          |      1661190 |       743022 | -55.27% |
+| ReadObject_canada        |     73041000 |     32002000 | -56.19% |
+| ReadObject_citm_catalog  |     13473400 |     11808100 | -12.36% |
+| ReadObject_github_repo   |      45984.9 |      30023.4 | -34.71% |
+| ReadObject_twitter       |      6713870 |      4593510 | -31.58% |
+| ReadFloat64_zero         |       107.57 |       14.504 | -86.52% |
+| ReadFloat64_smallInt     |       112.99 |       17.713 | -84.32% |
+| ReadFloat64_negExp       |       149.69 |      27.6944 | -81.50% |
+| ReadInt64_zero           |       14.027 |       12.406 | -11.56% |
+| ReadInt64_small          |        21.35 |       13.144 | -38.44% |
+| ReadInt64_big_negative   |      46.1238 |       27.828 | -39.67% |
+| DecodeInt64_zero         |       99.286 |       13.328 | -86.58% |
+| DecodeInt64_small        |       105.21 |       14.794 | -85.94% |
+| DecodeInt64_big_negative |       134.32 |       29.224 | -78.24% |
+| ReadString_short_ascii   |       50.339 |        39.98 | -20.58% |
+| ReadString_medium_ascii  |       4839.3 |       1872.8 | -61.30% |
+| ReadString_medium        |       2226.4 |       817.07 | -63.30% |
+| ReadBool                 |      24.8511 |       9.0604 | -63.54% |
 
 |           name           | jsoniter (B/op) | rjson (B/op) |  delta   |
 |--------------------------|------------:|------------:|----------|
 | GetRepoValues            |         360 |          16 | -95.56%  |
-| DistinctUserIDs          |      385439 |      4134.9 | -98.93%  |
-| ReadObject_canada        |    17315200 |     8433930 | -51.29%  |
-| ReadObject_citm_catalog  |     5756820 |     5136060 | -10.78%  |
-| ReadObject_github_repo   |     25461.9 |     17039.4 | -33.08%  |
-| ReadObject_twitter       |     2455040 |     2697120 | +9.86%   |
+| DistinctUserIDs          |      385571 |     4072.67 | -98.94%  |
+| ReadObject_canada        |    17315200 |     8434380 | -51.29%  |
+| ReadObject_citm_catalog  |     5787990 |     5229700 | -9.65%   |
+| ReadObject_github_repo   |     25469.3 |     17036.9 | -33.11%  |
+| ReadObject_twitter       |     2452640 |     2717220 | +10.79%  |
 | ReadFloat64_zero         |          16 |           0 | -100.00% |
 | ReadFloat64_smallInt     |          16 |           0 | -100.00% |
 | ReadFloat64_negExp       |          16 |           0 | -100.00% |
@@ -379,23 +383,23 @@ them yourself by running `script/compbench`.
 
 |          name           | jsonparser (ns/op) | rjson (ns/op) |  delta  |
 |-------------------------|-------------:|-------------:|---------|
-| GetRepoValues           |       2020.7 |      2116.56 | +4.74%  |
-| DistinctUserIDs         |       922930 |       753133 | -18.40% |
-| ReadFloat64_zero        |       43.741 |      14.1838 | -67.57% |
-| ReadFloat64_smallInt    |      45.9212 |      17.4567 | -61.99% |
-| ReadFloat64_negExp      |      67.4825 |      27.2667 | -59.59% |
-| ReadInt64_zero          |      25.7767 |       12.009 | -53.41% |
-| ReadInt64_small         |       27.575 |       13.496 | -51.06% |
-| ReadInt64_big_negative  |       59.112 |        29.12 | -50.74% |
-| ReadString_short_ascii  |      48.4433 |       33.613 | -30.61% |
-| ReadString_medium_ascii |      1595.62 |       1802.7 | +12.98% |
-| ReadString_medium       |      662.567 |       789.83 | +19.21% |
-| ReadBool                |       29.986 |      8.09111 | -73.02% |
+| GetRepoValues           |      2447.22 |       2156.9 | -11.86% |
+| DistinctUserIDs         |      1022040 |       743022 | -27.30% |
+| ReadFloat64_zero        |       43.557 |       14.504 | -66.70% |
+| ReadFloat64_smallInt    |      46.0313 |       17.713 | -61.52% |
+| ReadFloat64_negExp      |      67.8511 |      27.6944 | -59.18% |
+| ReadInt64_zero          |      25.7944 |       12.406 | -51.90% |
+| ReadInt64_small         |      27.1367 |       13.144 | -51.56% |
+| ReadInt64_big_negative  |        59.38 |       27.828 | -53.14% |
+| ReadString_short_ascii  |      49.6714 |        39.98 | -19.51% |
+| ReadString_medium_ascii |      1806.89 |       1872.8 | +3.65%  |
+| ReadString_medium       |       811.09 |       817.07 | ~       |
+| ReadBool                |       30.078 |       9.0604 | -69.88% |
 
 |          name           | jsonparser (B/op) | rjson (B/op) |  delta  |
 |-------------------------|------------:|------------:|---------|
 | GetRepoValues           |          16 |          16 | ~       |
-| DistinctUserIDs         |      4945.5 |      4134.9 | -16.39% |
+| DistinctUserIDs         |      6170.9 |     4072.67 | -34.00% |
 | ReadFloat64_zero        |           0 |           0 | ~       |
 | ReadFloat64_smallInt    |           0 |           0 | ~       |
 | ReadFloat64_negExp      |           0 |           0 | ~       |
@@ -411,36 +415,36 @@ them yourself by running `script/compbench`.
 
 |          name           | goccyjson (ns/op) | rjson (ns/op) |  delta  |
 |-------------------------|-------------:|-------------:|---------|
-| GetRepoValues           |      7109.25 |      2116.56 | -70.23% |
-| ReadObject_canada       |     33791900 |     26946800 | -20.26% |
-| ReadObject_citm_catalog |     14062900 |     11645500 | -17.19% |
-| ReadObject_github_repo  |      48828.4 |      33139.8 | -32.13% |
-| ReadObject_twitter      |     13765400 |      4379160 | -68.19% |
+| GetRepoValues           |      7488.44 |       2156.9 | -71.20% |
+| ReadObject_canada       |     47965900 |     32002000 | -33.28% |
+| ReadObject_citm_catalog |     15102800 |     11808100 | -21.82% |
+| ReadObject_github_repo  |      43846.8 |      30023.4 | -31.53% |
+| ReadObject_twitter      |     14948500 |      4593510 | -69.27% |
 
 |          name           | goccyjson (B/op) | rjson (B/op) |  delta  |
 |-------------------------|------------:|------------:|---------|
 | GetRepoValues           |        6152 |          16 | -99.74% |
-| ReadObject_canada       |     7942610 |     8433930 | +6.19%  |
-| ReadObject_citm_catalog |     7146590 |     5136060 | -28.13% |
-| ReadObject_github_repo  |     26591.1 |     17039.4 | -35.92% |
-| ReadObject_twitter      |     2801030 |     2697120 | -3.71%  |
+| ReadObject_canada       |    10980000 |     8434380 | -23.18% |
+| ReadObject_citm_catalog |     7411250 |     5229700 | -29.44% |
+| ReadObject_github_repo  |     26592.9 |     17036.9 | -35.93% |
+| ReadObject_twitter      |     2811040 |     2717220 | -3.34%  |
 
 ### simdjson
 
 |          name           | simdjson (ns/op) | rjson (ns/op) |  delta  |
 |-------------------------|-------------:|-------------:|---------|
-| GetRepoValues           |      11782.9 |      2116.56 | -82.04% |
-| DistinctUserIDs         |      1027120 |       753133 | -26.68% |
-| ReadObject_canada       |     34362000 |     26946800 | -21.58% |
-| ReadObject_citm_catalog |     11142600 |     11645500 | +4.51%  |
-| ReadObject_github_repo  |      41890.3 |      33139.8 | -20.89% |
-| ReadObject_twitter      |      4411260 |      4379160 | ~       |
+| GetRepoValues           |      11510.1 |       2156.9 | -81.26% |
+| DistinctUserIDs         |       992518 |       743022 | -25.14% |
+| ReadObject_canada       |     30483200 |     32002000 | +4.98%  |
+| ReadObject_citm_catalog |     10949300 |     11808100 | +7.84%  |
+| ReadObject_github_repo  |      36584.2 |      30023.4 | -17.93% |
+| ReadObject_twitter      |      4399670 |      4593510 | +4.41%  |
 
 |          name           | simdjson (B/op) | rjson (B/op) |  delta  |
 |-------------------------|------------:|------------:|---------|
-| GetRepoValues           |         808 |          16 | -98.02% |
-| DistinctUserIDs         |       33368 |      4134.9 | -87.61% |
-| ReadObject_canada       |    15440500 |     8433930 | -45.38% |
-| ReadObject_citm_catalog |     8526420 |     5136060 | -39.76% |
-| ReadObject_github_repo  |     23425.4 |     17039.4 | -27.26% |
-| ReadObject_twitter      |     2664980 |     2697120 | +1.21%  |
+| GetRepoValues           |         712 |          16 | -97.75% |
+| DistinctUserIDs         |     21623.2 |     4072.67 | -81.17% |
+| ReadObject_canada       |    12702400 |     8434380 | -33.60% |
+| ReadObject_citm_catalog |     8301120 |     5229700 | -37.00% |
+| ReadObject_github_repo  |     23330.7 |     17036.9 | -26.98% |
+| ReadObject_twitter      |     2652500 |     2717220 | +2.44%  |

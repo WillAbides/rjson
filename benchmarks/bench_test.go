@@ -61,6 +61,27 @@ func benchValid(b *testing.B, data []byte) {
 	})
 }
 
+func BenchmarkDistinctUserIDs(b *testing.B) {
+	data := getTestdata(b, "benchmark_data/twitter.json")
+	var result []int64
+	var err error
+	runBenchers(b, func(x bencher) bool {
+		_, ok := x.(distinctUserIDser)
+		return ok
+	}, func(b *testing.B, bb bencher) {
+		runner := bb.(distinctUserIDser)
+		b.ReportAllocs()
+		b.SetBytes(int64(len(data)))
+		for i := 0; i < b.N; i++ {
+			result, err = runner.distinctUserIDs(data, result[:0])
+			if err != nil {
+				break
+			}
+		}
+		require.NoError(b, err)
+	})
+}
+
 func BenchmarkReadObject_canada(b *testing.B) {
 	runBenchReadObject(b, getTestdata(b, "benchmark_data/canada.json"))
 }

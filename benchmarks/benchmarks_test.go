@@ -85,6 +85,26 @@ func floatMyValue(val interface{}) interface{} {
 	}
 }
 
+func Test_distinctUserIDers(t *testing.T) {
+	golden := &jsonBencher{}
+	data := getTestdata(t, "benchmark_data/twitter.json")
+	want, err := golden.distinctUserIDs(data, nil)
+	require.NoError(t, err)
+
+	for _, bb := range benchers {
+		initBencher(bb)
+		runner, ok := bb.(distinctUserIDser)
+		if !ok {
+			continue
+		}
+		t.Run(bb.name(), func(t *testing.T) {
+			got, err := runner.distinctUserIDs(data, nil)
+			require.NoError(t, err)
+			require.ElementsMatch(t, want, got)
+		})
+	}
+}
+
 func Test_getRepoValuesRunners(t *testing.T) {
 	golden := &jsonBencher{}
 

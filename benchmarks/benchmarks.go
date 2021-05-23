@@ -82,3 +82,7 @@ type stringReader interface {
 type boolReader interface {
 	readBool(data []byte) (bool, error)
 }
+
+type distinctUserIDser interface {
+	distinctUserIDs(data []byte, dest []int64) ([]int64, error)
+}

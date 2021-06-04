@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[[7E3,0\x03\xce\xcd\xf6\x16WD7")

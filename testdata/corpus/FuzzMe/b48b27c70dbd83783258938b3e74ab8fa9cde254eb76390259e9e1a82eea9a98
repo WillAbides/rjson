@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[f\x9eo2\x87>\x11\xad\xc80w\\Y2l\"A0")

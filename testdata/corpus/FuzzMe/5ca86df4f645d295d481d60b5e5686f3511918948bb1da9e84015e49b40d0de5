@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[[000\xc3\xc30\x1f0 \u007f\xff7")

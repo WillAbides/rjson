@@ -1,0 +1,2 @@
+go test fuzz v1
+string("\x88\xf7\x95[\v\v\v\v\v\v\v{\"\"\x00@'\x00\x00AAAAA\xf5?u9\xfc[")

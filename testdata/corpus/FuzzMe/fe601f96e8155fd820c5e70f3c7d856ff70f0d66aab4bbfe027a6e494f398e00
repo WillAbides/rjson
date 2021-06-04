@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[\n7\x00\n\x01%\x00")

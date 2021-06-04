@@ -5,15 +5,23 @@ set -e
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 make -s bin/go-fuzz bin/go-fuzz-build bin/jq
 PATH="$(pwd)/bin:$PATH"
+pkg="github.com/willabides/rjson"
 
-mkdir -p tmp
+GOBIN="$(pwd)/bin" GO111MODULE=off go get golang.org/dl/gotip
 
-# make a list of all dependencies outside of this repo so they won't be instrumented by go-fuzz
-preservers="$(go list -f '{{ join .Deps "\n" }}' | grep -v rjson |  tr '\n' ',')"
+if ! gotip version; then
+  gotip download dev.fuzz
+fi
 
-go get github.com/dvyukov/go-fuzz@6a8e9d1f241
-trap "go mod tidy" EXIT
+fuzz_cache_dir="$(gotip env GOCACHE)/fuzz/$pkg/FuzzMe"
 
-go-fuzz-build -o tmp/fuzz-rjson.zip -preserve "$preservers"
+cp_cache() {
+  mkdir -p testdata/corpus
+  if [ -d "$fuzz_cache_dir" ]; then
+    cp -r "$fuzz_cache_dir" testdata/corpus
+  fi
+}
 
-go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 4 -workdir testdata/fuzz
+trap "cp_cache" EXIT
+
+gotip test -run '^$' -fuzz FuzzMe -v "$@" .

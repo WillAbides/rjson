@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[\"w\\u55555R50\x85,\xee[e5\xaau\xf9l00")

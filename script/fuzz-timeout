@@ -4,29 +4,4 @@ set -e
 
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 
-timeout="$1"
-
-if [ -z "$timeout" ]; then
-  echo 'usage: script/fuzz-timeout <timeout in seconds>'
-  exit 2
-fi
-
-make -s bin/go-fuzz bin/go-fuzz-build bin/jq
-PATH="$(pwd)/bin:$PATH"
-
-mkdir -p tmp
-
-go get github.com/dvyukov/go-fuzz@6a8e9d1f241
-trap "go mod tidy" EXIT
-
-go-fuzz-build -o tmp/fuzz-rjson.zip
-
-go-fuzz -dup -bin tmp/fuzz-rjson.zip -workdir testdata/fuzz &
-
-pid=$!
-
-sleep "$timeout"
-
-kill -2 $pid
-
-echo "done"
+script/fuzz -fuzztime "${1}s"

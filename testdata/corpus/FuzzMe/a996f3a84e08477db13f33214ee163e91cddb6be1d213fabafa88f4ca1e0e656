@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[\"\\u\x00\x10fa\x01\xd7\xd7\xd7\xd76\\ud6fa\\u\xb6u")

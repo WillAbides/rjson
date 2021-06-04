@@ -1,0 +1,2 @@
+go test fuzz v1
+string("{\";:\n\xff\"\"\xe8\x03\x00\x00\":T4\x9d\xa4\x82@5e885\x00\"\":\x00\xff")

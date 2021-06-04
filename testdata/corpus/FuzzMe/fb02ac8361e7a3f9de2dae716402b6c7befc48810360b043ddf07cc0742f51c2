@@ -1,0 +1,2 @@
+go test fuzz v1
+string("{ \":8,\"\":T4\x9d8\x82+2E\xa48\x02\x00\"\":2E88 ")

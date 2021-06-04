@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[\"\xcd\xcd\xcd\xcd\xcd\xcd\xf6\xf600")

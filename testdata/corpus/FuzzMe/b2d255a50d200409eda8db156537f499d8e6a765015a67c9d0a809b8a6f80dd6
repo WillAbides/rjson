@@ -1,0 +1,2 @@
+go test fuzz v1
+string("{\"R0\x92:\"ref\",\"R1\":\"ref\",\"R2\":\"q\"f\b,\"R3\":eref\"}\n")

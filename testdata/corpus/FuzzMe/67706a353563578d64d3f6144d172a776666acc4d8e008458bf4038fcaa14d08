@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[\"w\\5\xf6Al0\xf6\xf6\xf6\xf600")

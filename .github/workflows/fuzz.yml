@@ -29,7 +29,7 @@ jobs:
             exit
           fi
           git restore -s origin/fuzz-update testdata/fuzz
-      - run: script/fuzz-timeout 30
+      - run: script/fuzz-timeout 120
       - uses: peter-evans/create-pull-request@v3.8.2
         with:
           branch: fuzz-update

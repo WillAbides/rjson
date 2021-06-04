@@ -5,11 +5,23 @@ set -e
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 make -s bin/go-fuzz bin/go-fuzz-build bin/jq
 PATH="$(pwd)/bin:$PATH"
+pkg="github.com/willabides/rjson"
 
 GOBIN="$(pwd)/bin" GO111MODULE=off go get golang.org/dl/gotip
 
 if ! gotip version; then
   gotip download dev.fuzz
 fi
+
+fuzz_cache_dir="$(gotip env GOCACHE)/fuzz/$pkg/FuzzMe"
+
+cp_cache() {
+  mkdir -p testdata/corpus
+  if [ -d "$fuzz_cache_dir" ]; then
+    cp -r "$fuzz_cache_dir" testdata/corpus
+  fi
+}
+
+trap "cp_cache" EXIT
 
 gotip test -run '^$' -fuzz FuzzMe -v "$@" .

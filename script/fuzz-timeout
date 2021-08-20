@@ -16,7 +16,7 @@ PATH="$(pwd)/bin:$PATH"
 
 mkdir -p tmp
 
-go get github.com/dvyukov/go-fuzz@6a8e9d1f241
+go get github.com/dvyukov/go-fuzz@b1f3d6f4ef4e0fab65fa66f9191e6b115ad34f31
 trap "go mod tidy" EXIT
 
 go-fuzz-build -o tmp/fuzz-rjson.zip

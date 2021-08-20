@@ -9,7 +9,7 @@ jobs:
       - uses: WillAbides/setup-go-faster@v1
         id: setup-go
         with:
-          go-version: '1.15.x'
+          go-version: '1.17'
       - uses: actions/cache@v2
         with:
           path: |
@@ -31,7 +31,7 @@ jobs:
       - uses: WillAbides/setup-go-faster@v1
         id: setup-go
         with:
-          go-version: '1.15.x'
+          go-version: '1.17'
       - uses: WillAbides/benchdiff-action@v0.3.3
         id: benchdiff
         with:

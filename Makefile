@@ -29,7 +29,7 @@ bin/gofumpt: bin/gobin
 	GOBIN=${CURDIR}/bin \
 	bin/gobin mvdan.cc/gofumpt@$(GOFUMPT_REV)
 
-GO_FUZZ_REV := 6a8e9d1f2415cf672ddbe864c2d4092287b33a21
+GO_FUZZ_REV := b1f3d6f4ef4e0fab65fa66f9191e6b115ad34f31
 bin/go-fuzz-build: bin/gobin
 	GOBIN=${CURDIR}/bin \
 	go install github.com/dvyukov/go-fuzz/go-fuzz-build@$(GO_FUZZ_REV)

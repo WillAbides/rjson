@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[n\x02D\xb1nnn\x00\x02D 3\x02D\x00\x02D7")

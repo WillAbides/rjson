@@ -1,0 +1,2 @@
+go test fuzz v1
+string("{\":\xa5\xa5\xa5 \xa5\xa5\v\x14\x80 \x00\x00\"!\u007f\xff\u007f\x00e")

@@ -1,0 +1,2 @@
+go test fuzz v1
+string("-\x00\x00\xff\u007f\x00\xf2\"\x00\x00[")

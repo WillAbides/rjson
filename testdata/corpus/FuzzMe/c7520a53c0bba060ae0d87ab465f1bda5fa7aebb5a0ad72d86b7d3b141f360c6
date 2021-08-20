@@ -1,0 +1,2 @@
+go test fuzz v1
+string(".j*i,7\x9a@,[[")

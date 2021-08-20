@@ -1,0 +1,2 @@
+go test fuzz v1
+string("\"-\x88\xb4Y\x8d\"\t\t\t\t\t\t\t\t\xe3")

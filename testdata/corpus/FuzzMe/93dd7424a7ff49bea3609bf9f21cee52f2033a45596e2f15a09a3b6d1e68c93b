@@ -1,0 +1,2 @@
+go test fuzz v1
+string("\t[76\xb3*<11111*\t[7")

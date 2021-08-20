@@ -1,0 +1,2 @@
+go test fuzz v1
+string("[tCs5  \x01\x00@P@")

@@ -29,25 +29,34 @@ func fuzzOracle(data []byte) (val float64, p int, err error) {
 	return val, int(decoder.InputOffset()), nil
 }
 
-// Fuzz is for running go-fuzz tests
-func Fuzz(data []byte) int {
+// RunFuzz runs a fuzz test but returns an error instead of panicking
+func RunFuzz(data []byte) (int, error) {
 	want, wantOffset, err := fuzzOracle(data)
 	wantErr := err != nil
 	got, gotOffset, gotErr := ParseJSONFloatPrefix(data)
 	if wantErr {
 		if gotErr == nil {
-			panic("missed an error")
+			return 0, fmt.Errorf("missed an error")
 		}
 	} else {
 		if gotErr != nil {
-			panic("unexpected error")
+			return 0, fmt.Errorf("unexpected error")
 		}
 	}
 	if want != got {
-		panic(fmt.Sprintf("wanted %v but got %v\n", want, got))
+		return 0, fmt.Errorf("wanted %v but got %v", want, got)
 	}
 	if wantOffset != gotOffset {
-		panic(fmt.Sprintf("wanted offset %v but got %v\n", wantOffset, gotOffset))
+		return 0, fmt.Errorf("wanted offset %v but got %v", wantOffset, gotOffset)
 	}
-	return 0
+	return 0, nil
+}
+
+// Fuzz is for running go-fuzz tests
+func Fuzz(data []byte) int {
+	n, err := RunFuzz(data)
+	if err != nil {
+		panic(err.Error())
+	}
+	return n
 }

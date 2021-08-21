@@ -4,13 +4,18 @@ package rjson
 
 import (
 	"fmt"
+
+	"github.com/willabides/rjson/internal/fp"
 )
 
 // Fuzz is for running go-fuzz tests
 func Fuzz(data []byte) int {
 	score := 0
-
-	for _, fd := range fuzzers {
+	allFuzzers := append(fuzzers, fuzzer{
+		name: "fp.RunFuzz",
+		fn:   fp.RunFuzz,
+	})
+	for _, fd := range allFuzzers {
 		d := make([]byte, len(data))
 		copy(d, data)
 		s, err := fd.fn(d)

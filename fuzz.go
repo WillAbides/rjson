@@ -1,9 +1,11 @@
+//go:build gofuzz
 // +build gofuzz
 
 package rjson
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/willabides/rjson/internal/fp"
 )
@@ -11,7 +13,8 @@ import (
 // Fuzz is for running go-fuzz tests
 func Fuzz(data []byte) int {
 	score := 0
-	allFuzzers := append(fuzzers, fuzzer{
+	allFuzzers := slices.Clone(fuzzers)
+	allFuzzers = append(allFuzzers, fuzzer{
 		name: "fp.RunFuzz",
 		fn:   fp.RunFuzz,
 	})

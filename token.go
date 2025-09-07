@@ -188,6 +188,7 @@ func nextTokenTypeCompat(data []byte) (TokenType, int, error) {
 			}
 		}
 		if err != nil {
+			//nolint:nilerr // convert to InvalidType
 			return InvalidType, p + 1, nil
 		}
 	}

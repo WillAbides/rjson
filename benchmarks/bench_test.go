@@ -20,7 +20,7 @@ func BenchmarkGetRepoValues(b *testing.B) {
 		var result repoData
 		var err error
 		b.ReportAllocs()
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			result = repoData{}
 			err = runner.readRepoData(data, &result)
 		}
@@ -54,7 +54,7 @@ func benchValid(b *testing.B, data []byte) {
 		runner := bb.(validator)
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			boolResult = runner.valid(data)
 		}
 		require.True(b, boolResult)
@@ -72,7 +72,7 @@ func BenchmarkDistinctUserIDs(b *testing.B) {
 		runner := bb.(distinctUserIDser)
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			result, err = runner.distinctUserIDs(data, result[:0])
 			if err != nil {
 				break
@@ -98,7 +98,7 @@ func BenchmarkReadObject_twitter(b *testing.B) {
 	runBenchReadObject(b, getTestdata(b, "benchmark_data/twitter.json"))
 }
 
-var mapResult map[string]interface{}
+var mapResult map[string]any
 
 func runBenchReadObject(b *testing.B, data []byte) {
 	runBenchers(b, func(x bencher) bool {
@@ -109,7 +109,7 @@ func runBenchReadObject(b *testing.B, data []byte) {
 		var err error
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			mapResult, err = runner.readObject(data)
 		}
 		require.NoError(b, err)
@@ -143,7 +143,7 @@ func runBenchReadFloat64(b *testing.B, data []byte) {
 		var err error
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			float64Result, err = runner.readFloat64(data)
 		}
 		require.NoError(b, err)
@@ -177,7 +177,7 @@ func runBenchReadInt64(b *testing.B, data []byte) {
 		var err error
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			int64Result, err = runner.readInt64(data)
 		}
 		require.NoError(b, err)
@@ -206,7 +206,7 @@ func runBenchDecodeInt64(b *testing.B, data []byte) {
 		var err error
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			err = runner.decodeInt64(data, &int64Result)
 		}
 		require.NoError(b, err)
@@ -219,11 +219,16 @@ func BenchmarkReadString_short_ascii(b *testing.B) {
 }
 
 func BenchmarkReadString_medium_ascii(b *testing.B) {
-	benchReadString(b, []byte(fmt.Sprintf(`%q`, strings.Repeat("All work and no play makes Jack a dull boy.\n", 20))))
+	benchReadString(b, fmt.Appendf(nil, `%q`, strings.Repeat("All work and no play makes Jack a dull boy.\n", 20)))
 }
 
 func BenchmarkReadString_medium(b *testing.B) {
-	benchReadString(b, []byte(`"@aym0566x \n\n名前:前田あゆみ\n第一印象:なんか怖っ！\n今の印象:とりあえずキモい。噛み合わない\n好きなところ:ぶすでキモいとこ😋✨✨\n思い出:んーーー、ありすぎ😊❤️\nLINE交換できる？:あぁ……ごめん✋\nトプ画をみて:照れますがな😘✨\n一言:お前は一生もんのダチ💖"`))
+	benchReadString(
+		b,
+		[]byte(
+			`"@aym0566x \n\n名前:前田あゆみ\n第一印象:なんか怖っ！\n今の印象:とりあえずキモい。噛み合わない\n好きなところ:ぶすでキモいとこ😋✨✨\n思い出:んーーー、ありすぎ😊❤️\nLINE交換できる？:あぁ……ごめん✋\nトプ画をみて:照れますがな😘✨\n一言:お前は一生もんのダチ💖"`,
+		),
+	)
 }
 
 var stringResult string
@@ -240,7 +245,7 @@ func benchReadString(b *testing.B, data []byte) {
 		var err error
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			stringResult, err = runner.readString(data)
 		}
 		require.NoError(b, err)
@@ -261,7 +266,7 @@ func BenchmarkReadBool(b *testing.B) {
 		var err error
 		b.ReportAllocs()
 		b.SetBytes(int64(len(data)))
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			boolResult, err = runner.readBool(data)
 		}
 		require.NoError(b, err)

@@ -1,6 +1,7 @@
 package benchmarks
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/willabides/rjson"
@@ -42,7 +43,7 @@ func (x *rjsonBencher) decodeInt64(data []byte, v *int64) error {
 	return err
 }
 
-func (x *rjsonBencher) readObject(data []byte) (val map[string]interface{}, err error) {
+func (x *rjsonBencher) readObject(data []byte) (val map[string]any, err error) {
 	val, _, err = x.valueReader.ReadObject(data)
 	return val, err
 }
@@ -56,7 +57,7 @@ func (x *rjsonBencher) readRepoData(data []byte, val *repoData) error {
 	h.seenFullName, h.seenForks, h.seenArchived = false, false, false
 	h.res = val
 	_, err := rjson.HandleObjectValues(data, h, &h.buffer)
-	if err == h.doneErr {
+	if errors.Is(err, h.doneErr) {
 		err = nil
 	}
 	return err

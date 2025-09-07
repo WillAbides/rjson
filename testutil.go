@@ -8,9 +8,9 @@ import (
 )
 
 var arrayHandlers = map[string]ArrayValueHandlerFunc{
-	"alwaysZero":  func(data []byte) (p int, err error) { return 0, nil },
+	"alwaysZero":  func([]byte) (p int, err error) { return 0, nil },
 	"skipValue":   func(data []byte) (p int, err error) { return SkipValue(data, nil) },
-	"alwaysError": func(data []byte) (p int, err error) { return 0, fmt.Errorf("error") },
+	"alwaysError": func([]byte) (p int, err error) { return 0, fmt.Errorf("error") },
 	"skipHalf": func(data []byte) (p int, err error) {
 		value, err := SkipValue(data, nil)
 		return value / 2, err
@@ -22,8 +22,8 @@ var arrayHandlers = map[string]ArrayValueHandlerFunc{
 	"skipAll":       func(data []byte) (p int, err error) { return len(data), nil },
 	"skipAllTimes2": func(data []byte) (p int, err error) { return len(data) * 2, nil },
 	"skipAllPlus1":  func(data []byte) (p int, err error) { return len(data) + 1, nil },
-	"neg1":          func(data []byte) (p int, err error) { return -1, nil },
-	"neg100_000":    func(data []byte) (p int, err error) { return -100_000, nil },
+	"neg1":          func([]byte) (p int, err error) { return -1, nil },
+	"neg100_000":    func([]byte) (p int, err error) { return -100_000, nil },
 }
 
 type nCallArrayValueHandler struct {
@@ -40,22 +40,22 @@ func (h *nCallArrayValueHandler) HandleArrayValue(data []byte) (p int, err error
 	return 0, nil
 }
 
-func stdLibCompatibleValue(rjsonVal interface{}) interface{} {
+func stdLibCompatibleValue(rjsonVal any) any {
 	switch v := rjsonVal.(type) {
 	case string:
 		return StdLibCompatibleString(v)
-	case map[string]interface{}:
+	case map[string]any:
 		return StdLibCompatibleMap(v)
-	case []interface{}:
+	case []any:
 		return StdLibCompatibleSlice(v)
 	default:
 		return v
 	}
 }
 
-type multiPathErr []*pathErr
+type multiPathError []*pathError
 
-func (m multiPathErr) Error() string {
+func (m multiPathError) Error() string {
 	msg := ""
 	for _, err := range m {
 		msg += err.Error() + "\n"
@@ -63,33 +63,33 @@ func (m multiPathErr) Error() string {
 	return msg
 }
 
-type pathErr struct {
+type pathError struct {
 	path []string
 	msg  string
 }
 
-func (p *pathErr) Error() string {
+func (p *pathError) Error() string {
 	return strings.Join(p.path, ".") + ": " + p.msg
 }
 
-func newPathErr(path []string, msg string, args ...interface{}) *pathErr {
-	return &pathErr{
+func newPathErr(path []string, msg string, args ...any) *pathError {
+	return &pathError{
 		path: path,
 		msg:  fmt.Sprintf(msg, args...),
 	}
 }
 
-func wrongValErr(path []string, a, b interface{}) *pathErr {
+func wrongValErr(path []string, a, b any) *pathError {
 	return newPathErr(path, "wrong value. wanted %v but got %v", a, b)
 }
 
-func wrongTypeErr(path []string, a, b interface{}) *pathErr {
+func wrongTypeErr(path []string, a, b any) *pathError {
 	return newPathErr(path, "wrong type. wanted %T but got %T", a, b)
 }
 
-func fuzzCompare(want, got interface{}) error {
+func fuzzCompare(want, got any) error {
 	switch want.(type) {
-	case map[string]interface{}, []interface{}:
+	case map[string]any, []any:
 		return ifaceCompare(want, got, []string{"ROOT"})
 	}
 	if got != want {
@@ -98,8 +98,7 @@ func fuzzCompare(want, got interface{}) error {
 	return nil
 }
 
-//nolint:gocyclo // oh the complexity
-func ifaceCompare(want, got interface{}, path []string) error {
+func ifaceCompare(want, got any, path []string) error {
 	var err error
 	switch wantVal := want.(type) {
 	case string:
@@ -134,14 +133,14 @@ func ifaceCompare(want, got interface{}, path []string) error {
 			return newPathErr(path, "wrong value. wanted nil but got %v", got)
 		}
 		return nil
-	case map[string]interface{}:
-		gotVal, ok := got.(map[string]interface{})
+	case map[string]any:
+		gotVal, ok := got.(map[string]any)
 		if !ok {
 			return wrongTypeErr(path, wantVal, got)
 		}
-		var multiErr multiPathErr
+		var multiErr multiPathError
 		for k, wv := range wantVal {
-			var gv interface{}
+			var gv any
 			gv, ok = gotVal[k]
 			if !ok {
 				multiErr = append(multiErr, newPathErr(append(path, k), "missing map key"))
@@ -151,11 +150,11 @@ func ifaceCompare(want, got interface{}, path []string) error {
 				continue
 			}
 			err = ifaceCompare(wv, gv, append(path, k))
-			var pe *pathErr
+			var pe *pathError
 			if errors.As(err, &pe) {
 				multiErr = append(multiErr, pe)
 			}
-			var multiErr2 multiPathErr
+			var multiErr2 multiPathError
 			if errors.As(err, &multiErr2) {
 				multiErr = append(multiErr, multiErr2...)
 			}
@@ -170,23 +169,23 @@ func ifaceCompare(want, got interface{}, path []string) error {
 			return multiErr
 		}
 		return nil
-	case []interface{}:
-		gotVal, ok := got.([]interface{})
+	case []any:
+		gotVal, ok := got.([]any)
 		if !ok {
 			return wrongTypeErr(path, wantVal, got)
 		}
-		var multiErr multiPathErr
+		var multiErr multiPathError
 		for i := range wantVal {
 			pathElem := fmt.Sprintf(`[%d]`, i)
 			if i >= len(gotVal) {
 				multiErr = append(multiErr, newPathErr(append(path, pathElem), "missing value"))
 			}
 			err = ifaceCompare(wantVal[i], gotVal[i], append(path, pathElem))
-			var pe *pathErr
+			var pe *pathError
 			if errors.As(err, &pe) {
 				multiErr = append(multiErr, pe)
 			}
-			var multiErr2 multiPathErr
+			var multiErr2 multiPathError
 			if errors.As(err, &multiErr2) {
 				multiErr = append(multiErr, multiErr2...)
 			}

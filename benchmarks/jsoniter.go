@@ -1,6 +1,7 @@
 package benchmarks
 
 import (
+	"errors"
 	"fmt"
 	"io"
 
@@ -9,7 +10,7 @@ import (
 
 type jsoniterBencher struct {
 	iter                          *jsoniter.Iterator
-	jsoniterDistinctUerIdsHandler *jsoniterDistinctUerIdsHandler
+	jsoniterDistinctUerIDsHandler *jsoniterDistinctUerIDsHandler
 }
 
 func (x *jsoniterBencher) name() string {
@@ -19,7 +20,7 @@ func (x *jsoniterBencher) name() string {
 func (x *jsoniterBencher) init() {
 	*x = jsoniterBencher{
 		iter:                          jsoniter.NewIterator(jsoniter.ConfigCompatibleWithStandardLibrary),
-		jsoniterDistinctUerIdsHandler: &jsoniterDistinctUerIdsHandler{},
+		jsoniterDistinctUerIDsHandler: &jsoniterDistinctUerIDsHandler{},
 	}
 }
 
@@ -33,7 +34,7 @@ func (x *jsoniterBencher) readFloat64(data []byte) (val float64, err error) {
 	x.resetIter(data)
 	val = x.iter.ReadFloat64()
 	err = x.iter.Error
-	if err == io.EOF {
+	if errors.Is(err, io.EOF) {
 		err = nil
 	}
 	return val, err
@@ -43,7 +44,7 @@ func (x *jsoniterBencher) readInt64(data []byte) (val int64, err error) {
 	x.resetIter(data)
 	val = x.iter.ReadInt64()
 	err = x.iter.Error
-	if err == io.EOF {
+	if errors.Is(err, io.EOF) {
 		err = nil
 	}
 	return val, err
@@ -53,7 +54,7 @@ func (x *jsoniterBencher) decodeInt64(data []byte, v *int64) error {
 	return jsoniter.Unmarshal(data, v)
 }
 
-func (x *jsoniterBencher) readObject(data []byte) (val map[string]interface{}, err error) {
+func (x *jsoniterBencher) readObject(data []byte) (val map[string]any, err error) {
 	x.resetIter(data)
 	x.iter.ReadVal(&val)
 	return val, x.iter.Error
@@ -109,7 +110,7 @@ func (h *jsoniterGetValuesFromRepoHelper) callback(it *jsoniter.Iterator, field 
 	return true
 }
 
-type jsoniterDistinctUerIdsHandler struct {
+type jsoniterDistinctUerIDsHandler struct {
 	userIDs  []int64
 	inUser   bool
 	inStatus bool
@@ -117,15 +118,15 @@ type jsoniterDistinctUerIdsHandler struct {
 
 func (x *jsoniterBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, error) {
 	x.resetIter(data)
-	x.jsoniterDistinctUerIdsHandler.userIDs = dest
-	x.iter.ReadObjectCB(x.jsoniterDistinctUerIdsHandler.objectCB)
+	x.jsoniterDistinctUerIDsHandler.userIDs = dest
+	x.iter.ReadObjectCB(x.jsoniterDistinctUerIDsHandler.objectCB)
 	if x.iter.Error != nil {
 		return nil, x.iter.Error
 	}
-	return x.jsoniterDistinctUerIdsHandler.userIDs, nil
+	return x.jsoniterDistinctUerIDsHandler.userIDs, nil
 }
 
-func (h *jsoniterDistinctUerIdsHandler) objectCB(it *jsoniter.Iterator, fieldname string) bool {
+func (h *jsoniterDistinctUerIDsHandler) objectCB(it *jsoniter.Iterator, fieldname string) bool {
 	switch fieldname {
 	case "statuses":
 		return it.ReadArrayCB(h.arrayCB)
@@ -150,7 +151,7 @@ func (h *jsoniterDistinctUerIdsHandler) objectCB(it *jsoniter.Iterator, fieldnam
 	return true
 }
 
-func (h *jsoniterDistinctUerIdsHandler) arrayCB(it *jsoniter.Iterator) bool {
+func (h *jsoniterDistinctUerIDsHandler) arrayCB(it *jsoniter.Iterator) bool {
 	h.inStatus = true
 	it.ReadObjectCB(h.objectCB)
 	h.inStatus = false

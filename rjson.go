@@ -93,7 +93,7 @@ func skipValueCompat(data []byte) (p int, err error) {
 	}
 	decoder = json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
-	var val interface{}
+	var val any
 	err = decoder.Decode(&val)
 	return int(decoder.InputOffset()), err
 }
@@ -143,8 +143,8 @@ var whitespace = [256]bool{
 }
 
 func countWhitespace(data []byte) int {
-	for i := 0; i < len(data); i++ {
-		if !whitespace[data[i]] {
+	for i, d := range data {
+		if !whitespace[d] {
 			return i
 		}
 	}
@@ -178,15 +178,15 @@ func StdLibCompatibleStringBytes(rjsonString, buf []byte) []byte {
 }
 
 // StdLibCompatibleSlice returns a copy of rjsonSlice with StdLibCompatibleString applied to all string values recursively.
-func StdLibCompatibleSlice(rjsonSlice []interface{}) []interface{} {
-	out := make([]interface{}, len(rjsonSlice))
+func StdLibCompatibleSlice(rjsonSlice []any) []any {
+	out := make([]any, len(rjsonSlice))
 	for i, val := range rjsonSlice {
 		switch v := val.(type) {
 		case string:
 			out[i] = StdLibCompatibleString(v)
-		case []interface{}:
+		case []any:
 			out[i] = StdLibCompatibleSlice(v)
-		case map[string]interface{}:
+		case map[string]any:
 			out[i] = StdLibCompatibleMap(v)
 		default:
 			out[i] = v
@@ -197,16 +197,16 @@ func StdLibCompatibleSlice(rjsonSlice []interface{}) []interface{} {
 
 // StdLibCompatibleMap returns a copy of rjsonMap with StdLibCompatibleString applied to all map keys and
 // string values recursively.
-func StdLibCompatibleMap(rjsonMap map[string]interface{}) map[string]interface{} {
-	out := make(map[string]interface{}, len(rjsonMap))
+func StdLibCompatibleMap(rjsonMap map[string]any) map[string]any {
+	out := make(map[string]any, len(rjsonMap))
 	for key, val := range rjsonMap {
 		k := StdLibCompatibleString(key)
 		switch v := val.(type) {
 		case string:
 			out[k] = StdLibCompatibleString(v)
-		case []interface{}:
+		case []any:
 			out[k] = StdLibCompatibleSlice(v)
-		case map[string]interface{}:
+		case map[string]any:
 			out[k] = StdLibCompatibleMap(v)
 		default:
 			out[k] = v

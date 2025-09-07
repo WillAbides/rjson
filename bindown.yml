@@ -1,11 +1,12 @@
 systems:
-- darwin/amd64
-- linux/amd64
+  - darwin/amd64
+  - darwin/arm64
+  - linux/amd64
 dependencies:
   benchdiff:
-    template: benchdiff#benchdiff
+    template: benchdiff
     vars:
-      version: 0.6.2
+      version: 0.9.1
   gobin:
     template: origin#gobin
     vars:
@@ -13,172 +14,137 @@ dependencies:
   golangci-lint:
     template: origin#golangci-lint
     vars:
-      version: 1.28.2
-  jq:
-    template: origin#jq
-    vars:
-      version: "1.6"
-  mockgen:
-    template: origin#mockgen
-    vars:
-      version: 1.5.0
+      version: 2.4.0
   shellcheck:
     template: origin#shellcheck
     vars:
-      version: 0.7.1
+      version: 0.11.0
 templates:
-  benchdiff#benchdiff:
-    url: https://github.com/WillAbides/benchdiff/releases/download/v{{.version}}/benchdiff_{{.version}}_{{.os}}_{{.arch}}.tar.gz
-    required_vars:
-    - version
+  benchdiff:
+    homepage: https://github.com/WillAbides/benchdiff
+    url: https://github.com/WillAbides/benchdiff/releases/download/v{{.version}}/benchdiff_{{.version}}_{{.os}}_{{.arch}}{{.urlSuffix}}
+    archive_path: benchdiff{{.archivePathSuffix}}
+    bin: benchdiff
+    vars:
+      archivePathSuffix: ""
+      urlSuffix: .tar.gz
     systems:
-    - darwin/amd64
-    - linux/386
-    - linux/amd64
+      - darwin/amd64
+      - darwin/arm64
+      - linux/amd64
+    required_vars:
+      - version
   origin#gobin:
     url: https://github.com/myitcv/gobin/releases/download/v{{.version}}/{{.os}}-{{.arch}}
     archive_path: '{{.os}}-{{.arch}}'
     bin: gobin
-    required_vars:
-    - version
     systems:
-    - darwin/386
-    - darwin/amd64
-    - freebsd/386
-    - freebsd/amd64
-    - freebsd/arm
-    - linux/386
-    - linux/amd64
-    - linux/arm
-    - netbsd/386
-    - netbsd/amd64
-    - netbsd/arm
-    - openbsd/386
-    - openbsd/amd64
-    - windows/386
-    - windows/amd64
+      - darwin/386
+      - darwin/amd64
+      - freebsd/386
+      - freebsd/amd64
+      - freebsd/arm
+      - linux/386
+      - linux/amd64
+      - linux/arm
+      - netbsd/386
+      - netbsd/amd64
+      - netbsd/arm
+      - openbsd/386
+      - openbsd/amd64
+      - windows/386
+      - windows/amd64
+    required_vars:
+      - version
   origin#golangci-lint:
-    url: https://github.com/golangci/golangci-lint/releases/download/v{{.version}}/golangci-lint-{{.version}}-{{.os}}-{{.arch}}{{.urlsuffix}}
-    archive_path: golangci-lint-{{.version}}-{{.os}}-{{.arch}}/golangci-lint{{.archivepathsuffix}}
+    homepage: https://golangci-lint.run
+    description: Fast linters Runner for Go
+    url: https://github.com/golangci/golangci-lint/releases/download/v{{.version}}/golangci-lint-{{.version}}-{{.os}}-{{.arch}}{{.urlSuffix}}
+    archive_path: golangci-lint-{{.version}}-{{.os}}-{{.arch}}/golangci-lint{{.archivePathSuffix}}
     bin: golangci-lint
-    link: true
     vars:
-      archivepathsuffix: ""
-      urlsuffix: .tar.gz
-    required_vars:
-    - version
+      archivePathSuffix: ""
+      urlSuffix: .tar.gz
     overrides:
-    - matcher:
-        os:
-        - windows
-      dependency:
-        vars:
-          archivepathsuffix: .exe
-          urlsuffix: .zip
-    systems:
-    - darwin/386
-    - darwin/amd64
-    - linux/386
-    - linux/amd64
-    - linux/arm64
-    - windows/386
-    - windows/amd64
-    - freebsd/386
-    - freebsd/amd64
-    - linux/mips64
-    - linux/mips64le
-    - linux/s390x
-    - linux/ppc64le
-  origin#jq:
-    url: https://github.com/stedolan/jq/releases/download/jq-{{.version}}/jq-{{.os}}{{.arch}}{{.extension}}
-    archive_path: jq-{{.os}}{{.arch}}{{.extension}}
-    bin: jq
-    vars:
-      extension: ""
-    required_vars:
-    - version
-    overrides:
-    - matcher:
-        os:
-        - darwin
-        arch:
-        - amd64
-      dependency:
-        url: https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64
-        archive_path: jq-osx-amd64
-    - matcher:
-        os:
-        - windows
-      dependency:
-        vars:
-          extension: .exe
+      - matcher:
+          os:
+            - windows
+        dependency:
+          vars:
+            archivePathSuffix: .exe
+            urlSuffix: .zip
+          substitutions:
+            arch:
+              arm: armv6
     substitutions:
       arch:
-        "386": "32"
-        amd64: "64"
-      os:
-        windows: win
+        arm: armv6
     systems:
-    - linux/386
-    - linux/amd64
-    - darwin/amd64
-    - windows/386
-    - windows/amd64
-  origin#mockgen:
-    url: https://github.com/golang/mock/releases/download/v{{.version}}/mock_{{.version}}_{{.os}}_{{.arch}}.tar.gz
-    archive_path: mock_{{.version}}_{{.os}}_{{.arch}}/mockgen{{.archivepathsuffix}}
-    bin: mockgen
-    vars:
-      archivepathsuffix: ""
+      - darwin/amd64
+      - darwin/arm64
+      - freebsd/386
+      - freebsd/amd64
+      - freebsd/arm
+      - linux/386
+      - linux/amd64
+      - linux/arm
+      - linux/arm64
+      - linux/loong64
+      - linux/mips64
+      - linux/mips64le
+      - linux/ppc64le
+      - linux/riscv64
+      - linux/s390x
+      - netbsd/386
+      - netbsd/amd64
+      - netbsd/arm
+      - windows/386
+      - windows/amd64
+      - windows/arm
+      - windows/arm64
     required_vars:
-    - version
-    overrides:
-    - matcher:
-        os:
-        - windows
-      dependency:
-        vars:
-          archivepathsuffix: .exe
-    systems:
-    - darwin/386
-    - darwin/amd64
-    - linux/386
-    - linux/amd64
-    - windows/386
-    - windows/amd64
+      - version
   origin#shellcheck:
-    url: https://github.com/koalaman/shellcheck/releases/download/v{{.version}}/shellcheck-v{{.version}}.{{.os}}.{{.arch}}.tar.xz
-    archive_path: shellcheck-v{{.version}}/shellcheck
+    homepage: https://www.shellcheck.net
+    description: ShellCheck, a static analysis tool for shell scripts
+    url: https://github.com/koalaman/shellcheck/releases/download/v{{.version}}/shellcheck-v{{.version}}.{{.os}}.{{.arch}}{{.urlSuffix}}
+    archive_path: shellcheck-v{{.version}}/shellcheck{{.archivePathSuffix}}
     bin: shellcheck
-    required_vars:
-    - version
+    vars:
+      archivePathSuffix: ""
+      urlSuffix: .tar.xz
     overrides:
-    - matcher:
-        os:
-        - windows
-      dependency:
-        url: https://github.com/koalaman/shellcheck/releases/download/v{{.version}}/shellcheck-v{{.version}}.zip
-        archive_path: shellcheck-v{{.version}}.exe
+      - matcher:
+          os:
+            - windows
+        dependency:
+          url: https://github.com/koalaman/shellcheck/releases/download/v{{.version}}/shellcheck-v{{.version}}.zip
+          archive_path: shellcheck.exe
     substitutions:
       arch:
         amd64: x86_64
+        arm: armv6hf
+        arm64: aarch64
     systems:
-    - darwin/amd64
-    - linux/amd64
-    - windows/amd64
+      - darwin/amd64
+      - darwin/arm64
+      - linux/amd64
+      - linux/arm
+      - linux/arm64
+      - windows/amd64
+    required_vars:
+      - version
 template_sources:
-  benchdiff: https://raw.githubusercontent.com/WillAbides/benchdiff/main/bindown.yml
   origin: https://raw.githubusercontent.com/WillAbides/bindown-templates/master/bindown.yml
 url_checksums:
-  https://github.com/WillAbides/benchdiff/releases/download/v0.6.2/benchdiff_0.6.2_darwin_amd64.tar.gz: 240c33329a304cc3f20238bdb2d4aed1b182cf540fd53402ac6aa6d421b08faf
-  https://github.com/WillAbides/benchdiff/releases/download/v0.6.2/benchdiff_0.6.2_linux_amd64.tar.gz: b5e10486be1c07f3dc54a3cfbfa794922830dda55974ed137c7c6f9cf91e8e8e
-  https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_darwin_amd64.tar.gz: d644549b478340f5346fd58c945ed74fb969d2ca1c85e28735f07aa8dbd5a572
-  https://github.com/golang/mock/releases/download/v1.5.0/mock_1.5.0_linux_amd64.tar.gz: 33980a05fc892b89b83c3c430bf7a98566bdb16304b20e7aba1ebf570296acb5
-  https://github.com/golangci/golangci-lint/releases/download/v1.28.2/golangci-lint-1.28.2-darwin-amd64.tar.gz: 6e6952a4d72906f6265c379743f274b7609a289cc9cbb19bf6ff94e6f8f00daf
-  https://github.com/golangci/golangci-lint/releases/download/v1.28.2/golangci-lint-1.28.2-linux-amd64.tar.gz: c893b07dd7d2c8e13b6380dd52781bb6732f7f541d90da2dc941be5f7e8be6fb
-  https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.darwin.x86_64.tar.xz: b080c3b659f7286e27004aa33759664d91e15ef2498ac709a452445d47e3ac23
-  https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz: 64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
+  https://github.com/WillAbides/benchdiff/releases/download/v0.9.1/benchdiff_0.9.1_darwin_amd64.tar.gz: 2b321a7e707358c1dadd19b2c1ebc2e512ac6103bca4cf978906c209c070821f
+  https://github.com/WillAbides/benchdiff/releases/download/v0.9.1/benchdiff_0.9.1_darwin_arm64.tar.gz: 9eee0971d5173b8edd2849efb64375e75c068a4dde5e18344491b0f7d552b77e
+  https://github.com/WillAbides/benchdiff/releases/download/v0.9.1/benchdiff_0.9.1_linux_amd64.tar.gz: 8d09d8c058727532bdfbbdabcd5c3ef1151d541d4acc1b9795ac1022edc1137c
+  https://github.com/golangci/golangci-lint/releases/download/v2.4.0/golangci-lint-2.4.0-darwin-amd64.tar.gz: 7904ce63f79db44934939cf7a063086ea0ea98e9b19eba0a9d52ccdd0d21951c
+  https://github.com/golangci/golangci-lint/releases/download/v2.4.0/golangci-lint-2.4.0-darwin-arm64.tar.gz: cd4dd53fa09b6646baff5fd22b8c64d91db02c21c7496df27992d75d34feec59
+  https://github.com/golangci/golangci-lint/releases/download/v2.4.0/golangci-lint-2.4.0-linux-amd64.tar.gz: fae792524c04424c0ac369f5b8076f04b45cf29fc945a370e55d369a8dc11840
+  https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.aarch64.tar.xz: 56affdd8de5527894dca6dc3d7e0a99a873b0f004d7aabc30ae407d3f48b0a79
+  https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.x86_64.tar.xz: 3c89db4edcab7cf1c27bff178882e0f6f27f7afdf54e859fa041fca10febe4c6
+  https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz: 8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198
   https://github.com/myitcv/gobin/releases/download/v0.0.14/darwin-amd64: 08db3d50eea308b475d591d43efc160c7c44f4666da4f2fd103864a9d038b230
   https://github.com/myitcv/gobin/releases/download/v0.0.14/linux-amd64: 5bc800e8be7eaefcb86780786c38b75243082685a17ceea3c2235e06b8259151
-  https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64: af986793a515d500ab2d35f8d2aecd656e764504b789b66d7e1a0b727a124c44
-  https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64: 5c0a0a3ea600f302ee458b30317425dd9632d1ad8882259fcaf4e9b868b2b1ef

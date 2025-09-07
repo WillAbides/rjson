@@ -15,8 +15,8 @@ const valueReaderMaxDepth = 10_000
 type ValueReader struct {
 	buf          Buffer
 	pool         sync.Pool
-	objVal       map[string]interface{}
-	arrVal       []interface{}
+	objVal       map[string]any
+	arrVal       []any
 	fieldNameBuf []byte
 	stringBuf    []byte
 	depth        int
@@ -55,7 +55,7 @@ func (h *ValueReader) HandleArrayValue(data []byte) (p int, err error) {
 	}
 	p--
 	data = data[p:]
-	var val interface{}
+	var val any
 	var pp int
 	switch tknType {
 	case ObjectStartType:
@@ -65,7 +65,8 @@ func (h *ValueReader) HandleArrayValue(data []byte) (p int, err error) {
 		}
 		h2.newMapSize = h.maxMapSize
 		val, pp, err = h2.ReadObject(data)
-		mpLen := len(val.(map[string]interface{}))
+		//nolint:errcheck // objects are maps
+		mpLen := len(val.(map[string]any))
 		if mpLen > h.maxMapSize {
 			h.maxMapSize = mpLen
 		}
@@ -106,7 +107,7 @@ func (h *ValueReader) HandleObjectValue(fieldname, data []byte) (p int, err erro
 	}
 	p--
 	data = data[p:]
-	var val interface{}
+	var val any
 	var pp int
 	switch tknType {
 	case ObjectStartType:
@@ -116,7 +117,8 @@ func (h *ValueReader) HandleObjectValue(fieldname, data []byte) (p int, err erro
 		}
 		h2.newMapSize = h.maxMapSize
 		val, pp, err = h2.ReadObject(data)
-		mpLen := len(val.(map[string]interface{}))
+		//nolint:errcheck // objects are maps
+		mpLen := len(val.(map[string]any))
 		if mpLen > h.maxMapSize {
 			h.maxMapSize = mpLen
 		}
@@ -135,7 +137,7 @@ func (h *ValueReader) HandleObjectValue(fieldname, data []byte) (p int, err erro
 	return p + pp, err
 }
 
-func (h *ValueReader) readSimpleValue(data []byte, tknType TokenType) (val interface{}, p int, err error) {
+func (h *ValueReader) readSimpleValue(data []byte, tknType TokenType) (val any, p int, err error) {
 	switch tknType {
 	case NullType:
 		p, err = ReadNull(data)
@@ -154,14 +156,14 @@ func (h *ValueReader) readSimpleValue(data []byte, tknType TokenType) (val inter
 
 // ReadValue allocates a ValueReader and returns ValueReader.ReadValue. You should probably use ValueReader.ReadValue
 // instead so you don't have to allocate a new ValueReader for each call.
-func ReadValue(data []byte) (val interface{}, p int, err error) {
+func ReadValue(data []byte) (val any, p int, err error) {
 	h := ValueReader{}
 	return h.ReadValue(data)
 }
 
 // ReadValue reads a value at the beginning of data. The result will be a string, bool, nil, float64, []interface{}
 // or map[string]interface{} depending on the json data type. p is the first position in data after the value.
-func (h *ValueReader) ReadValue(data []byte) (val interface{}, p int, err error) {
+func (h *ValueReader) ReadValue(data []byte) (val any, p int, err error) {
 	var tknType TokenType
 	tknType, p, err = NextTokenType(data)
 	if err != nil {
@@ -189,7 +191,7 @@ func (h *ValueReader) ReadValue(data []byte) (val interface{}, p int, err error)
 	return val, p + pp, err
 }
 
-func readValueCompat(data []byte) (val interface{}, p int, err error) {
+func readValueCompat(data []byte) (val any, p int, err error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	err = decoder.Decode(&val)
 	if err != nil {
@@ -200,14 +202,14 @@ func readValueCompat(data []byte) (val interface{}, p int, err error) {
 
 // ReadObject allocates a ValueReader and returns ValueReader.ReadObject. You should probably use ValueReader.ReadObject
 // instead so you don't have to allocate a new ValueReader for each call.
-func ReadObject(data []byte) (val map[string]interface{}, p int, err error) {
+func ReadObject(data []byte) (val map[string]any, p int, err error) {
 	h := ValueReader{}
 	return h.ReadObject(data)
 }
 
 // ReadObject reads an object value from the front of data and returns it as a map[string]interface{}. p is the first
 // position in data after the value.
-func (h *ValueReader) ReadObject(data []byte) (val map[string]interface{}, p int, err error) {
+func (h *ValueReader) ReadObject(data []byte) (val map[string]any, p int, err error) {
 	if h.depth == 0 {
 		h.depth = 1
 		defer func() { h.depth = 0 }()
@@ -216,7 +218,7 @@ func (h *ValueReader) ReadObject(data []byte) (val map[string]interface{}, p int
 	if mapSize == 0 {
 		mapSize = h.lastMapSize
 	}
-	h.objVal = make(map[string]interface{}, mapSize)
+	h.objVal = make(map[string]any, mapSize)
 	p, err = HandleObjectValues(data[p:], h, &h.buf)
 	if err != nil {
 		return nil, p, err
@@ -235,7 +237,7 @@ func (h *ValueReader) ReadObject(data []byte) (val map[string]interface{}, p int
 	return h.objVal, p, nil
 }
 
-func readObjectCompat(data []byte) (val map[string]interface{}, p int, err error) {
+func readObjectCompat(data []byte) (val map[string]any, p int, err error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	tkn, err := decoder.Token()
 	if err != nil {
@@ -254,14 +256,14 @@ func readObjectCompat(data []byte) (val map[string]interface{}, p int, err error
 
 // ReadArray allocates a ValueReader and returns ValueReader.ReadArray. You should probably use ValueReader.ReadArray
 // instead so you don't have to allocate a new ValueReader for each call.
-func ReadArray(data []byte) (val []interface{}, p int, err error) {
+func ReadArray(data []byte) (val []any, p int, err error) {
 	h := ValueReader{}
 	return h.ReadArray(data)
 }
 
 // ReadArray reads an array from the front of data and returns it as a []interface{}. p is the first position in data
 // after the value.
-func (h *ValueReader) ReadArray(data []byte) (val []interface{}, p int, err error) {
+func (h *ValueReader) ReadArray(data []byte) (val []any, p int, err error) {
 	if h.depth == 0 {
 		h.depth = 1
 		defer func() {
@@ -272,7 +274,7 @@ func (h *ValueReader) ReadArray(data []byte) (val []interface{}, p int, err erro
 	if sliceSize == 0 {
 		sliceSize = h.lastSliceSize
 	}
-	h.arrVal = make([]interface{}, 0, sliceSize)
+	h.arrVal = make([]any, 0, sliceSize)
 	p, err = HandleArrayValues(data, h, &h.buf)
 	if err != nil {
 		return nil, p, err
@@ -292,7 +294,7 @@ func (h *ValueReader) ReadArray(data []byte) (val []interface{}, p int, err erro
 	return h.arrVal, p, err
 }
 
-func readArrayCompat(data []byte) (val []interface{}, p int, err error) {
+func readArrayCompat(data []byte) (val []any, p int, err error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	tkn, err := decoder.Token()
 	if err != nil {

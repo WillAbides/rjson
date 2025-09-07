@@ -1,3 +1,6 @@
+//go:build amd64
+// +build amd64
+
 package benchmarks
 
 import (
@@ -5,6 +8,10 @@ import (
 
 	"github.com/minio/simdjson-go"
 )
+
+func init() {
+	benchers = append(benchers, &simdjsonBencher{})
+}
 
 type simdjsonBencher struct {
 	parsedJSON *simdjson.ParsedJson
@@ -104,7 +111,8 @@ func (x *simdjsonBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, e
 			return nil, err
 		}
 		x.elem = x.obj.FindKey("id", x.elem)
-		id, err := x.elem.Iter.Int()
+		var id int64
+		id, err = x.elem.Iter.Int()
 		if err != nil {
 			return nil, err
 		}

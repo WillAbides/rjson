@@ -253,12 +253,14 @@ func (a *decimal) Shift(k int) {
 			leftShift(a, maxShift)
 			k -= maxShift
 		}
+		//nolint:gosec // overflow checked above
 		leftShift(a, uint(k))
 	case k < 0:
 		for k < -maxShift {
 			rightShift(a, maxShift)
 			k += maxShift
 		}
+		//nolint:gosec // overflow checked above
 		rightShift(a, uint(-k))
 	}
 }

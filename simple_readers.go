@@ -92,6 +92,7 @@ func ReadUint32(data []byte) (val uint32, p int, err error) {
 		val64 = 0
 		err = errInvalidUInt
 	}
+	//nolint:gosec // overflow checked above
 	return uint32(val64), p, err
 }
 
@@ -137,11 +138,13 @@ func ReadInt64(data []byte) (val int64, p int, err error) {
 		if u64Val > cutoff {
 			return 0, p, fmt.Errorf("value out of int64 range")
 		}
+		//nolint:gosec // overflow checked above
 		return -int64(u64Val), p, nil
 	}
 	if u64Val >= cutoff {
 		return 0, p, fmt.Errorf("value out of int64 range")
 	}
+	//nolint:gosec // overflow checked above
 	return int64(u64Val), p, nil
 }
 
@@ -196,11 +199,13 @@ func readInt32Compat(data []byte) (val int32, p int, err error) {
 func ReadInt(data []byte) (val, p int, err error) {
 	switch strconv.IntSize {
 	case 64:
-		val, p, err := ReadInt64(data)
-		return int(val), p, err
+		var val64 int64
+		val64, p, err = ReadInt64(data)
+		return int(val64), p, err
 	case 32:
-		val, p, err := ReadInt32(data)
-		return int(val), p, err
+		var val32 int32
+		val32, p, err = ReadInt32(data)
+		return int(val32), p, err
 	default:
 		return 0, 0, fmt.Errorf("unsupported int size: %d", strconv.IntSize)
 	}
@@ -227,11 +232,13 @@ func readIntCompat(data []byte) (val, p int, err error) {
 func ReadUint(data []byte) (val uint, p int, err error) {
 	switch strconv.IntSize {
 	case 64:
-		val, p, err := ReadUint64(data)
-		return uint(val), p, err
+		var val64 uint64
+		val64, p, err = ReadUint64(data)
+		return uint(val64), p, err
 	case 32:
-		val, p, err := ReadUint32(data)
-		return uint(val), p, err
+		var val32 uint32
+		val32, p, err = ReadUint32(data)
+		return uint(val32), p, err
 	default:
 		return 0, 0, fmt.Errorf("unsupported int size: %d", strconv.IntSize)
 	}
@@ -293,7 +300,6 @@ func ReadStringBytes(data, buf []byte) (val []byte, p int, err error) {
 	start := p
 	for ; p < len(data); p++ {
 		var pp int
-		var err error
 		if data[p] <= 0x1f {
 			buf, pp, err = appendRemainderOfString(data[p:], buf)
 			p += pp
@@ -346,7 +352,6 @@ func ReadString(data []byte, buf *[]byte) (val string, p int, err error) {
 	}
 	for ; p < len(data); p++ {
 		var pp int
-		var err error
 		if data[p] <= 0x1f {
 			bBuf, pp, err = appendRemainderOfString(data[p:], bBuf)
 			p += pp

@@ -41,6 +41,7 @@ func eiselLemire64(man uint64, exp10 int, neg bool) (f float64, ok bool) {
 	clz := bits.LeadingZeros64(man)
 	man <<= clz
 	const float64ExponentBias = 1023
+	//nolint:gosec // overflow checked above
 	retExp2 := uint64(217706*exp10>>16+64+float64ExponentBias) - uint64(clz)
 
 	// Multiplication.
@@ -101,8 +102,8 @@ const (
 // detailedPowersOfTen contains 128-bit mantissa approximations (rounded down)
 // to the powers of 10. For example:
 //
-//  - 1e43 ≈ (0xE596B7B0_C643C719                   * (2 ** 79))
-//  - 1e43 = (0xE596B7B0_C643C719_6D9CCD05_D0000000 * (2 ** 15))
+//   - 1e43 ≈ (0xE596B7B0_C643C719                   * (2 ** 79))
+//   - 1e43 = (0xE596B7B0_C643C719_6D9CCD05_D0000000 * (2 ** 15))
 //
 // The mantissas are explicitly listed. The exponents are implied by a linear
 // expression with slope 217706.0/65536.0 ≈ log(10)/log(2).

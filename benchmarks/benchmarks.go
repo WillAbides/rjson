@@ -12,7 +12,6 @@ var benchers = []bencher{
 	&jsonparserBencher{},
 	&fastjsonBencher{},
 	&goccyjsonBencher{},
-	&simdjsonBencher{},
 }
 
 func getBenchers(filter func(bencher) bool) []bencher {
@@ -30,7 +29,7 @@ func getBenchers(filter func(bencher) bool) []bencher {
 	return bb
 }
 
-func initBencher(b interface{}) {
+func initBencher(b any) {
 	x, ok := b.(initter)
 	if ok {
 		x.init()
@@ -58,7 +57,7 @@ type int64Decoder interface {
 }
 
 type objectReader interface {
-	readObject(data []byte) (val map[string]interface{}, err error)
+	readObject(data []byte) (val map[string]any, err error)
 }
 
 type validator interface {

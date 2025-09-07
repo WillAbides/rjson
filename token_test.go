@@ -25,6 +25,7 @@ func TestNextToken(t *testing.T) {
 		{data: `asdf `, tkn: 'a', p: 1, err: "no valid json token found"},
 	} {
 		t.Run(td.data, func(t *testing.T) {
+			t.Parallel()
 			tkn, p, err := NextToken([]byte(td.data))
 			if td.err != "" {
 				require.EqualError(t, err, td.err)
@@ -62,6 +63,7 @@ func TestNextTokenType(t *testing.T) {
 		{data: `asdf `, p: 1},
 	} {
 		t.Run(td.data, func(t *testing.T) {
+			t.Parallel()
 			tkn, p, err := NextTokenType([]byte(td.data))
 			if td.err != "" {
 				require.EqualError(t, err, td.err)

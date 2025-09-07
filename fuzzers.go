@@ -81,10 +81,9 @@ func fuzzHandleObjectValues(data []byte) (int, error) {
 			return handlerFunc(data)
 		})
 		_, err := HandleObjectValues(data, hh, &buf)
-		_ = err //nolint:errcheck // just checking for panic
+		_ = err
 
 		for i := 2; i <= 4; i++ {
-
 			h := nCallArrayValueHandler{
 				handler: handlerFunc,
 				n:       i,
@@ -92,8 +91,8 @@ func fuzzHandleObjectValues(data []byte) (int, error) {
 			hh = func(_, data []byte) (p int, err error) {
 				return h.HandleArrayValue(data)
 			}
-			_, err := HandleObjectValues(data, hh, nil)
-			_ = err //nolint:errcheck // just checking for panic
+			_, err = HandleObjectValues(data, hh, nil)
+			_ = err
 		}
 	}
 	return 0, nil
@@ -352,7 +351,7 @@ func fuzzReadValue(data []byte) (int, error) {
 	return 0, err
 }
 
-func checkFuzzResults(want, got interface{}, wantP, gotP int, wantErr, gotErr error) error {
+func checkFuzzResults(want, got any, wantP, gotP int, wantErr, gotErr error) error {
 	err := checkFuzzErrors(wantErr, gotErr)
 	if err != nil {
 		return err
@@ -370,12 +369,12 @@ func checkFuzzResults(want, got interface{}, wantP, gotP int, wantErr, gotErr er
 func checkFuzzErrors(wantErr, gotErr error) error {
 	if wantErr != nil {
 		if gotErr == nil {
-			return fmt.Errorf("we got no error but json got: %v", wantErr)
+			return fmt.Errorf("we got no error but json got: %w", wantErr)
 		}
 		return nil
 	}
 	if gotErr != nil {
-		return fmt.Errorf("json got no error but we did: %v", gotErr)
+		return fmt.Errorf("json got no error but we did: %w", gotErr)
 	}
 	return nil
 }

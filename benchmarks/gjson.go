@@ -34,14 +34,15 @@ func (x *gjsonBencher) readInt64(data []byte) (val int64, err error) {
 	case gjson.Null:
 		return 0, fmt.Errorf("null is not a number")
 	case gjson.Number:
-		val := result.Int()
+		val = result.Int()
 		if float64(val) == result.Num {
 			// risks overflowing on 32 bit systems, but close enough for now
 			return val, nil
 		}
 		return 0, fmt.Errorf("not an int")
+	default:
+		return 0, fmt.Errorf("not an int")
 	}
-	return 0, fmt.Errorf("not an int")
 }
 
 func (x *gjsonBencher) decodeInt64(data []byte, v *int64) error {
@@ -55,13 +56,14 @@ func (x *gjsonBencher) decodeInt64(data []byte, v *int64) error {
 			*v = val
 			return nil
 		}
+	default:
 	}
 	return fmt.Errorf("not an int")
 }
 
-func (x *gjsonBencher) readObject(data []byte) (val map[string]interface{}, err error) {
+func (x *gjsonBencher) readObject(data []byte) (val map[string]any, err error) {
 	result := gjson.ParseBytes(data)
-	mp, ok := result.Value().(map[string]interface{})
+	mp, ok := result.Value().(map[string]any)
 	if !ok {
 		return nil, fmt.Errorf("not a map")
 	}
@@ -125,6 +127,7 @@ func (x *gjsonBencher) readBool(data []byte) (bool, error) {
 	return val, nil
 }
 
+//nolint:unparam // needed for interface
 func (x *gjsonBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, error) {
 	result := gjson.GetBytes(data, "statuses.#.user.id")
 	for _, r := range result.Array() {

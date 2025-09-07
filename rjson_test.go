@@ -4,7 +4,7 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -40,7 +40,7 @@ func corpusFiles(t *testing.T) []string {
 	t.Helper()
 	var result []string
 	corpusDir := filepath.FromSlash(`testdata/fuzz/corpus`)
-	dir, err := ioutil.ReadDir(corpusDir)
+	dir, err := os.ReadDir(corpusDir)
 	require.NoError(t, err)
 	for _, info := range dir {
 		result = append(result, filepath.Join(corpusDir, info.Name()))
@@ -52,14 +52,14 @@ func testFuzzerFunc(t *testing.T, fn func([]byte) (int, error)) {
 	t.Helper()
 	require.NotNil(t, fn)
 	for _, filename := range corpusFiles(t) {
-		data, err := ioutil.ReadFile(filename)
+		data, err := os.ReadFile(filename)
 		require.NoError(t, err)
 		_, err = fn(data)
 		assert.NoErrorf(t, err, "error from file: %s\n with data:\n%s", filename, string(data))
 	}
 }
 
-//nolint:unused,deadcode // this is a convenience method for ad-hoc testing
+//nolint:unused // this is a convenience method for ad-hoc testing
 func testFuzzerWithInput(t *testing.T, fuzzer func([]byte) (int, error), inputs ...string) {
 	t.Helper()
 
@@ -217,6 +217,7 @@ func Test_fuzzDecodeBool(t *testing.T) {
 
 // various values that fuzz has crashed on in the past
 var oldCrashers = []string{
+	//nolint:staticcheck // unescaped control character
 	`"浱up蔽Cr"`,
 	"{\"\":\"0\xc9\"}",
 	"\"\x90\"",
@@ -244,7 +245,7 @@ func jsontestsuiteFiles(t testing.TB) []string {
 	t.Helper()
 	var files []string
 	testdir := filepath.FromSlash("testdata/jsontestsuite")
-	dir, err := ioutil.ReadDir(testdir)
+	dir, err := os.ReadDir(testdir)
 	require.NoError(t, err)
 	for _, info := range dir {
 		name := info.Name()
@@ -268,7 +269,7 @@ func TestValid(t *testing.T) {
 	})
 
 	for _, name := range jsontestsuiteFiles(t) {
-		data, err := ioutil.ReadFile(name)
+		data, err := os.ReadFile(name)
 		require.NoError(t, err)
 		t.Run(name, func(t *testing.T) {
 			var want bool
@@ -320,9 +321,9 @@ func gunzipTestJSON(t testing.TB, filename string) string {
 	}()
 	gz, err := gzip.NewReader(f)
 	require.NoError(t, err)
-	buf, err := ioutil.ReadAll(gz)
+	buf, err := io.ReadAll(gz)
 	require.NoError(t, err)
-	err = ioutil.WriteFile(target, buf, 0o600)
+	err = os.WriteFile(target, buf, 0o600)
 	require.NoError(t, err)
 	return target
 }
@@ -330,7 +331,7 @@ func gunzipTestJSON(t testing.TB, filename string) string {
 func getTestdataJSONGz(t testing.TB, path string) []byte {
 	t.Helper()
 	filename := gunzipTestJSON(t, path)
-	got, err := ioutil.ReadFile(filename)
+	got, err := os.ReadFile(filename)
 	require.NoError(t, err)
 	return got
 }

@@ -3,17 +3,18 @@
 set -e
 
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
-make -s bin/go-fuzz bin/go-fuzz-build bin/jq
-PATH="$(pwd)/bin:$PATH"
+PATH="$(go env GOROOT)/bin:$(pwd)/bin:$PATH"
 
 mkdir -p tmp
 
 # make a list of all dependencies outside of this repo so they won't be instrumented by go-fuzz
 preservers="$(go list -f '{{ join .Deps "\n" }}' | grep -v rjson |  tr '\n' ',')"
 
-go get github.com/dvyukov/go-fuzz@b1f3d6f4ef4e0fab65fa66f9191e6b115ad34f31
+GO_FUZZ_VERSION="$(cat script/.go-fuzz-version)"
+
+go get "github.com/dvyukov/go-fuzz@$GO_FUZZ_VERSION"
 trap "go mod tidy" EXIT
 
-go-fuzz-build -o tmp/fuzz-rjson.zip -preserve "$preservers"
+script/go-fuzz-build -o tmp/fuzz-rjson.zip -preserve "$preservers"
 
-go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 4 -workdir testdata/fuzz
+script/go-fuzz -dup -bin tmp/fuzz-rjson.zip -procs 4 -workdir testdata/fuzz

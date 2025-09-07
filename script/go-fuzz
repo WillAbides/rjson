@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
+
+GO_FUZZ_VERSION="$(cat script/.go-fuzz-version)"
+
+GOBIN="$PWD/bin" go install "github.com/dvyukov/go-fuzz/go-fuzz@$GO_FUZZ_VERSION" 2>/dev/null
+
+exec "bin/go-fuzz" "$@"

@@ -45,7 +45,7 @@ func (x *jsonBencher) decodeInt64(data []byte, v *int64) error {
 	return json.Unmarshal(data, &v)
 }
 
-func (x *jsonBencher) readObject(data []byte) (val map[string]interface{}, err error) {
+func (x *jsonBencher) readObject(data []byte) (val map[string]any, err error) {
 	err = json.Unmarshal(data, &val)
 	if err != nil {
 		return nil, err

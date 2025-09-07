@@ -29,11 +29,13 @@ func ParseJSONFloatPrefix(data []byte) (f float64, n int, err error) {
 	// Try pure floating-point arithmetic conversion, and if that fails,
 	// the Eisel-Lemire algorithm.
 	if !trunc {
+		//nolint:govet // ok shadow
 		if f2, ok := atof64exact(mantissa, exp, neg); ok {
 			return f2, n, nil
 		}
 	}
 
+	//nolint:govet // ok shadow
 	if f2, ok := eiselLemire64(mantissa, exp, neg); ok {
 		if !trunc {
 			return f2, n, nil
@@ -41,7 +43,7 @@ func ParseJSONFloatPrefix(data []byte) (f float64, n int, err error) {
 		// Even if the mantissa was truncated, we may
 		// have found the correct result. Confirm by
 		// converting the upper mantissa bound.
-		fUp, ok := eiselLemire64(mantissa+1, exp, neg)
+		fUp, ok := eiselLemire64(mantissa+1, exp, neg) //nolint:govet // ok shadow
 		if ok && f2 == fUp {
 			return f2, n, nil
 		}
@@ -189,6 +191,7 @@ finishUp:
 			return mantissa, 0, neg, trunc, p, false
 		}
 		esign := 1
+		//nolint:staticcheck // no need for switch
 		if data[p] == '+' {
 			p++
 		} else if data[p] == '-' {
@@ -288,6 +291,7 @@ func (a *decimal) set(data []byte) (ok bool) {
 			return false
 		}
 		esign := 1
+		//nolint:staticcheck // no need for switch
 		if data[i] == '+' {
 			i++
 		} else if data[i] == '-' {
@@ -410,6 +414,7 @@ overflow:
 out:
 	// Assemble bits.
 	bits := mant & (uint64(1)<<mantbits - 1)
+	//nolint:gosec // overflow checked above
 	bits |= uint64((exp-bias)&(1<<expbits-1)) << mantbits
 	if a.neg {
 		bits |= 1 << mantbits << expbits
@@ -433,9 +438,11 @@ var float64pow10 = []float64{
 // If possible to convert decimal representation to 64-bit float f exactly,
 // entirely in floating-point math, do so, avoiding the expense of decimalToFloatBits.
 // Three common cases:
+//
 //	value is exact integer
 //	value is exact integer * exact power of ten
 //	value is exact integer / exact power of ten
+//
 // These all produce potentially inexact but correctly rounded answers.
 func atof64exact(mantissa uint64, exp int, neg bool) (f float64, ok bool) {
 	if mantissa>>mantbits != 0 {

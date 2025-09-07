@@ -1,6 +1,7 @@
 package benchmarks
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/buger/jsonparser"
@@ -35,7 +36,7 @@ func (x *jsonparserBencher) readRepoData(data []byte, result *repoData) error {
 	h.seenFullName, h.seenForks, h.seenArchived = false, false, false
 	h.res = result
 	err := jsonparser.ObjectEach(data, h.callback)
-	if err == h.doneErr {
+	if errors.Is(err, h.doneErr) {
 		err = nil
 	}
 	return err
@@ -86,7 +87,7 @@ func (x *jsonparserBencher) readBool(data []byte) (bool, error) {
 }
 
 func (x *jsonparserBencher) distinctUserIDs(data []byte, dest []int64) ([]int64, error) {
-	_, err := jsonparser.ArrayEach(data, func(value []byte, dataType jsonparser.ValueType, _ int, err error) {
+	_, err := jsonparser.ArrayEach(data, func(value []byte, _ jsonparser.ValueType, _ int, err error) {
 		if err != nil {
 			return
 		}

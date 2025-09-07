@@ -5,8 +5,8 @@ set -e
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 
 make -s bin/golangci-lint bin/shellcheck
-bin/golangci-lint run ./...
+bin/golangci-lint run --build-tags gofuzz
 bin/shellcheck script/*
 
 cd benchmarks
-../bin/golangci-lint run --config ../.golangci.yml .
+../bin/golangci-lint run --config ../.golangci.yaml

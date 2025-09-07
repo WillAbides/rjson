@@ -50,7 +50,7 @@ func Benchmark_readFloat(b *testing.B) {
 	data := []byte(`11111.001111111789`)
 	var ok bool
 	b.SetBytes(int64(len(data)))
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _, _, _, _, ok = readFloat(data)
 	}
 	assert.True(b, ok)
@@ -60,7 +60,7 @@ func BenchmarkParseJSONFloatPrefix(b *testing.B) {
 	data := []byte(`11111.001111111789`)
 	b.SetBytes(int64(len(data)))
 	var err error
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _, err = ParseJSONFloatPrefix(data)
 	}
 	assert.NoError(b, err)

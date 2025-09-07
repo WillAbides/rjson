@@ -16,7 +16,7 @@ import (
 func runComp(w io.Writer, mainFile, compFile string) error {
 	stat := &benchstatter.Benchstat{
 		OutputFormatter: benchstatter.MarkdownFormatter(&benchstatter.MarkdownFormatterOptions{
-			benchstatter.CSVFormatterOptions{
+			CSVFormatterOptions: benchstatter.CSVFormatterOptions{
 				NoRange: true,
 			},
 		}),
@@ -51,7 +51,7 @@ func runComp(w io.Writer, mainFile, compFile string) error {
 
 func runComps(w io.Writer, mainFile string, comps []string) error {
 	for _, comp := range comps {
-		_, err := w.Write([]byte(fmt.Sprintf("### %s\n\n", filepath.Base(comp))))
+		_, err := w.Write(fmt.Appendf(nil, "### %s\n\n", filepath.Base(comp)))
 		if err != nil {
 			return err
 		}

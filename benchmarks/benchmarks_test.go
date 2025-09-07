@@ -1,7 +1,7 @@
 package benchmarks
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -12,7 +12,7 @@ import (
 
 func getTestdata(t testing.TB, path string) []byte {
 	t.Helper()
-	b, err := ioutil.ReadFile(filepath.Join("..", "testdata", filepath.FromSlash(path)))
+	b, err := os.ReadFile(filepath.Join("..", "testdata", filepath.FromSlash(path)))
 	require.NoError(t, err)
 	return b
 }
@@ -66,14 +66,14 @@ func Test_objectReaders(t *testing.T) {
 
 // simdjson decodes some numbers to int64 instead of float64. This function turns them back to
 // floats so I can validate it's the same as encoding/json
-func floatMyValue(val interface{}) interface{} {
+func floatMyValue(val any) any {
 	switch vv := val.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		for k, v := range vv {
 			vv[k] = floatMyValue(v)
 		}
 		return vv
-	case []interface{}:
+	case []any:
 		for i := range vv {
 			vv[i] = floatMyValue(vv[i])
 		}
@@ -98,7 +98,8 @@ func Test_distinctUserIDers(t *testing.T) {
 			continue
 		}
 		t.Run(bb.name(), func(t *testing.T) {
-			got, err := runner.distinctUserIDs(data, nil)
+			var got []int64
+			got, err = runner.distinctUserIDs(data, nil)
 			require.NoError(t, err)
 			require.ElementsMatch(t, want, got)
 		})
@@ -372,7 +373,7 @@ func Test_readString(t *testing.T) {
 
 func Test_validRunners(t *testing.T) {
 	testdir := filepath.FromSlash("../testdata/jsontestsuite")
-	dir, err := ioutil.ReadDir(testdir)
+	dir, err := os.ReadDir(testdir)
 	require.NoError(t, err)
 
 	for _, bb := range benchers {
@@ -385,7 +386,9 @@ func Test_validRunners(t *testing.T) {
 			initBencher(runner)
 
 			if runnerName == "jsoniter" {
-				t.Skip(`This is a reported issue. Remove this skip when https://github.com/json-iterator/go/issues/540 is addressed`)
+				t.Skip(
+					`This is a reported issue. Remove this skip when https://github.com/json-iterator/go/issues/540 is addressed`,
+				)
 			}
 			if runnerName == "goccyjson" {
 				t.Skip(`This one has a lot of false positives.'`)
@@ -404,7 +407,8 @@ func Test_validRunners(t *testing.T) {
 				default:
 					continue
 				}
-				origData, err := ioutil.ReadFile(filepath.Join(filepath.FromSlash("../testdata/jsontestsuite"), name))
+				var origData []byte
+				origData, err = os.ReadFile(filepath.Join(filepath.FromSlash("../testdata/jsontestsuite"), name))
 				require.NoError(t, err)
 
 				t.Run(name, func(t *testing.T) {

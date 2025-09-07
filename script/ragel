@@ -11,7 +11,7 @@ docker_image_name="rjson-ragel"
 
 if [ -z "$(docker images -q "$docker_image_name")" ]; then
 cat <<EOF | docker build -t "$docker_image_name" -
-  FROM debian:10.8-slim
+  FROM debian:bookworm-slim
 
   RUN DEBIAN_FRONTEND="noninteractive" \
     && apt-get update \

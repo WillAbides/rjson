@@ -150,7 +150,7 @@ func nullOrBust(data []byte, origErr error) (p int, err error) {
 	return p, nil
 }
 
-func decodeCompatHelper(data []byte, v interface{}) (p int, err error) {
+func decodeCompatHelper(data []byte, v any) (p int, err error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	err = decoder.Decode(v)
 	if err != nil {

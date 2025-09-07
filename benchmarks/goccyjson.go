@@ -10,7 +10,7 @@ func (x *goccyjsonBencher) name() string {
 	return "goccyjson"
 }
 
-func (x *goccyjsonBencher) readObject(data []byte) (val map[string]interface{}, err error) {
+func (x *goccyjsonBencher) readObject(data []byte) (val map[string]any, err error) {
 	err = goccyjson.Unmarshal(data, &val)
 	if err != nil {
 		return nil, err

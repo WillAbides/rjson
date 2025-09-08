@@ -15,7 +15,8 @@ make -s bin/benchstat >/dev/null
   go build -o ../bin/benchstatter ./cmd/benchstatter
 )
 
-benchers=(rjson encoding_json fastjson gjson jsoniter jsonparser goccyjson simdjson)
+#benchers=(rjson encoding_json fastjson gjson jsoniter jsonparser goccyjson simdjson sonic)
+benchers=(rjson sonic)
 
 mkdir -p tmp/compbench
 

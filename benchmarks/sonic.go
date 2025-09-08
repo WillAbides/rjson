@@ -37,11 +37,16 @@ func (x *sonicBencher) readFloat64(data []byte) (val float64, err error) {
 }
 
 func (x *sonicBencher) readInt64(data []byte) (val int64, err error) {
+	// Use sonic with UseInt64 configuration for better integer handling
+	config := sonic.Config{UseInt64: true}
+	api := config.Froze()
+
 	var v interface{}
-	err = sonic.Unmarshal(data, &v)
+	err = api.Unmarshal(data, &v)
 	if err != nil {
 		return 0, err
 	}
+
 	switch t := v.(type) {
 	case int64:
 		return t, nil
@@ -90,7 +95,17 @@ func (x *sonicBencher) readObject(data []byte) (val map[string]any, err error) {
 }
 
 func (x *sonicBencher) valid(data []byte) bool {
-	return sonic.Valid(data)
+	// Use sonic with strict validation configuration
+	config := sonic.Config{
+		ValidateString:   true,
+		UseUnicodeErrors: true,
+	}
+	api := config.Froze()
+
+	// Try to unmarshal to a generic interface to validate
+	var v interface{}
+	err := api.Unmarshal(data, &v)
+	return err == nil
 }
 
 func (x *sonicBencher) readRepoData(data []byte, val *repoData) error {

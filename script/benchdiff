@@ -2,7 +2,11 @@
 
 set -e
 
-CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
+REPO_ROOT="$(CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")" && pwd)"
 
-script/bindown install benchdiff
-bin/benchdiff "$@"
+(
+  cd "$REPO_ROOT"
+  script/bindown install benchdiff
+)
+
+exec "$REPO_ROOT/bin/benchdiff" "$@"

@@ -6,7 +6,9 @@ REPO_ROOT="$(CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")" && pwd)"
 
 (
   cd "$REPO_ROOT"
-  script/bindown install benchdiff
+  script/bindown -q install benchdiff
 )
 
 exec "$REPO_ROOT/bin/benchdiff" "$@"
+
+ # go test ./... -run '$^' -bench '.*/sonic' -count 2 -benchtime 10ms -cpu 1

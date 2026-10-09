@@ -22,7 +22,6 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
      | '\\"' @{dst = append(dst, '"')}
      | '\\\\' @{dst = append(dst, '\\')}
      | '\\/' @{dst = append(dst, '/')}
-     | '\\\'' @{dst = append(dst, '\'')}
      | '\\b' @{dst = append(dst, '\b')}
      | '\\f' @{dst = append(dst, '\f')}
      | '\\n' @{dst = append(dst, '\n')}
@@ -43,6 +42,9 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
  write data; write init; write exec;
  }%%
 
+   if cs < unescapeStringContent_first_final {
+     return nil, p, errInvalidString
+   }
    return dst, p,nil
 }
 

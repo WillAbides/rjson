@@ -50,8 +50,6 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 			goto st_case_14
 		case 15:
 			goto st_case_15
-		case 16:
-			goto st_case_16
 		case 2:
 			goto st_case_2
 		case 3:
@@ -60,8 +58,8 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 			goto st_case_4
 		case 5:
 			goto st_case_5
-		case 17:
-			goto st_case_17
+		case 16:
+			goto st_case_16
 		}
 		goto st_out
 	st_case_6:
@@ -69,12 +67,12 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr0:
 
 		return nil, p, errInvalidString
@@ -84,10 +82,10 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 	st0:
 		cs = 0
 		goto _out
-	tr15:
+	tr14:
 		segStart = p
 		goto st7
-	tr18:
+	tr17:
 		dst = append(dst, data[segStart:p]...)
 		segStart = p
 		goto st7
@@ -100,16 +98,16 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr19
+			goto tr18
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr18
-	tr17:
+		goto tr17
+	tr16:
 		segStart = p
 		goto st1
-	tr19:
+	tr18:
 		dst = append(dst, data[segStart:p]...)
 		segStart = p
 		goto st1
@@ -121,22 +119,20 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		switch data[p] {
 		case 34:
 			goto tr1
-		case 39:
-			goto tr2
 		case 47:
-			goto tr3
+			goto tr2
 		case 92:
-			goto tr4
+			goto tr3
 		case 98:
-			goto tr5
+			goto tr4
 		case 102:
-			goto tr6
+			goto tr5
 		case 110:
-			goto tr7
+			goto tr6
 		case 114:
-			goto tr8
+			goto tr7
 		case 116:
-			goto tr9
+			goto tr8
 		case 117:
 			goto st2
 		}
@@ -153,14 +149,14 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr2:
-		dst = append(dst, '\'')
+		dst = append(dst, '/')
 		goto st9
 	st9:
 		if p++; p == pe {
@@ -171,14 +167,14 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr3:
-		dst = append(dst, '/')
+		dst = append(dst, '\\')
 		goto st10
 	st10:
 		if p++; p == pe {
@@ -189,14 +185,14 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr4:
-		dst = append(dst, '\\')
+		dst = append(dst, '\b')
 		goto st11
 	st11:
 		if p++; p == pe {
@@ -207,14 +203,14 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr5:
-		dst = append(dst, '\b')
+		dst = append(dst, '\f')
 		goto st12
 	st12:
 		if p++; p == pe {
@@ -225,14 +221,14 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr6:
-		dst = append(dst, '\f')
+		dst = append(dst, '\n')
 		goto st13
 	st13:
 		if p++; p == pe {
@@ -243,14 +239,14 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr7:
-		dst = append(dst, '\n')
+		dst = append(dst, '\r')
 		goto st14
 	st14:
 		if p++; p == pe {
@@ -261,14 +257,14 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	tr8:
-		dst = append(dst, '\r')
+		dst = append(dst, '\t')
 		goto st15
 	st15:
 		if p++; p == pe {
@@ -279,30 +275,12 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
-	tr9:
-		dst = append(dst, '\t')
-		goto st16
-	st16:
-		if p++; p == pe {
-			goto _test_eof16
-		}
-	st_case_16:
-		switch data[p] {
-		case 34:
-			goto st0
-		case 92:
-			goto tr17
-		}
-		if data[p] <= 31 {
-			goto st0
-		}
-		goto tr15
+		goto tr14
 	st2:
 		if p++; p == pe {
 			goto _test_eof2
@@ -365,17 +343,17 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		switch {
 		case data[p] < 65:
 			if 48 <= data[p] && data[p] <= 57 {
-				goto tr14
+				goto tr13
 			}
 		case data[p] > 70:
 			if 97 <= data[p] && data[p] <= 102 {
-				goto tr14
+				goto tr13
 			}
 		default:
-			goto tr14
+			goto tr13
 		}
 		goto tr0
-	tr14:
+	tr13:
 
 		dst, unescapeUnicodeCharBytes, ok = unescapeUnicodeChar(data[segStart:], dst)
 		if !ok {
@@ -385,22 +363,22 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 			p += unescapeUnicodeCharBytes - 6
 		}
 
-		goto st17
-	st17:
+		goto st16
+	st16:
 		if p++; p == pe {
-			goto _test_eof17
+			goto _test_eof16
 		}
-	st_case_17:
+	st_case_16:
 		switch data[p] {
 		case 34:
 			goto st0
 		case 92:
-			goto tr17
+			goto tr16
 		}
 		if data[p] <= 31 {
 			goto st0
 		}
-		goto tr15
+		goto tr14
 	st_out:
 	_test_eof7:
 		cs = 7
@@ -432,9 +410,6 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 	_test_eof15:
 		cs = 15
 		goto _test_eof
-	_test_eof16:
-		cs = 16
-		goto _test_eof
 	_test_eof2:
 		cs = 2
 		goto _test_eof
@@ -447,8 +422,8 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 	_test_eof5:
 		cs = 5
 		goto _test_eof
-	_test_eof17:
-		cs = 17
+	_test_eof16:
+		cs = 16
 		goto _test_eof
 
 	_test_eof:
@@ -470,6 +445,9 @@ func unescapeStringContent(data []byte, dst []byte) ([]byte, int, error) {
 		}
 	}
 
+	if cs < unescapeStringContent_first_final {
+		return nil, p, errInvalidString
+	}
 	return dst, p, nil
 }
 

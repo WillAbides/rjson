@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -13,6 +14,41 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestUnescapeStringContent(t *testing.T) {
+	t.Parallel()
+
+	inputs := []string{
+		``, `plain text`, `'`, `a'b`, `\u0027`, `\\'`,
+		`\'`, `a\'b`, `\u0061\'`, `\'\u0062`,
+		`\"`, `\\`, `\/`, `\b`, `\f`, `\n`, `\r`, `\t`,
+		`\u0061`, `\uD83D\uDE00`, `\uD800`, `\uDC00`,
+		`\`, `\u`, `\u123`, `\uXXXX`, `\x27`,
+	}
+	for b := range 128 {
+		inputs = append(inputs, string(byte(b)), "a"+string(byte(b))+"b", "\\"+string(byte(b)))
+	}
+	for i, input := range inputs {
+		t.Run(fmt.Sprintf("input_%d", i), func(t *testing.T) {
+			t.Parallel()
+
+			var want string
+			stdErr := json.Unmarshal([]byte(`"`+input+`"`), &want)
+			for _, prefix := range []string{"", "prefix:"} {
+				buf := make([]byte, len(prefix), len(prefix)+len(input)+16)
+				copy(buf, prefix)
+				got, p, err := UnescapeStringContent([]byte(input), buf)
+				if stdErr != nil {
+					assert.ErrorIs(t, err, errInvalidString, "input: %q", input)
+					continue
+				}
+				require.NoError(t, err, "input: %q", input)
+				assert.Equal(t, prefix+want, string(got), "input: %q", input)
+				assert.Equal(t, len(input), p, "input: %q", input)
+			}
+		})
+	}
+}
 
 // These are the files in testdata.
 var jsonTestFiles = []string{
